@@ -51,7 +51,7 @@ print("Abwurfwinkel = " , AbwurfWinkel , "grad")
 print ("Abwurfgeschwindigkeit = " , AbwurfGeschwindigkeit , "KoerperMasse/s")
 
 ###Berechnung Gesamtflugdauer
-FallBeschleunigung = float(9.81)
+FallBeschleunigung = 9.81
 FlugDauer = AbwurfGeschwindigkeit * np.sin(AbwurfWinkel * np.pi/180) / FallBeschleunigung
 
 ###Berechnung Maximale Hoehe 
