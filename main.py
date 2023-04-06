@@ -4,7 +4,7 @@ import matplotlib.animation as ani
 
 fig, ax = plt.subplots()
 
-###Eingabe Abwurfhoehewedww
+###Eingabe Abwurfhoehe
 while True:
     try:
         Abwurfhoehe = float(input("Bitte geben sie eine Abwurfhoehe die groeßer als 0m ist an:  "))
