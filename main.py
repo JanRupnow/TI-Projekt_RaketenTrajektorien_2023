@@ -69,7 +69,7 @@ x = np.linspace(0, WurfWeite, 1000)
 Abwurfhoehe = Wurfbahn(x)
 
 ###Darstellung der Funktion
-line = ax.plot(x, Abwurfhoehe, 'ro')[0]  ###Wurfbahn
+line = ax.plot(x, Abwurfhoehe, 'r--')[0]  ###Wurfbahn
 ax.plot(WurfWeite, 0, 'ro')  ###Kontakt mit dem Boden
 
 ###Animation
