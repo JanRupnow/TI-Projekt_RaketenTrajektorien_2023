@@ -1,8 +1,8 @@
-import numpy as np
-import matplotlib.pyplot as plt
-import matplotlib.animation as ani
 
 def main():
+    import numpy as np
+    import matplotlib.pyplot as plt
+    import matplotlib.animation as ani
     fig, ax = plt.subplots()
     ###Eingabe Abwurfhoehe
     while True:
@@ -45,10 +45,10 @@ def main():
         except: 
             print("Bitte nur Zahlen eingeben!")
     ###Ausgabe der eingegebenen Werte
-    print("\nIhre Werte:\nAbwurfhoehe = " , Abwurfhoehe ,"KoerperMasse")
+    print("\nEingebene Werte:\nAbwurfhoehe = " , Abwurfhoehe ,"m")
     print("Masse =" , KoerperMasse , "kg")
     print("Abwurfwinkel = " , AbwurfWinkel , "grad")
-    print ("Abwurfgeschwindigkeit = " , AbwurfGeschwindigkeit , "KoerperMasse/s")
+    print ("Abwurfgeschwindigkeit = " , AbwurfGeschwindigkeit , "m/s")
 
     ###Berechnung Gesamtflugdauer
     FallBeschleunigung = 9.81
@@ -72,13 +72,15 @@ def main():
     line = ax.plot(x, Abwurfhoehe, 'r--')[0]  ###Wurfbahn
     ax.plot(WurfWeite, 0, 'ro')  ###Kontakt mit dem Boden
 
+    ###Schrittweite
+    step = 150
     ###Animation
     def animate(i):
-        line.set_xdata(x[:int(i * len(x) / 150)])
-        line.set_ydata(Abwurfhoehe[:int(i * len(Abwurfhoehe) / 150)])
+        line.set_xdata(x[:int(i * len(x) / step)])
+        line.set_ydata(Abwurfhoehe[:int(i * len(Abwurfhoehe) / step)])
         return line,
 
-    ani = ani.FuncAnimation(fig, animate, frames=150, interval=25, repeat=True)
+    ani = ani.FuncAnimation(fig, animate, frames=step, interval=25, repeat=True)
 
     ###Skalierung der Achsen
     ax.set_ylim(0, MaximalHoehe + (0.1 * MaximalHoehe))
@@ -90,6 +92,6 @@ def main():
     ax.set_ylabel('Wurfhoehe [m]')
 
     plt.show()
-    
+
 if __name__ == '__main__':
     main()
