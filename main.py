@@ -72,13 +72,15 @@ def main():
     line = ax.plot(x, Abwurfhoehe, 'r--')[0]  ###Wurfbahn
     ax.plot(WurfWeite, 0, 'ro')  ###Kontakt mit dem Boden
 
+    ###Schrittweite
+    step = 150
     ###Animation
     def animate(i):
-        line.set_xdata(x[:int(i * len(x) / 150)])
-        line.set_ydata(Abwurfhoehe[:int(i * len(Abwurfhoehe) / 150)])
+        line.set_xdata(x[:int(i * len(x) / step)])
+        line.set_ydata(Abwurfhoehe[:int(i * len(Abwurfhoehe) / step)])
         return line,
 
-    ani = ani.FuncAnimation(fig, animate, frames=150, interval=25, repeat=True)
+    ani = ani.FuncAnimation(fig, animate, frames=step, interval=25, repeat=True)
 
     ###Skalierung der Achsen
     ax.set_ylim(0, MaximalHoehe + (0.1 * MaximalHoehe))
