@@ -1,8 +1,8 @@
-import numpy as np
-import matplotlib.pyplot as plt
-import matplotlib.animation as ani
 
 def main():
+    import numpy as np
+    import matplotlib.pyplot as plt
+    import matplotlib.animation as ani
     fig, ax = plt.subplots()
     ###Eingabe Abwurfhoehe
     while True:
