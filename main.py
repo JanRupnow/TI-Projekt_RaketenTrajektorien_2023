@@ -45,10 +45,10 @@ def main():
         except: 
             print("Bitte nur Zahlen eingeben!")
     ###Ausgabe der eingegebenen Werte
-    print("\nIhre Werte:\nAbwurfhoehe = " , Abwurfhoehe ,"KoerperMasse")
+    print("\nEingebene Werte:\nAbwurfhoehe = " , Abwurfhoehe ,"m")
     print("Masse =" , KoerperMasse , "kg")
     print("Abwurfwinkel = " , AbwurfWinkel , "grad")
-    print ("Abwurfgeschwindigkeit = " , AbwurfGeschwindigkeit , "KoerperMasse/s")
+    print ("Abwurfgeschwindigkeit = " , AbwurfGeschwindigkeit , "m/s")
 
     ###Berechnung Gesamtflugdauer
     FallBeschleunigung = 9.81
@@ -90,6 +90,6 @@ def main():
     ax.set_ylabel('Wurfhoehe [m]')
 
     plt.show()
-    
+
 if __name__ == '__main__':
     main()
