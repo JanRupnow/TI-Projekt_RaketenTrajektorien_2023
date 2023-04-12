@@ -83,8 +83,8 @@ def main():
     ani = ani.FuncAnimation(fig, animate, frames=step, interval=25, repeat=True)
 
     ###Skalierung der Achsen
-    ax.set_ylim(0, MaximalHoehe + (0.1 * MaximalHoehe))
-    ax.set_xlim(0, WurfWeite + (0.1 * WurfWeite))
+    ax.set_ylim(0,(1.1 * MaximalHoehe))
+    ax.set_xlim(0,(1.1 * WurfWeite))
 
     ###Achsenbeschriftung
     ax.set_title('Schiefer Wurf')
