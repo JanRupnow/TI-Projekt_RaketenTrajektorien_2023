@@ -4,11 +4,19 @@ def main():
     import matplotlib.pyplot as plt
     import matplotlib.animation as ani
     fig, ax = plt.subplots()
+    def f1(x, t):
+        y=-FallBeschleunigung-c*x**2*np.sign(x) 
+        if ((t>5)&(t<6)):
+            y=y+10*FallBeschleunigung
+        return y
+    def f2(x, t):
+        y=-c*x**2*np.sign(x)
+        return y
     ###Eingabe Abwurfhoehe
     while True:
         try:
             Abwurfhoehe = float(input("Bitte geben sie eine Abwurfhoehe die groeßer als 0m ist an:  "))
-            if 0 < Abwurfhoehe:
+            if 0 <= Abwurfhoehe:
                 break
             else:
                 print("Ungültige Eingabe! Bitte geben sie eine Abwurfhoehe die groeßer als 0m ist an.")
@@ -18,7 +26,7 @@ def main():
     while True:
         try:
             KoerperMasse = float(input("Bitte geben sie eine positive Masse des Wurfkoerpes in kg an: "))
-            if 0 < KoerperMasse:
+            if 0 <= KoerperMasse:
                 break
             else:
                 print("Ungültige Eingabe! Bitte geben sie eine positive Masse des Wurfkoerpes in kg an.")
@@ -38,10 +46,50 @@ def main():
     while True:
         try:
             AbwurfGeschwindigkeit = float(input("Bitte geben sie eine Abwurfgeschwindigkeit in KoerperMasse/s an: "))
-            if 0 <AbwurfGeschwindigkeit:
+            if 0 <=AbwurfGeschwindigkeit:
                 break
             else:
                 print("Ungültige Eingabe! Bitte geben sie eine positive Abwurfgeschwindigkeit in KoerperMasse/s an.")
+        except: 
+            print("Bitte nur Zahlen eingeben!")
+    ###Eingabe Luftwiederstand
+    while True:
+        try:
+            Luftwiederstand = float(input("Bitte geben sie eine positive Luftwiederstand an: "))
+            if 0 <=Luftwiederstand:
+                break
+            else:
+                print("Ungültige Eingabe! Bitte geben sie eine positive Luftwiederstand an.")
+        except: 
+            print("Bitte nur Zahlen eingeben!")
+    ###Eingabe Startzeit
+    while True:
+        try:
+            Startzeit = float(input("Bitte geben sie eine Startzeit in Sekunden an: "))
+            if 0 <=Startzeit:
+                break
+            else:
+                print("Ungültige Eingabe! Bitte geben sie eine positive Startzeit an.")
+        except: 
+            print("Bitte nur Zahlen eingeben!")
+    ###Eingabe Endzeit
+    while True:
+        try:
+            Endzeit = float(input("Bitte geben sie eine Endzeit an: "))
+            if Startzeit <=Endzeit:
+                break
+            else:
+                print("Ungültige Eingabe! Bitte geben sie eine spätere Endzeit als Startzeit an.")
+        except: 
+            print("Bitte nur Zahlen eingeben!")
+    ###Eingabe Rechenschritte
+    while True:
+        try:
+            Rechenschritte = int(input("Bitte geben sie eine Anzahl von Rechenschritte an: "))
+            if 0 < Rechenschritte:
+                break
+            else:
+                print("Ungültige Eingabe! Bitte geben sie eine postive Anzahl von Rechenschritten an.")
         except: 
             print("Bitte nur Zahlen eingeben!")
     ###Ausgabe der eingegebenen Werte
@@ -49,42 +97,50 @@ def main():
     print("Masse =" , KoerperMasse , "kg")
     print("Abwurfwinkel = " , AbwurfWinkel , "grad")
     print ("Abwurfgeschwindigkeit = " , AbwurfGeschwindigkeit , "m/s")
-
+    print ("Luftwiederstand = " , Luftwiederstand)
     ###Berechnung Gesamtflugdauer
     FallBeschleunigung = 9.81
-    FlugDauer = AbwurfGeschwindigkeit * np.sin(AbwurfWinkel * np.pi/180) / FallBeschleunigung
+    c = Luftwiederstand/KoerperMasse
+ 
+    r_x= np.zeros(Rechenschritte)
+    r_z= np.zeros(Rechenschritte)
+    v_x=np.zeros(Rechenschritte)
+    v_z=np.zeros(Rechenschritte)
+    t=np.linspace(Startzeit, Endzeit, Rechenschritte)
+    dt=(Endzeit-Startzeit)/Rechenschritte
 
-    ###Berechnung Maximale Hoehe 
-    MaximalHoehe = 0.5 * FallBeschleunigung * FlugDauer ** 2 + Abwurfhoehe
+    # Anfangsbedingungen
+    r_x[0] = 0
+    r_z[0] = Abwurfhoehe
+    v_x[0] = AbwurfGeschwindigkeit * np.cos(AbwurfWinkel * np.pi / 180)
+    v_z[0] = AbwurfGeschwindigkeit * np.sin(AbwurfWinkel * np.pi / 180)
+    
+    for i in range(Rechenschritte - 1):
+        # z-Komponente
+        k1 = f1(v_z[i], t[i])
+        k2 = f1(v_z[i] + k1*dt/2, t[i])
+        k3 = f1(v_z[i] + k2*dt/2, t[i])
+        k4 = f1(v_z[i] + k3*dt/2, t[i])
+        k = (k1 + 2*k2 + 2*k3 + k4)/6
+        v_z[i+1] = v_z[i] + k*dt
+        r_z[i+1] = r_z[i] + v_z[i]*dt
 
-    ###Berechnung Maximale Wurfweite w
-    WurfWeite = (AbwurfGeschwindigkeit * np.cos(AbwurfWinkel * np.pi/180) * (AbwurfGeschwindigkeit * np.sin(AbwurfWinkel * np.pi/180) + np.sqrt(AbwurfGeschwindigkeit ** 2 * np.sin(AbwurfWinkel * np.pi/180) ** 2 + 2 * FallBeschleunigung * Abwurfhoehe))) / FallBeschleunigung
-
-    ###Wurfbahn Funktion
-    def Wurfbahn(x):
-        return (-(FallBeschleunigung / (2 * AbwurfGeschwindigkeit ** 2 * np.cos(AbwurfWinkel * np.pi / 180) ** 2)) * x ** 2) + (np.tan(AbwurfWinkel * np.pi / 180) * x + Abwurfhoehe)
-
-    ###Berechnung der Flugbahn mit allen Punkten
-    x = np.linspace(0, WurfWeite, 1000)
-    Abwurfhoehe = Wurfbahn(x)
+        # x-Komponente
+        k1 = f2(v_x[i], t[i])
+        k2 = f2(v_x[i] + k1*dt/2, t[i])
+        k3 = f2(v_x[i] + k2*dt/2, t[i])
+        k4 = f2(v_x[i] + k3*dt/2, t[i])
+        k = (k1 + 2*k2 + 2*k3 + k4)/6
+        v_x[i+1] = v_x[i] + k*dt
+        r_x[i+1] = r_x[i] + v_x[i]*dt
 
     ###Darstellung der Funktion
-    line = ax.plot(x, Abwurfhoehe, 'r--')[0]  ###Wurfbahn
-    ax.plot(WurfWeite, 0, 'ro')  ###Kontakt mit dem Boden
-
-    ###Schrittweite
-    step = 150
-    ###Animation
-    def animate(i):
-        line.set_xdata(x[:int(i * len(x) / step)])
-        line.set_ydata(Abwurfhoehe[:int(i * len(Abwurfhoehe) / step)])
-        return line,
-
-    ani = ani.FuncAnimation(fig, animate, frames=step, interval=25, repeat=True)
+    line = ax.plot(r_x, r_z, 'r--')  ###Wurfbahn
+    #ax.plot(r_x, 0, 'ro')  ###Kontakt mit dem Boden
 
     ###Skalierung der Achsen
-    ax.set_ylim(0, MaximalHoehe + (0.1 * MaximalHoehe))
-    ax.set_xlim(0, WurfWeite + (0.1 * WurfWeite))
+    ax.set_ylim(np.min(r_z)*1.1, np.max(r_z)*1.1)
+    ax.set_xlim(np.min(r_x)*1.1, np.max(r_x)*1.1)
 
     ###Achsenbeschriftung
     ax.set_title('Schiefer Wurf')
@@ -92,6 +148,5 @@ def main():
     ax.set_ylabel('Wurfhoehe [m]')
 
     plt.show()
-
 if __name__ == '__main__':
     main()
