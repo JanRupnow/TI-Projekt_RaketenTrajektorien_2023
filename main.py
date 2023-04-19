@@ -2,10 +2,9 @@
 def main():
     import numpy as np
     import matplotlib.pyplot as plt
-    import matplotlib.animation as ani
     fig, ax = plt.subplots()
-    def f1(x, t):
-        y=-FallBeschleunigung-c*x**2*np.sign(x) 
+    def f1(r_z, x, t):
+        y=-G*m_E/(r_E + r_z)**2 -c*x**2*np.sign(x) 
         if ((t>5)&(t<6)):
             y=y+10*FallBeschleunigung
         return y
@@ -45,11 +44,11 @@ def main():
     ###Eingabe Abwurfgeschwindigkeit
     while True:
         try:
-            AbwurfGeschwindigkeit = float(input("Bitte geben sie eine Abwurfgeschwindigkeit in KoerperMasse/s an: "))
+            AbwurfGeschwindigkeit = float(input("Bitte geben sie eine Abwurfgeschwindigkeit in m/s an: "))
             if 0 <=AbwurfGeschwindigkeit:
                 break
             else:
-                print("Ungültige Eingabe! Bitte geben sie eine positive Abwurfgeschwindigkeit in KoerperMasse/s an.")
+                print("Ungültige Eingabe! Bitte geben sie eine positive Abwurfgeschwindigkeit in m/s an.")
         except: 
             print("Bitte nur Zahlen eingeben!")
     ###Eingabe Luftwiederstand
@@ -102,6 +101,10 @@ def main():
     FallBeschleunigung = 9.81
     c = Luftwiederstand/KoerperMasse
  
+    G = 6.674 * 10**(-11)   # Gravitationskonstante [Nm^2/kg^2]
+    m_E = 5.972 * 10**24    # Erdmasse [kg]
+    r_E = 6.37 * 10**6      # Erdradius [m]
+
     r_x= np.zeros(Rechenschritte)
     r_z= np.zeros(Rechenschritte)
     v_x=np.zeros(Rechenschritte)
@@ -117,10 +120,10 @@ def main():
     
     for i in range(Rechenschritte - 1):
         # z-Komponente
-        k1 = f1(v_z[i], t[i])
-        k2 = f1(v_z[i] + k1*dt/2, t[i])
-        k3 = f1(v_z[i] + k2*dt/2, t[i])
-        k4 = f1(v_z[i] + k3*dt/2, t[i])
+        k1 = f1(r_z[i], v_z[i], t[i])
+        k2 = f1(r_z[i], v_z[i] + k1*dt/2, t[i])
+        k3 = f1(r_z[i], v_z[i] + k2*dt/2, t[i])
+        k4 = f1(r_z[i], v_z[i] + k3*dt/2, t[i])
         k = (k1 + 2*k2 + 2*k3 + k4)/6
         v_z[i+1] = v_z[i] + k*dt
         r_z[i+1] = r_z[i] + v_z[i]*dt
@@ -143,7 +146,7 @@ def main():
     ax.set_xlim(np.min(r_x)*1.1, np.max(r_x)*1.1)
 
     ###Achsenbeschriftung
-    ax.set_title('Schiefer Wurf')
+    ax.set_title('Balistischer Wurf')
     ax.set_xlabel('Wurfweite [m]')
     ax.set_ylabel('Wurfhoehe [m]')
 
