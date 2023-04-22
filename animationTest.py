@@ -2,7 +2,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 import keyboard
-import time
 fig, ax = plt.subplots()
 
 #line, = ax.plot(x, y)
@@ -116,25 +115,41 @@ def animate(i):
             Stop = True
 
         # Anzeige mit neuen Daten aktualisieren
-        line.set_ydata(r_z[:AktuellerRechenschritt])
-        line.set_xdata(r_x[:AktuellerRechenschritt])
-        AktuellerSchritt += 1
+        line.set_ydata(r_z[AktuellerSchritt:AktuellerRechenschritt])
+        line.set_xdata(r_x[AktuellerSchritt:AktuellerRechenschritt])
+        lineBisJetzt.set_xdata(r_x[:AktuellerSchritt])
+        lineBisJetzt.set_ydata(r_z[:AktuellerSchritt])
+        aktuellerPunkt.set_xdata(r_x[AktuellerSchritt])
+        aktuellerPunkt.set_ydata(r_z[AktuellerSchritt])
 
-    return line,
+        AktuellerSchritt += 1
+        
+        # Skalierung der Animation relativ zu Erde
+        ax.set_ylim(r_z[AktuellerSchritt]-r_E*5,r_z[AktuellerSchritt]+r_E*5)
+
+        ax.set_xlim(left=r_x[AktuellerSchritt]-r_E*5, right=r_x[AktuellerSchritt]+r_E*5)
+        # Skalierung des Graphen 
+       
+    return line, lineBisJetzt, aktuellerPunkt
 
 # Plotten der Erde
 circle1 = plt.Circle((0,0), r_E)
 ax.add_artist(circle1)
 
+
 # Fluglinie
 line, = ax.plot(r_x[:AktuellerRechenschritt], r_z[:AktuellerRechenschritt], 'r--')
+lineBisJetzt, = ax.plot(r_x[:0], r_z[:0], 'b--')
+aktuellerPunkt, = ax.plot(r_x[0], r_z[0], 'o')
+#plt.scatter(0, 0, r_E)
 
 # Animationsfunktion
 ani = animation.FuncAnimation(
-    fig, animate, interval=1, blit=True, save_count=50)
+    fig, animate, interval=1, blit=False)
 
 # Normalerweise würde beim Plotten, wenn 's' gedrückt wird, sich ein Fenster zum Speichern öffnen. Dies wird hiermit deaktiviert
 plt.rcParams['keymap.save'].remove('s')
+plt.rcParams["figure.autolayout"] = True
 plt.show()
 
 ###Darstellung der Funktion
