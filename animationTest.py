@@ -123,13 +123,20 @@ def animate(i):
         aktuellerPunkt.set_ydata(r_z[AktuellerSchritt])
 
         AktuellerSchritt += 1
-        
         # Skalierung der Animation relativ zu Erde
         ax.set_ylim(r_z[AktuellerSchritt]-r_E*5,r_z[AktuellerSchritt]+r_E*5)
 
         ax.set_xlim(left=r_x[AktuellerSchritt]-r_E*5, right=r_x[AktuellerSchritt]+r_E*5)
         # Skalierung des Graphen 
-       
+
+        # Anzeigen von Daten (rechts oben)
+        text.set_text("r_x: {0}\nr_z: {1}\nv_x: {2}\nv_z: {3}\nt: {4}".format(
+                            round(r_x[AktuellerSchritt], 2),
+                            round(r_z[AktuellerSchritt], 2),
+                            round(v_x[AktuellerSchritt], 2), 
+                            round(v_z[AktuellerSchritt], 2), 
+                            AktuellerSchritt * dt))
+        text.set_position(((r_x[AktuellerSchritt]+r_E*5) * 0.8, (r_z[AktuellerSchritt]+r_E*5) * 0.8))
     return line, lineBisJetzt, aktuellerPunkt
 
 # Plotten der Erde
@@ -146,6 +153,8 @@ aktuellerPunkt, = ax.plot(r_x[0], r_z[0], 'o')
 # Animationsfunktion
 ani = animation.FuncAnimation(
     fig, animate, interval=1, blit=False)
+
+text = ax.text(0, 0, '')
 
 # Normalerweise würde beim Plotten, wenn 's' gedrückt wird, sich ein Fenster zum Speichern öffnen. Dies wird hiermit deaktiviert
 plt.rcParams['keymap.save'].remove('s')
