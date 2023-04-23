@@ -78,7 +78,7 @@ def f1(r_x, r_z, x, t):
 # Methode für die y-Komponente
 def f2(r_x, r_z, x, t):
     r0 = np.sqrt(r_x**2 + r_z**2)
-    y=-(G*m_E/r0**3) * r_x - - (Luftwiederstand*x**2*np.sign(x) * p_0 * np.exp(-abs((r0-r_E)) / h_s))/(2 * KoerperMasse * r0) * r_x
+    y=-(G*m_E/r0**3) * r_x - (Luftwiederstand*x**2*np.sign(x) * p_0 * np.exp(-abs((r0-r_E)) / h_s))/(2 * KoerperMasse * r0) * r_x
     #y=-(G*m_E/(r_x**2 + r_z**2)**1.5) * r_x - c*x**2*np.sign(x)
     
     # Beschleunigung soll nur zum aktuellen Zeitpunkt hinzugefügt werden
