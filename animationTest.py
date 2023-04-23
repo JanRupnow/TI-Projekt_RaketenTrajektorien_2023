@@ -11,15 +11,18 @@ Abwurfhoehe = 0                 # Höhe über dem Meeresspiegel nur in z-Richtun
 AbwurfWinkel = 0                # Winkel [°]
 KoerperMasse = 100000           # Masse des Objekts [kg]
 AbwurfGeschwindigkeit = 11000   # Abwurfsgeschwindigkeit [m/s]
-Luftwiederstand = 0.0002        # Luftwiderstandsbeiwert
+Luftwiederstand = 0.0162        # Luftwiderstandsbeiwert
 Startzeit = 0                   # [s]
-Endzeit = 100000                # [s]
+Endzeit = 200000                # [s]
 Rechenschritte = 100000
 z_speed = 0                     # aktuell nicht genutzt     
 x_speed = 0                     #  - Verwendung zur Einstellung des Schubs
 Stop = False                    # Wenn eine Kollision mit der Erde festgestellt wurde, dann deaktiviert diese Variable weitere Berechnungen
 FallBeschleunigung = 9.81       # [m/s^2]
 c = Luftwiederstand/KoerperMasse
+
+p_0 = 1.225 # Luftdichte auf Meereshöhe [kg/m^3]
+h_s = 8400  # Skalenhöhe [m]
 
 G = 6.674 * 10**(-11)           # Gravitationskonstante [Nm^2/kg^2]
 m_E = 5.972 * 10**24            # Erdmasse [kg]
@@ -58,7 +61,9 @@ def berechneNaechstenSchritt(i: int):
 
 # Methode für die z-Komponente
 def f1(r_x, r_z, x, t):
-    y=-(G*m_E/(r_x**2 + r_z**2)**1.5) * r_z - c*x**2*np.sign(x)
+    r0 = np.sqrt(r_x**2 + r_z**2)
+    y=-(G*m_E/r0**3) * r_z - (Luftwiederstand*x**2*np.sign(x) * p_0 * np.exp(-abs((r0-r_E)) / h_s))/(2 * KoerperMasse * r0) * r_z
+    #y=-(G*m_E/(r_x**2 + r_z**2)**1.5) * r_z - c*x**2*np.sign(x)
     
     # Beschleunigung soll nur zum aktuellen Zeitpunkt hinzugefügt werden
     #  - 'w' beschleunigt nach oben und 's' nach unten
@@ -72,7 +77,9 @@ def f1(r_x, r_z, x, t):
 
 # Methode für die y-Komponente
 def f2(r_x, r_z, x, t):
-    y=-(G*m_E/(r_x**2 + r_z**2)**1.5) * r_x - c*x**2*np.sign(x)
+    r0 = np.sqrt(r_x**2 + r_z**2)
+    y=-(G*m_E/r0**3) * r_x - - (Luftwiederstand*x**2*np.sign(x) * p_0 * np.exp(-abs((r0-r_E)) / h_s))/(2 * KoerperMasse * r0) * r_x
+    #y=-(G*m_E/(r_x**2 + r_z**2)**1.5) * r_x - c*x**2*np.sign(x)
     
     # Beschleunigung soll nur zum aktuellen Zeitpunkt hinzugefügt werden
     #  - 'd' beschleunigt nach rechts und 'a' nach links
@@ -113,16 +120,16 @@ def animate(i):
             AktuellerRechenschritt += 1
 
         # Wenn die Rakete in die Erde fliegt, dann stoppt die Berechnung
-        if np.sqrt(r_x[i+1]**2 + r_z[i+1]**2) <= r_E:
+        if np.sqrt(r_x[AktuellerSchritt+1]**2 + r_z[AktuellerSchritt+1]**2) <= r_E:
             Stop = True
 
         # Anzeige mit neuen Daten aktualisieren
         line.set_ydata(r_z[AktuellerSchritt:AktuellerRechenschritt])
         line.set_xdata(r_x[AktuellerSchritt:AktuellerRechenschritt])
-        lineBisJetzt.set_xdata(r_x[:AktuellerSchritt])
-        lineBisJetzt.set_ydata(r_z[:AktuellerSchritt])
-        aktuellerPunkt.set_xdata(r_x[AktuellerSchritt])
-        aktuellerPunkt.set_ydata(r_z[AktuellerSchritt])
+        lineBisJetzt.set_xdata(r_x[:AktuellerSchritt+1])
+        lineBisJetzt.set_ydata(r_z[:AktuellerSchritt+1])
+        aktuellerPunkt.set_xdata(r_x[AktuellerSchritt+1])
+        aktuellerPunkt.set_ydata(r_z[AktuellerSchritt+1])
 
         AktuellerSchritt += 1
         # Skalierung der Animation relativ zu Erde
@@ -138,6 +145,10 @@ def animate(i):
                             round(v_z[AktuellerSchritt], 2), 
                             AktuellerSchritt * dt))
         text.set_position(((r_x[AktuellerSchritt]+r_E*5) * 0.8, (r_z[AktuellerSchritt]+r_E*5) * 0.8))
+
+    else:
+        line.set_ydata(r_z[:0])
+        line.set_xdata(r_x[:0])
 
     return line, lineBisJetzt, aktuellerPunkt
 
@@ -158,6 +169,9 @@ ani = animation.FuncAnimation(
     fig, animate, interval=1, blit=False)
 
 text = ax.text(0, 0, '')
+
+plt.gca().set_aspect('equal')
+
 
 # Normalerweise würde beim Plotten, wenn 's' gedrückt wird, sich ein Fenster zum Speichern öffnen. Dies wird hiermit deaktiviert
 plt.rcParams['keymap.save'].remove('s')
