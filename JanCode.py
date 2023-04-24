@@ -13,7 +13,7 @@ KoerperMasse = 100000           # Masse des Objekts [kg]
 AbwurfGeschwindigkeit = 11000   # Abwurfsgeschwindigkeit [m/s]
 Luftwiederstand = 0.0162        # Luftwiderstandsbeiwert
 Startzeit = 0                   # [s]
-Endzeit = 500000                # [s]
+Endzeit = 200000                # [s]
 Rechenschritte = 100000
 z_speed = 0                     # aktuell nicht genutzt     
 x_speed = 0                     #  - Verwendung zur Einstellung des Schubs
@@ -106,7 +106,7 @@ for i in range(1000):
     AktuellerRechenschritt += 1
 
 def animate(i):
-    global AktuellerRechenschritt, AktuellerSchritt, Stop
+    global AktuellerRechenschritt, AktuellerSchritt, Stop, KraftArray, ZeitArray
     # Wenn WASD gedrückt werden müssen die Vorhersagen angepasst werden
     if not Stop:
         if keyboard.is_pressed("a") or keyboard.is_pressed("s") or keyboard.is_pressed("d") or keyboard.is_pressed("w"):
@@ -155,7 +155,7 @@ def animate(i):
         line.set_ydata(r_z[:0])
         line.set_xdata(r_x[:0])
 
-    return line, lineBisJetzt, aktuellerPunkt
+    return line, lineBisJetzt, aktuellerPunkt, ZeitArray, KraftArray
 
 # Plotten der Erde
 circle1 = plt.Circle((0,0), r_E)
@@ -173,24 +173,17 @@ aktuellerPunkt, = ax.plot(r_x[0], r_z[0], 'o')
 ani = animation.FuncAnimation(
     fig, animate, interval=1, blit=False)
 
-text = ax.text(0.8, 0.8, '', transform=ax.transAxes)
+text = ax.text(0.65, 0.75, '', transform=ax.transAxes)
 
 plt.gca().set_aspect('equal')
-
-
 # Normalerweise würde beim Plotten, wenn 's' gedrückt wird, sich ein Fenster zum Speichern öffnen. Dies wird hiermit deaktiviert
 plt.rcParams['keymap.save'].remove('s')
 plt.show()
 plt.close()
 plt.plot(ZeitArray, KraftArray)
-
-
-# close the first figure
-plt.close()
 # Add labels and title
-plt.xlabel('X-axis label')
-plt.ylabel('Y-axis label')
-plt.title('Plot title')
-
+plt.xlabel('Zeit in Sekunden')
+plt.ylabel('Kraft')
+plt.title('Kraftgraph des Raketenstarts')
 # Show the plot
 plt.show()
