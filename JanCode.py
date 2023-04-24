@@ -140,8 +140,8 @@ def animate(i):
         line.set_xdata(r_x[AktuellerSchritt:AktuellerRechenschritt])
         lineBisJetzt.set_xdata(r_x[:AktuellerSchritt+1])
         lineBisJetzt.set_ydata(r_z[:AktuellerSchritt+1])
-        aktuellerPunkt.set_xdata(r_x[AktuellerSchritt+1])
-        aktuellerPunkt.set_ydata(r_z[AktuellerSchritt+1])
+        aktuellerPunkt.set_xdata(r_x[AktuellerSchritt:AktuellerSchritt+1])
+        aktuellerPunkt.set_ydata(r_z[AktuellerSchritt:AktuellerSchritt+1])
 
         AktuellerSchritt += 1
         # Skalierung der Animation relativ zu Erde
