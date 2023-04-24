@@ -20,6 +20,8 @@ x_speed = 0                     #  - Verwendung zur Einstellung des Schubs
 Stop = False                    # Wenn eine Kollision mit der Erde festgestellt wurde, dann deaktiviert diese Variable weitere Berechnungen
 FallBeschleunigung = 9.81       # [m/s^2]
 c = Luftwiederstand/KoerperMasse
+ZeitArray = []
+KraftArray = []
 
 p_0 = 1.225 # Luftdichte auf Meereshöhe [kg/m^3]
 h_s = 8400  # Skalenhöhe [m]
@@ -40,7 +42,7 @@ AktuellerRechenschritt = 0
 
 # Berechnung nach Runge-Kutta Verfahren
 def berechneNaechstenSchritt(i: int):
-    global r_x, r_z, v_x, v_z
+    global r_x, r_z, v_x, v_z,F
     # z-Komponente
     k1 = f1(r_x[i], r_z[i], v_z[i], t[i])
     k2 = f1(r_x[i], r_z[i], v_z[i] + k1*dt/2, t[i])
@@ -49,7 +51,7 @@ def berechneNaechstenSchritt(i: int):
     k = (k1 + 2*k2 + 2*k3 + k4)/6
     v_z[i+1] = v_z[i] + k*dt
     r_z[i+1] = r_z[i] + v_z[i]*dt
-
+    F = k * KoerperMasse
     # x-Komponente
     k1 = f2(r_x[i], r_z[i], v_x[i], t[i])
     k2 = f2(r_x[i], r_z[i], v_x[i] + k1*dt/2, t[i])
@@ -126,8 +128,8 @@ def animate(i):
         # Anzeige mit neuen Daten aktualisieren
         line.set_ydata(r_z[AktuellerSchritt:AktuellerRechenschritt])
         line.set_xdata(r_x[AktuellerSchritt:AktuellerRechenschritt])
-        lineBisJetzt.set_xdata(r_x[:AktuellerSchritt+1])
-        lineBisJetzt.set_ydata(r_z[:AktuellerSchritt+1])
+        lineBisJetzt.set_xdata(r_x[0:AktuellerSchritt])
+        lineBisJetzt.set_ydata(r_z[0:AktuellerSchritt])
         aktuellerPunkt.set_xdata(r_x[AktuellerSchritt+1])
         aktuellerPunkt.set_ydata(r_z[AktuellerSchritt+1])
 
@@ -144,19 +146,20 @@ def animate(i):
                             round(v_x[AktuellerSchritt], 2), 
                             round(v_z[AktuellerSchritt], 2), 
                             AktuellerSchritt * dt))
-        text.set_position(((r_x[AktuellerSchritt]+r_E*5) * 0.8, (r_z[AktuellerSchritt]+r_E*5) * 0.8))
-
     else:
         line.set_ydata(r_z[:0])
         line.set_xdata(r_x[:0])
-
-    return line, lineBisJetzt, aktuellerPunkt
+    # Array mit momentaner Zeit füllen
+    ZeitArray.append(AktuellerSchritt*dt)
+    # Array mit momentaner Kraft füllen
+    KraftArray.append(F)
+    return line, lineBisJetzt, aktuellerPunkt, text
 
 # Plotten der Erde
 circle1 = plt.Circle((0,0), r_E)
 ax.add_artist(circle1)
 
-
+print(1)
 # Fluglinie (zukünftige in rot)
 line, = ax.plot(r_x[:AktuellerRechenschritt], r_z[:AktuellerRechenschritt], 'r--')
 # Fluglinie (vergangene in blau)
@@ -168,11 +171,23 @@ aktuellerPunkt, = ax.plot(r_x[0], r_z[0], 'o')
 ani = animation.FuncAnimation(
     fig, animate, interval=1, blit=False)
 
-text = ax.text(0, 0, '')
+text = ax.text(0.80, 0.80, '')
 
 plt.gca().set_aspect('equal')
 
-
 # Normalerweise würde beim Plotten, wenn 's' gedrückt wird, sich ein Fenster zum Speichern öffnen. Dies wird hiermit deaktiviert
 plt.rcParams['keymap.save'].remove('s')
+plt.show(block=False)
+plt.close()
+plt.plot(ZeitArray, KraftArray)
+
+
+# close the first figure
+plt.close()
+# Add labels and title
+plt.xlabel('X-axis label')
+plt.ylabel('Y-axis label')
+plt.title('Plot title')
+
+# Show the plot
 plt.show()
