@@ -138,9 +138,9 @@ def animate(i):
         # Skalierung des Graphen 
 
         # Anzeigen von Daten (rechts oben) (Position, Geschwindigkeit, Zeit)
-        text.set_text("r_x: {0}m\nr_z: {1}m\nv_x: {2}m/s\nv_z: {3}m/s\nt: {4}s".format(
-                            round(r_x[AktuellerSchritt], 2),
-                            round(r_z[AktuellerSchritt], 2),
+        text.set_text("r_x: {0}km\nr_z: {1}km\nv_x: {2}m/s\nv_z: {3}m/s\nt: {4}s".format(
+                            round(r_x[AktuellerSchritt]/1000, 2),
+                            round(r_z[AktuellerSchritt]/1000, 2),
                             round(v_x[AktuellerSchritt], 2), 
                             round(v_z[AktuellerSchritt], 2), 
                             AktuellerSchritt * dt))
@@ -175,5 +175,4 @@ plt.gca().set_aspect('equal')
 
 # Normalerweise würde beim Plotten, wenn 's' gedrückt wird, sich ein Fenster zum Speichern öffnen. Dies wird hiermit deaktiviert
 plt.rcParams['keymap.save'].remove('s')
-plt.rcParams["figure.autolayout"] = True
 plt.show()
