@@ -5,7 +5,7 @@ import keyboard
 fig, ax = plt.subplots()
 
 #line, = ax.plot(x, y)
-
+ExtraKraft= 0
 Startwinkel = 45                # Winkel des Starts auf der Erde [°C]
 Abwurfhoehe = 0                 # Höhe über dem Meeresspiegel nur in z-Richtung [m]
 AbwurfWinkel = 0                # Winkel [°]
@@ -65,32 +65,32 @@ def berechneNaechstenSchritt(i: int):
 # Methode für die z-Komponente
 def f1(r_x, r_z, x, t):
     r0 = np.sqrt(r_x**2 + r_z**2)
-    y=-(G*m_E/r0**3) * r_z - (Luftwiederstand*x**2*np.sign(x) * p_0 * np.exp(-abs((r0-r_E)) / h_s))/(2 * KoerperMasse * r0) * r_z
+    y=( -(G*m_E/r0**2) - (Luftwiederstand*x**2*np.sign(x) * p_0 * np.exp(-abs((r0-r_E)) / h_s))/(2 * KoerperMasse) ) * (r_z/r0) 
     #y=-(G*m_E/(r_x**2 + r_z**2)**1.5) * r_z - c*x**2*np.sign(x)
     
     # Beschleunigung soll nur zum aktuellen Zeitpunkt hinzugefügt werden
     #  - 'w' beschleunigt nach oben und 's' nach unten
     if AktuellerSchritt == AktuellerRechenschritt:
         if keyboard.is_pressed("w"):
-            y += 10*FallBeschleunigung
+            y += ExtraKraft
         if keyboard.is_pressed("s"):
-            y -= 10*FallBeschleunigung
+            y -= ExtraKraft
         
     return y
 
 # Methode für die y-Komponente
 def f2(r_x, r_z, x, t):
     r0 = np.sqrt(r_x**2 + r_z**2)
-    y=-(G*m_E/r0**3) * r_x - (Luftwiederstand*x**2*np.sign(x) * p_0 * np.exp(-abs((r0-r_E)) / h_s))/(2 * KoerperMasse * r0) * r_x
+    y=( -(G*m_E/r0**2) - (Luftwiederstand*x**2*np.sign(x) * p_0 * np.exp(-abs((r0-r_E)) / h_s))/(2 * KoerperMasse) ) * (r_x/r0) 
     #y=-(G*m_E/(r_x**2 + r_z**2)**1.5) * r_x - c*x**2*np.sign(x)
     
     # Beschleunigung soll nur zum aktuellen Zeitpunkt hinzugefügt werden
     #  - 'd' beschleunigt nach rechts und 'a' nach links
     if AktuellerSchritt == AktuellerRechenschritt:
         if keyboard.is_pressed("d"):
-            y += 10*FallBeschleunigung
+            y += ExtraKraft
         if keyboard.is_pressed("a"):
-            y -= 10*FallBeschleunigung
+            y -= ExtraKraft
 
     return y
 
@@ -106,7 +106,7 @@ for i in range(1000):
     AktuellerRechenschritt += 1
 
 def animate(i):
-    global AktuellerRechenschritt, AktuellerSchritt, Stop, KraftArray, ZeitArray
+    global AktuellerRechenschritt, AktuellerSchritt, Stop, KraftArray, ZeitArray,ExtraKraft
     # Wenn WASD gedrückt werden müssen die Vorhersagen angepasst werden
     if not Stop:
         if keyboard.is_pressed("a") or keyboard.is_pressed("s") or keyboard.is_pressed("d") or keyboard.is_pressed("w"):
@@ -121,6 +121,15 @@ def animate(i):
         else:
             berechneNaechstenSchritt(AktuellerRechenschritt)
             AktuellerRechenschritt += 1
+
+        # Extrakraft ändern mit den Pfeiltasten (min 0N)
+        if keyboard.is_pressed("up"):
+            ExtraKraft += 1
+        if keyboard.is_pressed("down"):
+            ExtraKraft -= 1
+        if ExtraKraft <= 0:
+            ExtraKraft = 0        
+
 
         # Wenn die Rakete in die Erde fliegt, dann stoppt die Berechnung
         if np.sqrt(r_x[AktuellerSchritt+1]**2 + r_z[AktuellerSchritt+1]**2) <= r_E:
@@ -141,12 +150,13 @@ def animate(i):
         # Skalierung des Graphen 
 
         # Anzeigen von Daten (rechts oben) (Position, Geschwindigkeit, Zeit)
-        text.set_text("r_x: {0}km\nr_z: {1}km\nv_x: {2}m/s\nv_z: {3}m/s\nt: {4}s".format(
+        text.set_text("r_x: {0}km\nr_z: {1}km\nv_x: {2}m/s\nv_z: {3}m/s\nt: {4}s\nF: {5}N".format(
                             round(r_x[AktuellerSchritt]/1000, 2),
                             round(r_z[AktuellerSchritt]/1000, 2),
                             round(v_x[AktuellerSchritt], 2), 
                             round(v_z[AktuellerSchritt], 2), 
-                            AktuellerSchritt * dt))
+                            AktuellerSchritt * dt,
+                            ExtraKraft))
         # Array mit momentaner Zeit füllen
         ZeitArray.append(AktuellerSchritt*dt)
         # Array mit momentaner Kraft füllen
