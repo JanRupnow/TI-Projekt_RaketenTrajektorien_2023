@@ -6,7 +6,7 @@ fig, ax = plt.subplots()
 
 #line, = ax.plot(x, y)
 
-
+Startwinkel = 45                # Winkel des Starts auf der Erde [°C]
 Abwurfhoehe = 0                 # Höhe über dem Meeresspiegel nur in z-Richtung [m]
 AbwurfWinkel = 0                # Winkel [°]
 KoerperMasse = 100000           # Masse des Objekts [kg]
@@ -92,8 +92,8 @@ def f2(r_x, r_z, x, t):
     return y
 
 # Anfangsbedingungen
-r_x[0] = 0
-r_z[0] = r_E + Abwurfhoehe
+r_x[0] = (r_E + Abwurfhoehe) * np.sin(Startwinkel * np.pi / 180)
+r_z[0] = (r_E + Abwurfhoehe) * np.cos(Startwinkel * np.pi / 180)
 v_x[0] = AbwurfGeschwindigkeit * np.cos(AbwurfWinkel * np.pi / 180)
 v_z[0] = AbwurfGeschwindigkeit * np.sin(AbwurfWinkel * np.pi / 180)
 
