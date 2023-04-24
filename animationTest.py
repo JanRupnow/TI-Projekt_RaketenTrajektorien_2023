@@ -13,7 +13,7 @@ KoerperMasse = 100000           # Masse des Objekts [kg]
 AbwurfGeschwindigkeit = 11000   # Abwurfsgeschwindigkeit [m/s]
 Luftwiederstand = 0.0162        # Luftwiderstandsbeiwert
 Startzeit = 0                   # [s]
-Endzeit = 200000                # [s]
+Endzeit = 500000                # [s]
 Rechenschritte = 100000
 z_speed = 0                     # aktuell nicht genutzt     
 x_speed = 0                     #  - Verwendung zur Einstellung des Schubs
@@ -144,7 +144,7 @@ def animate(i):
                             round(v_x[AktuellerSchritt], 2), 
                             round(v_z[AktuellerSchritt], 2), 
                             AktuellerSchritt * dt))
-        text.set_position(((r_x[AktuellerSchritt]+r_E*5) * 0.8, (r_z[AktuellerSchritt]+r_E*5) * 0.8))
+        #text.set_position(((r_x[AktuellerSchritt]+r_E*5) * 0.8, (r_z[AktuellerSchritt]+r_E*5) * 0.8))
 
     else:
         line.set_ydata(r_z[:0])
@@ -168,7 +168,7 @@ aktuellerPunkt, = ax.plot(r_x[0], r_z[0], 'o')
 ani = animation.FuncAnimation(
     fig, animate, interval=1, blit=False)
 
-text = ax.text(0, 0, '')
+text = ax.text(0.8, 0.8, '', transform=ax.transAxes)
 
 plt.gca().set_aspect('equal')
 
