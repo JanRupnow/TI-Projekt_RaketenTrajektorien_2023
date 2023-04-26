@@ -215,5 +215,3 @@ plt.ylabel('Kraft')
 plt.title('Kraftgraph des Raketenstarts')
 # Show the plot
 plt.show()
-print(x_schub)
-print(z_schub)
