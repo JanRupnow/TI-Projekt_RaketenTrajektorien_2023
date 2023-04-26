@@ -30,7 +30,6 @@ SCALE = 200 / AU
 Luftwiederstand = 0.0162        # Luftwiderstandsbeiwert
 z_schub = 0                     # aktuell nicht genutzt     
 x_schub = 0                     #  - Verwendung zur Einstellung des Schubs
-Stop = False                    # Wenn eine Kollision mit der Erde festgestellt wurde, dann deaktiviert diese Variable weitere Berechnungen
 FallBeschleunigung = 9.81       # [m/s^2]
 p_0 = 1.225 # Luftdichte auf Meereshöhe [kg/m^3]
 h_s = 8400  # Skalenhöhe [m]
@@ -141,12 +140,9 @@ class Rocket:
         self.r_x[i+1] = self.r_x[i] + self.v_x[i]*dt
     def update_scale(self,scale):
         self.radius *= scale
+    def draw(self, window, show, move_x, move_y, draw_line,planet):
+        a = 0
 class Planet:
-    AU = 149.6e6 * 1000  # Astronomical unit
-    G = 6.67428e-11  # Gravitational constant
-    TIMESTEP = 60*60*24*2  # Seconds in 10 seconds
-    SCALE = 200 / AU
-
     def __init__(self, x, y, radius, color, mass):
         self.x = x
         self.y = y
@@ -173,7 +169,7 @@ class Planet:
                 pygame.draw.lines(window, self.color, False, updated_points, 1)
         pygame.draw.circle(window, self.color, (x + move_x, y + move_y), self.radius)
         if not self.sun:
-            distance_text = FONT_2.render(f"{round(self.distance_to_sun * 1.057 * 10 ** -16, 8)} light years", True,
+            distance_text = FONT_2.render(f"{round(self.#distance to Rocketship * 1.057 * 10 ** -16, 8)} light years", True,
                                           COLOR_WHITE)
             if show:
                 window.blit(distance_text, (x - distance_text.get_width() / 2 + move_x,
