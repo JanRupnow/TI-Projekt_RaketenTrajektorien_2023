@@ -21,47 +21,32 @@ COLOR_NEPTUNE = (63, 84, 186)
 FONT_1 = pygame.font.SysFont("Trebuchet MS", 21)
 FONT_2 = pygame.font.SysFont("Trebuchet MS", 16)
 pygame.display.set_caption("Solar System Simulation")
-### Variablen 
-ExtraKraft= 0
-Startwinkel = 45                # Winkel des Starts auf der Erde [°C]
-Abwurfhoehe = 0                 # Höhe über dem Meeresspiegel nur in z-Richtung [m]
-AbwurfWinkel = 0                # Winkel [°]
-KoerperMasse = 100000           # Masse des Objekts [kg]
-AbwurfGeschwindigkeit = 11000   # Abwurfsgeschwindigkeit [m/s]
+### Solarsystem Variablen 
+AU = 149.6e6 * 1000  # Astronomical unit
+G = 6.67428e-11  # Gravitational constant
+TIMESTEP = 60*60*24*2  # Seconds in 2 years
+SCALE = 200 / AU
+### Generelle Variablen
 Luftwiederstand = 0.0162        # Luftwiderstandsbeiwert
-Startzeit = 0                   # [s]
-Endzeit = 200000                # [s]
-Rechenschritte = 100000
 z_schub = 0                     # aktuell nicht genutzt     
 x_schub = 0                     #  - Verwendung zur Einstellung des Schubs
 Stop = False                    # Wenn eine Kollision mit der Erde festgestellt wurde, dann deaktiviert diese Variable weitere Berechnungen
 FallBeschleunigung = 9.81       # [m/s^2]
-c = Luftwiederstand/KoerperMasse
-
 p_0 = 1.225 # Luftdichte auf Meereshöhe [kg/m^3]
 h_s = 8400  # Skalenhöhe [m]
 
-G = 6.674 * 10**(-11)           # Gravitationskonstante [Nm^2/kg^2]
-m_E = 5.972 * 10**24            # Erdmasse [kg]
-r_E = 6.37 * 10**6              # Erdradius [m]
-
-r_x= np.zeros(Rechenschritte)   # x-Position [m]
-r_z= np.zeros(Rechenschritte)   # z-Position [m]
-v_x=np.zeros(Rechenschritte)    # x-Geschwindigkeit [m/s]
-v_z=np.zeros(Rechenschritte)    # z-Geschwindigkeit [m/s]
+### Zeit-Variablen
+Startzeit = 0                   # [s]
+Endzeit = 200000                # [s]
+Rechenschritte = 100000
 t=np.linspace(Startzeit, Endzeit, Rechenschritte)
 dt=(Endzeit-Startzeit)/Rechenschritte
-
 AktuellerSchritt = 0
 AktuellerRechenschritt = 0
 x_last_update_time = 0
 z_last_update_time = 0
 WAIT_TIME = 1 
-# Anfangsbedingungen
-r_x[0] = (r_E + Abwurfhoehe) * np.sin(Startwinkel * np.pi / 180)
-r_z[0] = (r_E + Abwurfhoehe) * np.cos(Startwinkel * np.pi / 180)
-v_x[0] = AbwurfGeschwindigkeit * np.cos(AbwurfWinkel * np.pi / 180)
-v_z[0] = AbwurfGeschwindigkeit * np.sin(AbwurfWinkel * np.pi / 180)
+
 ### Methoden
 # Funktion zur Verarbeitung der Schubes
 def on_key_press(event):
@@ -97,48 +82,65 @@ def check_key_press():
         return True
     else: 
         return False
-# Berechnung nach Runge-Kutta Verfahren
-def berechneNaechstenSchritt(i: int):
-    global r_x, r_z, v_x, v_z, F
-    # z-Komponente
-    k1 = f1(r_x[i], r_z[i], v_z[i], t[i])
-    k2 = f1(r_x[i], r_z[i], v_z[i] + k1*dt/2, t[i])
-    k3 = f1(r_x[i], r_z[i], v_z[i] + k2*dt/2, t[i])
-    k4 = f1(r_x[i], r_z[i], v_z[i] + k3*dt/2, t[i])
-    k = (k1 + 2*k2 + 2*k3 + k4)/6
-    v_z[i+1] = v_z[i] + k*dt
-    r_z[i+1] = r_z[i] + v_z[i]*dt
-    F = k * KoerperMasse
 
-    # x-Komponente
-    k1 = f2(r_x[i], r_z[i], v_x[i], t[i])
-    k2 = f2(r_x[i], r_z[i], v_x[i] + k1*dt/2, t[i])
-    k3 = f2(r_x[i], r_z[i], v_x[i] + k2*dt/2, t[i])
-    k4 = f2(r_x[i], r_z[i], v_x[i] + k3*dt/2, t[i])
-    k = (k1 + 2*k2 + 2*k3 + k4)/6
-    v_x[i+1] = v_x[i] + k*dt
-    r_x[i+1] = r_x[i] + v_x[i]*dt
-# Methode für die z-Komponente
-def f1(r_x, r_z, x, t):
-    r0 = np.sqrt(r_x**2 + r_z**2)
-    y=( -(G*m_E/r0**2) - (Luftwiederstand*x**2*np.sign(x) * p_0 * np.exp(-abs((r0-r_E)) / h_s))/(2 * KoerperMasse) ) * (r_z/r0) #Extrakraft z einbauen
-    #y=-(G*m_E/(r_x**2 + r_z**2)**1.5) * r_z - c*x**2*np.sign(x)
-    if AktuellerSchritt == AktuellerRechenschritt:
-        if z_schub!=0:
-            y += FallBeschleunigung*z_schub
-    # Beschleunigung soll nur zum aktuellen Zeitpunkt hinzugefügt werden
-    return y
-# Methode für die x-Komponente
-def f2(r_x, r_z, x, t):
-    r0 = np.sqrt(r_x**2 + r_z**2)
-    y=( -(G*m_E/r0**2) - (Luftwiederstand*x**2*np.sign(x) * p_0 * np.exp(-abs((r0-r_E)) / h_s))/(2 * KoerperMasse) ) * (r_x/r0) #Extrakraft x einbauen
-    #y=-(G*m_E/(r_x**2 + r_z**2)**1.5) * r_x - c*x**2*np.sign(x)
-    if AktuellerSchritt == AktuellerRechenschritt:
-        if x_schub!=0:
-            y += FallBeschleunigung*x_schub
-    # Beschleunigung soll nur zum aktuellen Zeitpunkt hinzugefügt werden
 
-    return y
+
+class Rocket:
+    def __init__(self, startwinkel, abwurfwinkel,koerpermasse, startplanet,radius):
+        self.Startwinkel = startwinkel 
+        self.AbwurfWinkel = abwurfwinkel
+        self.KoerperMasse = koerpermasse
+        self.r_x= np.zeros(Rechenschritte)   # x-Position [m]
+        self.r_z= np.zeros(Rechenschritte)   # z-Position [m]
+        self.v_x=np.zeros(Rechenschritte)    # x-Geschwindigkeit [m/s]
+        self.v_z=np.zeros(Rechenschritte)    # z-Geschwindigkeit [m/s]               # Winkel des Starts auf der Erde [°C]
+        self.c = Luftwiederstand/self.KoerperMasse
+        self.r_x[0] =startplanet.x (startplanet.radius) * np.sin(self.Startwinkel * np.pi / 180) # Startposition X-Komponente
+        self.r_z[0] =startplanet.z + (startplanet.radius) * np.cos(self.Startwinkel * np.pi / 180) # Startposition Z-Komponente
+        self.v_x[0] = 0 # Abwurfgeschwindigkeit X-Komponente
+        self.v_z[0] = 0 # Abwurfgeschwindigkeit Z-Komponente
+        self.radius = radius
+    # Methode für die x-Komponente
+    def f2(self,r_x, r_z, x, t, planet):
+        r0 = np.sqrt(r_x**2 + r_z**2)
+        y=( -(G*planet.mass/r0**2) - (Luftwiederstand*x**2*np.sign(x) * p_0 * np.exp(-abs((r0-planet.radius)) / h_s))/(2 * self.KoerperMasse) ) * (r_x/r0) #Extrakraft x einbauen
+        #y=-(G*m_E/(r_x**2 + r_z**2)**1.5) * r_x - c*x**2*np.sign(x)
+        if AktuellerSchritt == AktuellerRechenschritt:
+            if x_schub!=0:
+                y += FallBeschleunigung*x_schub
+        return y
+    # Methode für die z-Komponente
+    def f1(self,r_x, r_z, x, t, planet):
+        r0 = np.sqrt(r_x**2 + r_z**2)
+        y=( -(G*planet.mass/r0**2) - (Luftwiederstand*x**2*np.sign(x) * p_0 * np.exp(-abs((r0-planet.radius)) / h_s))/(2 * self.KoerperMasse) ) * (r_z/r0) #Extrakraft z einbauen
+        #y=-(G*m_E/(r_x**2 + r_z**2)**1.5) * r_z - c*x**2*np.sign(x)
+        if AktuellerSchritt == AktuellerRechenschritt:
+            if z_schub!=0:
+                y += FallBeschleunigung*z_schub
+        return y
+    # Berechnung nach Runge-Kutta Verfahren
+    def berechneNaechstenSchritt(self,i: int):
+        global r_x, r_z, v_x, v_z, F
+        # z-Komponente
+        k1 = Rocket.f1(self.r_x[i], self.r_z[i], self.v_z[i], t[i])
+        k2 = Rocket.f1(self.r_x[i], self.r_z[i], self.v_z[i] + k1*dt/2, t[i])
+        k3 = Rocket.f1(self.r_x[i], self.r_z[i], self.v_z[i] + k2*dt/2, t[i])
+        k4 = Rocket.f1(self.r_x[i], self.r_z[i], self.v_z[i] + k3*dt/2, t[i])
+        k = (k1 + 2*k2 + 2*k3 + k4)/6
+        self.v_z[i+1] = self.v_z[i] + k*dt
+        self.r_z[i+1] = self.r_z[i] + self.v_z[i]*dt
+        F = k * self.KoerperMasse
+
+        # x-Komponente
+        k1 = self.f2(self.r_x[i], self.r_z[i], self.v_x[i], t[i])
+        k2 = self.f2(self.r_x[i], self.r_z[i], self.v_x[i] + k1*dt/2, t[i])
+        k3 = self.f2(self.r_x[i], self.r_z[i], self.v_x[i] + k2*dt/2, t[i])
+        k4 = self.f2(self.r_x[i], self.r_z[i], self.v_x[i] + k3*dt/2, t[i])
+        k = (k1 + 2*k2 + 2*k3 + k4)/6
+        self.v_x[i+1] = self.v_x[i] + k*dt
+        self.r_x[i+1] = self.r_x[i] + self.v_x[i]*dt
+    def update_scale(self,scale):
+        self.radius *= scale
 class Planet:
     AU = 149.6e6 * 1000  # Astronomical unit
     G = 6.67428e-11  # Gravitational constant
