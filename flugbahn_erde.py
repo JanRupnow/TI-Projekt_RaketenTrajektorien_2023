@@ -85,7 +85,7 @@ def check_key_press():
 
 
 class Rocket:
-    def __init__(self, startwinkel, abwurfwinkel,koerpermasse, startplanet,radius):
+    def __init__(self, startwinkel, abwurfwinkel, koerpermasse, startplanet, radius):
         self.Startwinkel = startwinkel 
         self.AbwurfWinkel = abwurfwinkel
         self.KoerperMasse = koerpermasse
@@ -100,7 +100,7 @@ class Rocket:
         self.v_z[0] = 0 # Abwurfgeschwindigkeit Z-Komponente
         self.radius = radius
     # Methode für die x-Komponente
-    def f2(self,r_x, r_z, x, t, planet):
+    def f2(self, r_x, r_z, x, t, planet):
         r0 = np.sqrt(r_x**2 + r_z**2)
         y=( -(G*planet.mass/r0**2) - (Luftwiederstand*x**2*np.sign(x) * p_0 * np.exp(-abs((r0-planet.radius)) / h_s))/(2 * self.KoerperMasse) ) * (r_x/r0) #Extrakraft x einbauen
         #y=-(G*m_E/(r_x**2 + r_z**2)**1.5) * r_x - c*x**2*np.sign(x)
@@ -118,7 +118,7 @@ class Rocket:
                 y += FallBeschleunigung*z_schub
         return y
     # Berechnung nach Runge-Kutta Verfahren
-    def berechneNaechstenSchritt(self,i: int):
+    def berechneNaechstenSchritt(self, i: int):
         global r_x, r_z, v_x, v_z, F
         # z-Komponente
         k1 = Rocket.f1(self.r_x[i], self.r_z[i], self.v_z[i], t[i])
