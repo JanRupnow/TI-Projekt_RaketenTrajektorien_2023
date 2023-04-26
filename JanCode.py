@@ -70,6 +70,15 @@ def on_key_press(event):
     # Überprüfen, ob die Position innerhalb des erlaubten Bereichs liegt
     x_schub = max(-10, min(x_schub, 10))
     z_schub = max(-5, min(z_schub, 5))
+def check_key_press():
+    global x_schub, z_schub, x_last_update_time, z_last_update_time
+    current_time = time.time()
+    if ((current_time - z_last_update_time >= WAIT_TIME) and (current_time - x_last_update_time >= WAIT_TIME)):
+        return True
+    elif (((current_time - z_last_update_time >= WAIT_TIME) or (current_time - x_last_update_time >= WAIT_TIME))): 
+        return True
+    else: 
+        return False
     
 
 # Key-Listener registrieren
@@ -133,7 +142,7 @@ def animate(i):
     global AktuellerRechenschritt, AktuellerSchritt, Stop, KraftArray, ZeitArray,ExtraKraft
     # Wenn WASD gedrückt werden müssen die Vorhersagen angepasst werden
     if not Stop:
-        if keyboard.is_pressed("a") or keyboard.is_pressed("s") or keyboard.is_pressed("d") or keyboard.is_pressed("w"):
+        if (check_key_press):
             AktuellerRechenschritt = AktuellerSchritt
             # Berechnung der nächsten 1000 Schritte
             for i in range(1000):
