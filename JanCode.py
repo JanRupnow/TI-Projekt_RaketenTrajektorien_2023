@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 import keyboard
+import time
 fig, ax = plt.subplots()
 
 #line, = ax.plot(x, y)
@@ -15,8 +16,8 @@ Luftwiederstand = 0.0162        # Luftwiderstandsbeiwert
 Startzeit = 0                   # [s]
 Endzeit = 200000                # [s]
 Rechenschritte = 100000
-z_speed = 0                     # aktuell nicht genutzt     
-x_speed = 0                     #  - Verwendung zur Einstellung des Schubs
+z_schub = 0                     # aktuell nicht genutzt     
+x_schub = 0                     #  - Verwendung zur Einstellung des Schubs
 Stop = False                    # Wenn eine Kollision mit der Erde festgestellt wurde, dann deaktiviert diese Variable weitere Berechnungen
 FallBeschleunigung = 9.81       # [m/s^2]
 c = Luftwiederstand/KoerperMasse
@@ -40,6 +41,38 @@ dt=(Endzeit-Startzeit)/Rechenschritte
 AktuellerSchritt = 0
 AktuellerRechenschritt = 0
 
+### Funktionen ###
+x_last_update_time = 0
+z_last_update_time = 0
+WAIT_TIME = 1  # 2 Sekunden
+
+# Funktion zur Verarbeitung der Schubes
+def on_key_press(event):
+    global x_schub, z_schub, x_last_update_time, z_last_update_time
+    current_time = time.time()
+    if event.name == "w":
+        if current_time - z_last_update_time >= WAIT_TIME:
+            z_schub += 1
+            z_last_update_time = current_time
+    elif event.name == "s":
+        if current_time - z_last_update_time >= WAIT_TIME:
+            z_schub -= 1
+            z_last_update_time = current_time
+    elif event.name == "d":
+        if current_time - x_last_update_time >= WAIT_TIME:
+            x_schub += 1
+            x_last_update_time = current_time
+    elif event.name == "a":
+        if current_time - x_last_update_time >= WAIT_TIME:
+            x_schub -= 1
+            x_last_update_time = current_time
+
+    # Überprüfen, ob die Position innerhalb des erlaubten Bereichs liegt
+    x_schub = max(-10, min(x_schub, 10))
+    z_schub = max(-5, min(z_schub, 5))
+    
+
+# Key-Listener registrieren
 # Berechnung nach Runge-Kutta Verfahren
 def berechneNaechstenSchritt(i: int):
     global r_x, r_z, v_x, v_z, F
@@ -65,32 +98,23 @@ def berechneNaechstenSchritt(i: int):
 # Methode für die z-Komponente
 def f1(r_x, r_z, x, t):
     r0 = np.sqrt(r_x**2 + r_z**2)
-    y=( -(G*m_E/r0**2) - (Luftwiederstand*x**2*np.sign(x) * p_0 * np.exp(-abs((r0-r_E)) / h_s))/(2 * KoerperMasse) ) * (r_z/r0) 
+    y=( -(G*m_E/r0**2) - (Luftwiederstand*x**2*np.sign(x) * p_0 * np.exp(-abs((r0-r_E)) / h_s))/(2 * KoerperMasse) ) * (r_z/r0) #Extrakraft z einbauen
     #y=-(G*m_E/(r_x**2 + r_z**2)**1.5) * r_z - c*x**2*np.sign(x)
-    
-    # Beschleunigung soll nur zum aktuellen Zeitpunkt hinzugefügt werden
-    #  - 'w' beschleunigt nach oben und 's' nach unten
     if AktuellerSchritt == AktuellerRechenschritt:
-        if keyboard.is_pressed("w"):
-            y += ExtraKraft
-        if keyboard.is_pressed("s"):
-            y -= ExtraKraft
-        
+        if z_schub!=0:
+            y += 10*z_schub
+    # Beschleunigung soll nur zum aktuellen Zeitpunkt hinzugefügt werden
     return y
 
-# Methode für die y-Komponente
+# Methode für die x-Komponente
 def f2(r_x, r_z, x, t):
     r0 = np.sqrt(r_x**2 + r_z**2)
-    y=( -(G*m_E/r0**2) - (Luftwiederstand*x**2*np.sign(x) * p_0 * np.exp(-abs((r0-r_E)) / h_s))/(2 * KoerperMasse) ) * (r_x/r0) 
+    y=( -(G*m_E/r0**2) - (Luftwiederstand*x**2*np.sign(x) * p_0 * np.exp(-abs((r0-r_E)) / h_s))/(2 * KoerperMasse) ) * (r_x/r0) #Extrakraft x einbauen
     #y=-(G*m_E/(r_x**2 + r_z**2)**1.5) * r_x - c*x**2*np.sign(x)
-    
-    # Beschleunigung soll nur zum aktuellen Zeitpunkt hinzugefügt werden
-    #  - 'd' beschleunigt nach rechts und 'a' nach links
     if AktuellerSchritt == AktuellerRechenschritt:
-        if keyboard.is_pressed("d"):
-            y += ExtraKraft
-        if keyboard.is_pressed("a"):
-            y -= ExtraKraft
+        if x_schub!=0:
+            y += 10*x_schub
+    # Beschleunigung soll nur zum aktuellen Zeitpunkt hinzugefügt werden
 
     return y
 
@@ -115,20 +139,13 @@ def animate(i):
             for i in range(1000):
                 berechneNaechstenSchritt(AktuellerRechenschritt)
                 AktuellerRechenschritt += 1
-
         # Wenn die Funktion animate() aufgerufen wird, dann wird der nächste Schritt angezeigt, 
         # deshalb muss ein weiterer berechnet werden, um immer die nächsten 1000 Schritte anzuzeigen
         else:
             berechneNaechstenSchritt(AktuellerRechenschritt)
             AktuellerRechenschritt += 1
 
-        # Extrakraft ändern mit den Pfeiltasten (min 0N)
-        if keyboard.is_pressed("up"):
-            ExtraKraft += 1
-        if keyboard.is_pressed("down"):
-            ExtraKraft -= 1
-        if ExtraKraft <= 0:
-            ExtraKraft = 0        
+        keyboard.on_press(on_key_press)
 
 
         # Wenn die Rakete in die Erde fliegt, dann stoppt die Berechnung
@@ -150,13 +167,14 @@ def animate(i):
         # Skalierung des Graphen 
 
         # Anzeigen von Daten (rechts oben) (Position, Geschwindigkeit, Zeit)
-        text.set_text("r_x: {0}km\nr_z: {1}km\nv_x: {2}m/s\nv_z: {3}m/s\nt: {4}s\nF: {5}N".format(
+        text.set_text("r_x: {0}km\nr_z: {1}km\nv_x: {2}m/s\nv_z: {3}m/s\nt: {4}s\nF: {5}X-Schub\n {6} Z-Schub".format(
                             round(r_x[AktuellerSchritt]/1000, 2),
                             round(r_z[AktuellerSchritt]/1000, 2),
-                            round(v_x[AktuellerSchritt], 2), 
+                            round(v_x[AktuellerSchritt], 2),
                             round(v_z[AktuellerSchritt], 2), 
                             AktuellerSchritt * dt,
-                            ExtraKraft))
+                            x_schub,
+                            z_schub))
         # Array mit momentaner Zeit füllen
         ZeitArray.append(AktuellerSchritt*dt)
         # Array mit momentaner Kraft füllen
@@ -197,3 +215,5 @@ plt.ylabel('Kraft')
 plt.title('Kraftgraph des Raketenstarts')
 # Show the plot
 plt.show()
+print(x_schub)
+print(z_schub)
