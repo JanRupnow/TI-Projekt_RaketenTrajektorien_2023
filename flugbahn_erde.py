@@ -94,8 +94,8 @@ class Rocket:
         self.v_x=np.zeros(Rechenschritte)    # x-Geschwindigkeit [m/s]
         self.v_z=np.zeros(Rechenschritte)    # z-Geschwindigkeit [m/s]               # Winkel des Starts auf der Erde [°C]
         self.c = Luftwiederstand/self.KoerperMasse
-        self.r_x[0] =startplanet.x (startplanet.radius) * np.sin(self.Startwinkel * np.pi / 180) # Startposition X-Komponente
-        self.r_z[0] =startplanet.z + (startplanet.radius) * np.cos(self.Startwinkel * np.pi / 180) # Startposition Z-Komponente
+        self.r_x[0] = 0 # Startposition X-Komponente
+        self.r_z[0] = 0 # Startposition Z-Komponente
         self.v_x[0] = 0 # Abwurfgeschwindigkeit X-Komponente
         self.v_z[0] = 0 # Abwurfgeschwindigkeit Z-Komponente
         self.radius = radius
