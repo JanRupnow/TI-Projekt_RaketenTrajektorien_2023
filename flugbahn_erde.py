@@ -71,16 +71,6 @@ def on_key_press(event):
     # Überprüfen, ob die Position innerhalb des erlaubten Bereichs liegt
     x_schub = max(-10, min(x_schub, 10))
     z_schub = max(-5, min(z_schub, 5))
-### Testen Ob Tasten gedrückt wurden
-def check_key_press():
-    global x_schub, z_schub, x_last_update_time, z_last_update_time
-    current_time = time.time()
-    if ((current_time - z_last_update_time >= WAIT_TIME) and (current_time - x_last_update_time >= WAIT_TIME)):
-        return True
-    elif (((current_time - z_last_update_time >= WAIT_TIME) or (current_time - x_last_update_time >= WAIT_TIME))): 
-        return True
-    else: 
-        return False
 
 
 
@@ -156,20 +146,20 @@ class Planet:
         self.y_vel = 0
 
     def draw(self, window, show, move_x, move_y, draw_line):
-        x = self.x * self.SCALE + WIDTH / 2
-        y = self.y * self.SCALE + HEIGHT / 2
+        x = self.x * SCALE + WIDTH / 2
+        y = self.y * SCALE + HEIGHT / 2
         if len(self.orbit) > 2:
             updated_points = []
             for point in self.orbit:
                 x, y = point
-                x = x * self.SCALE + WIDTH / 2
-                y = y * self.SCALE + HEIGHT / 2
+                x = x * SCALE + WIDTH / 2
+                y = y * SCALE + HEIGHT / 2
                 updated_points.append((x + move_x, y + move_y))
             if draw_line:
                 pygame.draw.lines(window, self.color, False, updated_points, 1)
         pygame.draw.circle(window, self.color, (x + move_x, y + move_y), self.radius)
         if not self.sun:
-            distance_text = FONT_2.render(f"{round(self.#distance to Rocketship * 1.057 * 10 ** -16, 8)} light years", True,
+            distance_text = FONT_2.render(f"{round(self.distance_to_sun * 1.057 * 10 ** -16, 8)} light years", True,
                                           COLOR_WHITE)
             if show:
                 window.blit(distance_text, (x - distance_text.get_width() / 2 + move_x,
@@ -182,7 +172,7 @@ class Planet:
         distance = math.sqrt(distance_x ** 2 + distance_y ** 2)
         if other.sun:
             self.distance_to_sun = distance
-        force = self.G * self.mass * other.mass / distance ** 2
+        force = G * self.mass * other.mass / distance ** 2
         theta = math.atan2(distance_y, distance_x)
         force_x = math.cos(theta) * force
         force_y = math.sin(theta) * force
@@ -196,10 +186,10 @@ class Planet:
             fx, fy = self.attraction(planet)
             total_fx += fx
             total_fy += fy
-        self.x_vel += total_fx / self.mass * self.TIMESTEP
-        self.y_vel += total_fy / self.mass * self.TIMESTEP
-        self.x += self.x_vel * self.TIMESTEP
-        self.y += self.y_vel * self.TIMESTEP
+        self.x_vel += total_fx / self.mass * TIMESTEP
+        self.y_vel += total_fy / self.mass * TIMESTEP
+        self.x += self.x_vel * TIMESTEP
+        self.y += self.y_vel * TIMESTEP
         self.orbit.append((self.x, self.y))
 
     def update_scale(self, scale):
@@ -217,31 +207,31 @@ def main():
 
     # Metric from: https://nssdc.gsfc.nasa.gov/planetary/factsheet/
 
-    sun = Planet(0, 0, 30 * Planet.SCALE * 10 ** 9, COLOR_SUN, 1.98892 * 10 ** 30)
+    sun = Planet(0, 0, 30 * SCALE * 10 ** 9, COLOR_SUN, 1.98892 * 10 ** 30)
     sun.sun = True
 
-    mercury = Planet(-0.387 * Planet.AU, 0, 5 * Planet.SCALE * 10 ** 9, COLOR_MERCURY, 3.30 * 10 ** 23)
+    mercury = Planet(-0.387 * AU, 0, 5 * SCALE * 10 ** 9, COLOR_MERCURY, 3.30 * 10 ** 23)
     mercury.y_vel = 47.4 * 1000
 
-    venus = Planet(-0.723 * Planet.AU, 0, 9 * Planet.SCALE * 10 ** 9, COLOR_VENUS, 4.8685 * 10 ** 24)
+    venus = Planet(-0.723 * AU, 0, 9 * SCALE * 10 ** 9, COLOR_VENUS, 4.8685 * 10 ** 24)
     venus.y_vel = 35.02 * 1000
 
-    earth = Planet(-1 * Planet.AU, 0, 10 * Planet.SCALE * 10 ** 9, COLOR_EARTH, 5.9722 * 10 ** 24)
+    earth = Planet(-1 * AU, 0, 10 * SCALE * 10 ** 9, COLOR_EARTH, 5.9722 * 10 ** 24)
     earth.y_vel = 29.783 * 1000
 
-    mars = Planet(-1.524 * Planet.AU, 0, 5 * Planet.SCALE * 10 ** 9, COLOR_MARS, 6.39 * 10 ** 23)
+    mars = Planet(-1.524 * AU, 0, 5 * SCALE * 10 ** 9, COLOR_MARS, 6.39 * 10 ** 23)
     mars.y_vel = 24.077 * 1000
 
-    jupiter = Planet(-5.204 * Planet.AU, 0, 20 * Planet.SCALE * 10 ** 9, COLOR_JUPITER, 1.898 * 10 ** 27)
+    jupiter = Planet(-5.204 * AU, 0, 20 * SCALE * 10 ** 9, COLOR_JUPITER, 1.898 * 10 ** 27)
     jupiter.y_vel = 13.06 * 1000
 
-    saturn = Planet(-9.573 * Planet.AU, 0, 18 * Planet.SCALE * 10 ** 9, COLOR_SATURN, 5.683 * 10 ** 26)
+    saturn = Planet(-9.573 * AU, 0, 18 * SCALE * 10 ** 9, COLOR_SATURN, 5.683 * 10 ** 26)
     saturn.y_vel = 9.68 * 1000
 
-    uranus = Planet(-19.165 * Planet.AU, 0, 14 * Planet.SCALE * 10 ** 9, COLOR_URANUS, 8.681 * 10 ** 25)
+    uranus = Planet(-19.165 * AU, 0, 14 * SCALE * 10 ** 9, COLOR_URANUS, 8.681 * 10 ** 25)
     uranus.y_vel = 6.80 * 1000
 
-    neptune = Planet(-30.178 * Planet.AU, 0, 12 * Planet.SCALE * 10 ** 9, COLOR_NEPTUNE, 1.024 * 10 ** 26)
+    neptune = Planet(-30.178 * AU, 0, 12 * SCALE * 10 ** 9, COLOR_NEPTUNE, 1.024 * 10 ** 26)
     neptune.y_vel = 5.43 * 1000
 
     planets = [neptune, uranus, saturn, jupiter, mars, earth, venus, mercury, sun]
@@ -285,7 +275,7 @@ def main():
             move_y -= distance
 
         ### Rocket 
-        pygame.draw.circle(WINDOW, (255, 255, 255), (earth.x * earth.SCALE + WIDTH / 2 + move_x+earth.radius, earth.y * earth.SCALE + HEIGHT / 2 + move_y + earth.radius),Planet.SCALE * 10 ** 9)
+        pygame.draw.circle(WINDOW, (255, 255, 255), (earth.x * SCALE + WIDTH / 2 + move_x+earth.radius, earth.y * SCALE + HEIGHT / 2 + move_y + earth.radius),SCALE * 10 ** 9)
         for planet in planets:
             if not pause:
                 planet.update_position(planets)
