@@ -197,6 +197,7 @@ class Planet:
 
 
 def main():
+    global SCALE
     run = True
     pause = False
     show_distance = False
@@ -253,11 +254,11 @@ def main():
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_s:
                 draw_line = not draw_line
             elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 5:
-                Planet.SCALE *= 0.75
+                SCALE *= 0.75
                 for planet in planets:
                     planet.update_scale(0.75)
             elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 4:
-                Planet.SCALE *= 1.25
+                SCALE *= 1.25
                 for planet in planets:
                     planet.update_scale(1.25)
 
