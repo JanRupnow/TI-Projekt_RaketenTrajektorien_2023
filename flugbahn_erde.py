@@ -76,12 +76,15 @@ def on_key_press(event):
 
 class Rocket:
     def __init__(self, startwinkel, abwurfwinkel,treibstoffmasse, koerpermasse, startplanet, radius, color):
+        self.aktuellerschritt = AktuellerSchritt
+        self.aktuellerrechenschritt = AktuellerRechenschritt
+        self.dt = dt
         self.AbwurfWinkel = abwurfwinkel # Winkel des Starts auf der Erde [°C]
         self.KoerperMasse = koerpermasse
         self.TreibstoffMasse = treibstoffmasse
-        ## Berechnung der Startposition der Rakete abhängig vom Startplaneten
-        self.StartKoordinatenX = startplanet.x + startplanet.radius * np.sin(startwinkel * np.pi / 180)
-        self.StartKoordiantenZ = startplanet.y + startplanet.radius * np.cos(startwinkel * np.pi / 180)
+        ## Berechnung der Startposition der Rakete abhängig vom Startplaneten ohne Skalierung
+        self.StartKoordinatenX = startplanet.x/SCALE + startplanet.radius/SCALE * np.sin(startwinkel * np.pi / 180)
+        self.StartKoordiantenZ = startplanet.y/SCALE + startplanet.radius/SCALE * np.cos(startwinkel * np.pi / 180)
         self.r_x= np.zeros(Rechenschritte)   # x-Position [m]
         self.r_z= np.zeros(Rechenschritte)   # z-Position [m]
         self.v_x=np.zeros(Rechenschritte)    # x-Geschwindigkeit [m/s]
@@ -89,43 +92,41 @@ class Rocket:
         self.c = Luftwiederstand/self.KoerperMasse
         self.radius = radius
         self.color = color
+        self.startplanet = startplanet
     # Methode für die x-Komponente
-    def f2(self, r_x, r_z, x, t, startplanet, planets):
-        
+    def f2(self, r_x, r_z, x, t):
         ## TO DO Gravitation für alle Planeten einbauen
 
         r0 = np.sqrt(r_x**2 + r_z**2)
-        y=( -(G*startplanet.mass/r0**2) - (Luftwiederstand*x**2*np.sign(x) * p_0 * np.exp(-abs((r0-startplanet.radius)) / h_s))/(2 * self.KoerperMasse) ) * (r_x/r0) #Extrakraft x einbauen
+        x=( -(G*self.startplanet.mass/r0**2) - (Luftwiederstand*x**2*np.sign(x) * p_0 * np.exp(-abs((r0-self.startplanet.radius)) / h_s))/(2 * self.KoerperMasse) ) * (r_x/r0) #Extrakraft x einbauen
         #y=-(G*m_E/(r_x**2 + r_z**2)**1.5) * r_x - c*x**2*np.sign(x)
-        if AktuellerSchritt == AktuellerRechenschritt:
+        if self.aktuellerschritt == self.aktuellerrechenschritt:
             if x_schub!=0:
-                y += FallBeschleunigung*x_schub
-        return y
+                x += FallBeschleunigung*x_schub
+        return x
     # Methode für die z-Komponente
-    def f1(self,r_x, r_z, x, t, startplanet, planets):
+    def f1(self,r_x, r_z, x, t):
 
         ## TO DO Gravitation für alle Planeten einbauen
 
         r0 = np.sqrt(r_x**2 + r_z**2)
-        y=( -(G*startplanet.mass/r0**2) - (Luftwiederstand*x**2*np.sign(x) * p_0 * np.exp(-abs((r0-startplanet.radius)) / h_s))/(2 * self.KoerperMasse) ) * (r_z/r0) #Extrakraft z einbauen
+        z=( -(G*self.startplanet.mass/r0**2) - (Luftwiederstand*x**2*np.sign(x) * p_0 * np.exp(-abs((r0-self.startplanet.radius)) / h_s))/(2 * self.KoerperMasse) ) * (r_z/r0) #Extrakraft z einbauen
         #y=-(G*m_E/(r_x**2 + r_z**2)**1.5) * r_z - c*x**2*np.sign(x)
         if AktuellerSchritt == AktuellerRechenschritt:
             if z_schub!=0:
-                y += FallBeschleunigung*z_schub
-        return y
+                z += FallBeschleunigung*z_schub
+        return z
     # Berechnung nach Runge-Kutta Verfahren
     def berechneNaechstenSchritt(self, i: int):
-        global r_x, r_z, v_x, v_z, F
+        global  dt
         # z-Komponente
-        k1 = Rocket.f1(self.r_x[i], self.r_z[i], self.v_z[i], t[i])
-        k2 = Rocket.f1(self.r_x[i], self.r_z[i], self.v_z[i] + k1*dt/2, t[i])
-        k3 = Rocket.f1(self.r_x[i], self.r_z[i], self.v_z[i] + k2*dt/2, t[i])
-        k4 = Rocket.f1(self.r_x[i], self.r_z[i], self.v_z[i] + k3*dt/2, t[i])
+        k1 = self.f1(self.r_x[i], self.r_z[i], self.v_z[i], t[i])
+        k2 = self.f1(self.r_x[i], self.r_z[i], self.v_z[i] + k1*dt/2, t[i])
+        k3 = self.f1(self.r_x[i], self.r_z[i], self.v_z[i] + k2*dt/2, t[i])
+        k4 = self.f1(self.r_x[i], self.r_z[i], self.v_z[i] + k3*dt/2, t[i])
         k = (k1 + 2*k2 + 2*k3 + k4)/6
         self.v_z[i+1] = self.v_z[i] + k*dt
         self.r_z[i+1] = self.r_z[i] + self.v_z[i]*dt
-        ## Z-Kraft berechnen
-        F = k * self.KoerperMasse
 
         # x-Komponente
         k1 = self.f2(self.r_x[i], self.r_z[i], self.v_x[i], t[i])
@@ -137,16 +138,25 @@ class Rocket:
         self.r_x[i+1] = self.r_x[i] + self.v_x[i]*dt
     def update_scale(self,scale):
         self.radius *= scale
-    def draw(self, window, move_x, move_y,):
-        global AktuellerRechenschritt
+    def draw(self, window, move_x, move_y):
         for i in range(1000):
-            self.berechneNaechstenSchritt(AktuellerRechenschritt)
-            AktuellerRechenschritt += 1
+            self.berechneNaechstenSchritt(self.aktuellerrechenschritt)
+            self.aktuellerrechenschritt += 1
         # move_x and move_y verschieben je nach bewegung des Bildschirms
         predictions = []
-        predictions.append(r_z[AktuellerSchritt:AktuellerRechenschritt]*SCALE+move_x, r_x[AktuellerSchritt:AktuellerRechenschritt]*SCALE+move_y)
+        
+
+        ## Checke den Fehler nicht 
+        '''
+        list = []
+        list.append((1,2))
+        print(list)
+        das ist legitimer code aber im Code in Zeile 156 nimmt er es nicht
+        '''
+        predictions.append((self.r_z[self.aktuellerschritt:self.aktuellerrechenschritt]*SCALE+move_x), (self.r_x[self.aktuellerschritt:self.aktuellerrechenschritt]*SCALE+move_y))
         pygame.draw.lines(window, self.color, False, predictions, 1)
-        pygame.draw.polygon(window,self.color,self.r_x[AktuellerSchritt]*SCALE+move_x,self.r_x[AktuellerSchritt]*SCALE+move_y,2)
+        pygame.draw.polygon(window,self.color,self.r_x[self.aktuellerschritt]*SCALE+move_x,self.r_x[self.aktuellerschritt]*SCALE+move_y,2)
+        self.aktuellerschritt+= 1
         
 class Planet:
     def __init__(self, x, y, radius, color, mass):
@@ -253,6 +263,7 @@ def main():
 
     planets = [neptune, uranus, saturn, jupiter, mars, earth, venus, mercury, sun]
 
+    rocket = Rocket(45,0,0,10000,earth,5,(255,255,255))
     while run:
         clock.tick(60)
         WINDOW.fill(COLOR_UNIVERSE)
@@ -271,10 +282,12 @@ def main():
                 draw_line = not draw_line
             elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 5:
                 SCALE *= 0.75
+                rocket.update_scale(0.75)
                 for planet in planets:
                     planet.update_scale(0.75)
             elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 4:
                 SCALE *= 1.25
+                rocket.update_scale(1.25)
                 for planet in planets:
                     planet.update_scale(1.25)
 
@@ -292,6 +305,8 @@ def main():
             move_y -= distance
 
         ### Rocket 
+        rocket.draw(WINDOW,move_x,move_y)
+    
         pygame.draw.circle(WINDOW, (255, 255, 255), (earth.x * SCALE + WIDTH / 2 + move_x+earth.radius, earth.y * SCALE + HEIGHT / 2 + move_y + earth.radius),SCALE * 10 ** 9)
         for planet in planets:
             if not pause:
