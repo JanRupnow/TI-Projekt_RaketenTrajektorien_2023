@@ -1,2 +1,2 @@
 
-    AktuellerRechenschritt += 1
+        # x-Komponente

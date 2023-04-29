@@ -24,7 +24,7 @@ pygame.display.set_caption("Solar System Simulation")
 ### Solarsystem Variablen 
 AU = 149.6e6 * 1000  # Astronomical unit
 G = 6.67428e-11  # Gravitational constant
-TIMESTEP = 60*60*24*2  # Seconds in 2 years
+TIMESTEP = 1  # Seconds in 2 years
 SCALE = 200 / AU
 ### Generelle Variablen
 Luftwiederstand = 0.0162        # Luftwiderstandsbeiwert
@@ -93,6 +93,7 @@ class Rocket:
         self.radius = radius
         self.color = color
         self.startplanet = startplanet
+        self.predictions = []
     # Methode für die x-Komponente
     def f2(self, x, i:int):
         ## TO DO Gravitation für alle Planeten einbauen
@@ -136,22 +137,21 @@ class Rocket:
         self.r_x[i+1] = self.r_x[i] + self.v_x[i]*dt
     def update_scale(self,scale):
         self.radius *= scale
-    def draw(self, window, move_x, move_y):
-        for i in range(1000):
-            self.berechneNaechstenSchritt(self.aktuellerrechenschritt)
-            self.aktuellerrechenschritt += 1
+    def draw(self, window, move_x, move_y, powerchanged):
+        if powerchanged or len(self.predictions)<2:
+            for i in range(1000):
+                self.berechneNaechstenSchritt(self.aktuellerrechenschritt)
+                self.aktuellerrechenschritt += 1
         # move_x and move_y verschieben je nach bewegung des Bildschirms
-        predictions = []
+            self.predictions = []
         
 
         ## Checke den Fehler nicht 
-        '''
-        Nan in der predictions liste
-        '''
-        predictions.append((self.r_z[self.aktuellerschritt:self.aktuellerrechenschritt]*SCALE+move_x, self.r_x[self.aktuellerschritt:self.aktuellerrechenschritt]*SCALE+move_y))
-        print(predictions)
-        pygame.draw.lines(window, self.color, False, predictions, 1)
-        pygame.draw.polygon(window,self.color,self.r_x[self.aktuellerschritt]*SCALE+move_x,self.r_x[self.aktuellerschritt]*SCALE+move_y,2)
+            self.predictions = np.array((self.r_z[self.aktuellerschritt:self.aktuellerrechenschritt]*SCALE+move_x, self.r_x[self.aktuellerschritt:self.aktuellerrechenschritt]*SCALE+move_y)).T
+
+        pygame.draw.lines(window, self.color, False, self.predictions, 1)
+        
+        pygame.draw.circle(window,self.color,(self.r_x[self.aktuellerschritt]*SCALE+move_x , self.r_x[self.aktuellerschritt]*SCALE+move_y),1000000,2)
         self.aktuellerschritt+= 1
         
 class Planet:
@@ -219,6 +219,7 @@ class Planet:
 
 
 def main():
+    powerchanged = False
     global SCALE
     run = True
     pause = False
@@ -301,9 +302,7 @@ def main():
             move_y -= distance
 
         ### Rocket 
-        rocket.draw(WINDOW,move_x,move_y)
-    
-        pygame.draw.circle(WINDOW, (255, 255, 255), (earth.x * SCALE + WIDTH / 2 + move_x+earth.radius, earth.y * SCALE + HEIGHT / 2 + move_y + earth.radius),SCALE * 10 ** 9)
+        rocket.draw(WINDOW,move_x,move_y, powerchanged)
         for planet in planets:
             if not pause:
                 planet.update_position(planets)
