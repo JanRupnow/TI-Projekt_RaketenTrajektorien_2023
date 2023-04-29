@@ -92,7 +92,7 @@ class Rocket:
     # Methode für die x-Komponente
     def f2(self, r_x, r_z, x, t, startplanet, planets):
         
-        ## TO DO Gravitation für alle Planeten ein Bauen
+        ## TO DO Gravitation für alle Planeten einbauen
 
         r0 = np.sqrt(r_x**2 + r_z**2)
         y=( -(G*startplanet.mass/r0**2) - (Luftwiederstand*x**2*np.sign(x) * p_0 * np.exp(-abs((r0-startplanet.radius)) / h_s))/(2 * self.KoerperMasse) ) * (r_x/r0) #Extrakraft x einbauen
@@ -104,7 +104,7 @@ class Rocket:
     # Methode für die z-Komponente
     def f1(self,r_x, r_z, x, t, startplanet, planets):
 
-        ## TO DO Gravitation für alle Planeten ein Bauen
+        ## TO DO Gravitation für alle Planeten einbauen
 
         r0 = np.sqrt(r_x**2 + r_z**2)
         y=( -(G*startplanet.mass/r0**2) - (Luftwiederstand*x**2*np.sign(x) * p_0 * np.exp(-abs((r0-startplanet.radius)) / h_s))/(2 * self.KoerperMasse) ) * (r_z/r0) #Extrakraft z einbauen
@@ -144,9 +144,9 @@ class Rocket:
             AktuellerRechenschritt += 1
         # move_x and move_y verschieben je nach bewegung des Bildschirms
         predictions = []
-        predictions.append(r_z[AktuellerSchritt:AktuellerRechenschritt]+move_x, r_x[AktuellerSchritt:AktuellerRechenschritt]+move_y)
+        predictions.append(r_z[AktuellerSchritt:AktuellerRechenschritt]*SCALE+move_x, r_x[AktuellerSchritt:AktuellerRechenschritt]*SCALE+move_y)
         pygame.draw.lines(window, self.color, False, predictions, 1)
-        pygame.draw.polygon(window,self.color,self.r_x[AktuellerSchritt]+move_x,self.r_x[AktuellerSchritt]+move_y,2)
+        pygame.draw.polygon(window,self.color,self.r_x[AktuellerSchritt]*SCALE+move_x,self.r_x[AktuellerSchritt]*SCALE+move_y,2)
         
 class Planet:
     def __init__(self, x, y, radius, color, mass):
