@@ -94,23 +94,23 @@ class Rocket:
         self.color = color
         self.startplanet = startplanet
     # Methode für die x-Komponente
-    def f2(self, r_x, r_z, x, t):
+    def f2(self, x):
         ## TO DO Gravitation für alle Planeten einbauen
 
-        r0 = np.sqrt(r_x**2 + r_z**2)
-        x=( -(G*self.startplanet.mass/r0**2) - (Luftwiederstand*x**2*np.sign(x) * p_0 * np.exp(-abs((r0-self.startplanet.radius)) / h_s))/(2 * self.KoerperMasse) ) * (r_x/r0) #Extrakraft x einbauen
+        r0 = np.sqrt(self.r_x**2 + self.r_z**2)
+        x=( -(G*self.startplanet.mass/r0**2) - (Luftwiederstand*x**2*np.sign(self.v_z) * p_0 * np.exp(-abs((r0-self.startplanet.radius)) / h_s))/(2 * self.KoerperMasse) ) * (self.r_x/r0) #Extrakraft x einbauen
         #y=-(G*m_E/(r_x**2 + r_z**2)**1.5) * r_x - c*x**2*np.sign(x)
         if self.aktuellerschritt == self.aktuellerrechenschritt:
             if x_schub!=0:
                 x += FallBeschleunigung*x_schub
         return x
     # Methode für die z-Komponente
-    def f1(self,r_x, r_z, x, t):
+    def f1(self, x):
 
         ## TO DO Gravitation für alle Planeten einbauen
 
-        r0 = np.sqrt(r_x**2 + r_z**2)
-        z=( -(G*self.startplanet.mass/r0**2) - (Luftwiederstand*x**2*np.sign(x) * p_0 * np.exp(-abs((r0-self.startplanet.radius)) / h_s))/(2 * self.KoerperMasse) ) * (r_z/r0) #Extrakraft z einbauen
+        r0 = np.sqrt(self.r_x**2 + self.r_z**2)
+        z=( -(G*self.startplanet.mass/r0**2) - (Luftwiederstand*x**2*np.sign(self.v_z) * p_0 * np.exp(-abs((r0-self.startplanet.radius)) / h_s))/(2 * self.KoerperMasse) ) * (self.r_z/r0) #Extrakraft z einbauen
         #y=-(G*m_E/(r_x**2 + r_z**2)**1.5) * r_z - c*x**2*np.sign(x)
         if AktuellerSchritt == AktuellerRechenschritt:
             if z_schub!=0:
@@ -120,19 +120,19 @@ class Rocket:
     def berechneNaechstenSchritt(self, i: int):
         global  dt
         # z-Komponente
-        k1 = self.f1(self.r_x[i], self.r_z[i], self.v_z[i], t[i])
-        k2 = self.f1(self.r_x[i], self.r_z[i], self.v_z[i] + k1*dt/2, t[i])
-        k3 = self.f1(self.r_x[i], self.r_z[i], self.v_z[i] + k2*dt/2, t[i])
-        k4 = self.f1(self.r_x[i], self.r_z[i], self.v_z[i] + k3*dt/2, t[i])
+        k1 = self.f1(self.v_z[i])
+        k2 = self.f1(self.v_z[i] + k1*dt/2)
+        k3 = self.f1(self.v_z[i] + k2*dt/2)
+        k4 = self.f1(self.v_z[i] + k3*dt/2)
         k = (k1 + 2*k2 + 2*k3 + k4)/6
         self.v_z[i+1] = self.v_z[i] + k*dt
         self.r_z[i+1] = self.r_z[i] + self.v_z[i]*dt
 
         # x-Komponente
-        k1 = self.f2(self.r_x[i], self.r_z[i], self.v_x[i], t[i])
-        k2 = self.f2(self.r_x[i], self.r_z[i], self.v_x[i] + k1*dt/2, t[i])
-        k3 = self.f2(self.r_x[i], self.r_z[i], self.v_x[i] + k2*dt/2, t[i])
-        k4 = self.f2(self.r_x[i], self.r_z[i], self.v_x[i] + k3*dt/2, t[i])
+        k1 = self.f2(self.v_x[i])
+        k2 = self.f2(self.v_x[i] + k1*dt/2)
+        k3 = self.f2(self.v_x[i] + k2*dt/2)
+        k4 = self.f2(self.v_x[i] + k3*dt/2)
         k = (k1 + 2*k2 + 2*k3 + k4)/6
         self.v_x[i+1] = self.v_x[i] + k*dt
         self.r_x[i+1] = self.r_x[i] + self.v_x[i]*dt
@@ -153,7 +153,7 @@ class Rocket:
         print(list)
         das ist legitimer code aber im Code in Zeile 156 nimmt er es nicht
         '''
-        predictions.append((self.r_z[self.aktuellerschritt:self.aktuellerrechenschritt]*SCALE+move_x), (self.r_x[self.aktuellerschritt:self.aktuellerrechenschritt]*SCALE+move_y))
+        predictions.append((self.r_z[self.aktuellerschritt:self.aktuellerrechenschritt]*SCALE+move_x, self.r_x[self.aktuellerschritt:self.aktuellerrechenschritt]*SCALE+move_y))
         pygame.draw.lines(window, self.color, False, predictions, 1)
         pygame.draw.polygon(window,self.color,self.r_x[self.aktuellerschritt]*SCALE+move_x,self.r_x[self.aktuellerschritt]*SCALE+move_y,2)
         self.aktuellerschritt+= 1
