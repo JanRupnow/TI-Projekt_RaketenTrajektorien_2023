@@ -94,8 +94,8 @@ class Rocket:
         self.color = color
         self.startplanet = startplanet
         self.predictions = []
-        self.v_x[0] = 10000
-        self.v_z[0] = 10000
+        self.v_x[0] = 10e6
+        self.v_z[0] = 10e6
         self.r_x[0]= self.StartKoordinatenX   
         self.r_z[0]= self.StartKoordiantenZ
     # Methode für die x-Komponente
@@ -141,7 +141,7 @@ class Rocket:
     def update_scale(self,scale):
         self.radius *= scale
     def draw(self, window, move_x, move_y, powerchanged):
-        if powerchanged or len(self.predictions)<2:
+        if powerchanged or len(self.predictions)<2 or 0==0:
             for i in range(1000):
                 self.berechneNaechstenSchritt(self.aktuellerrechenschritt)
                 self.aktuellerrechenschritt += 1
@@ -150,10 +150,12 @@ class Rocket:
         
 
         ## Checke den Fehler nicht 
-            self.predictions = np.array((self.r_z[self.aktuellerschritt:self.aktuellerrechenschritt]*SCALE+move_x+WIDTH/2, self.r_x[self.aktuellerschritt:self.aktuellerrechenschritt]*SCALE+move_y+ HEIGHT/2)).T
-
-        pygame.draw.lines(window, self.color, False, self.predictions, 1)
-        pygame.draw.circle(window,self.color,(self.r_x[self.aktuellerschritt]*SCALE+move_x , self.r_z[self.aktuellerschritt]*SCALE+move_y),self.radius)
+            self.predictions = np.array((self.r_z[self.aktuellerschritt:self.aktuellerrechenschritt]*SCALE+move_x+WIDTH/2-200, self.r_x[self.aktuellerschritt:self.aktuellerrechenschritt]*SCALE+move_y+ HEIGHT/2+200)).T
+            pygame.draw.lines(window, self.color, False, self.predictions, 1)
+        a = self.predictions
+        b = self.r_x[self.aktuellerschritt]*SCALE+move_x+WIDTH/2
+        c = self.r_z[self.aktuellerschritt]*SCALE+move_y+HEIGHT/2
+        pygame.draw.circle(window,self.color,(self.r_x[self.aktuellerschritt]*SCALE+move_x+WIDTH/2 , self.r_z[self.aktuellerschritt]*SCALE+move_y+HEIGHT/2),self.radius)
         self.aktuellerschritt+= 1
         
 class Planet:
@@ -181,8 +183,6 @@ class Planet:
                 updated_points.append((x + move_x, y + move_y))
             if draw_line:
                 pygame.draw.lines(window, self.color, False, updated_points, 1)   
-        v = x+move_x
-        v2 = y+move_y
         pygame.draw.circle(window, self.color, (x + move_x, y + move_y), self.radius)
         if not self.sun:
             distance_text = FONT_2.render(f"{round(self.distance_to_sun * 1.057 * 10 ** -16, 8)} light years", True,
@@ -264,7 +264,7 @@ def main():
 
     planets = [neptune, uranus, saturn, jupiter, mars, earth, venus, mercury, sun]
 
-    rocket = Rocket(45,0,0,10000,earth,20,(255,255,255))
+    rocket = Rocket(45,0,0,10000,earth,5,(255,255,255))
     while run:
         clock.tick(60)
         WINDOW.fill(COLOR_UNIVERSE)
