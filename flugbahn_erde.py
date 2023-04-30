@@ -4,6 +4,7 @@ import keyboard
 import time
 import numpy as np
 
+
 pygame.init()
 WIDTH, HEIGHT = pygame.display.Info().current_w, pygame.display.Info().current_h
 WINDOW = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
