@@ -141,20 +141,13 @@ class Rocket:
     def update_scale(self,scale):
         self.radius *= scale
     def draw(self, window, move_x, move_y, powerchanged):
+        a = len(self.predictions)
         if powerchanged or len(self.predictions)<2 or 0==0:
             for i in range(1000):
                 self.berechneNaechstenSchritt(self.aktuellerrechenschritt)
                 self.aktuellerrechenschritt += 1
-        # move_x and move_y verschieben je nach bewegung des Bildschirms
-            self.predictions = []
-        
-
-        ## Checke den Fehler nicht 
-            self.predictions = np.array((self.r_z[self.aktuellerschritt:self.aktuellerrechenschritt]*SCALE+move_x+WIDTH/2-200, self.r_x[self.aktuellerschritt:self.aktuellerrechenschritt]*SCALE+move_y+ HEIGHT/2+200)).T
-            pygame.draw.lines(window, self.color, False, self.predictions, 1)
-        a = self.predictions
-        b = self.r_x[self.aktuellerschritt]*SCALE+move_x+WIDTH/2
-        c = self.r_z[self.aktuellerschritt]*SCALE+move_y+HEIGHT/2
+        # move_x and move_y verschieben je nach bewegung des Bildschirm    
+        pygame.draw.lines(window, self.color, False, np.array((self.r_z[self.aktuellerschritt:self.aktuellerrechenschritt]*SCALE+move_x+WIDTH/2-200, self.r_x[self.aktuellerschritt:self.aktuellerrechenschritt]*SCALE+move_y+ HEIGHT/2+200)).T, 1)
         pygame.draw.circle(window,self.color,(self.r_x[self.aktuellerschritt]*SCALE+move_x+WIDTH/2 , self.r_z[self.aktuellerschritt]*SCALE+move_y+HEIGHT/2),self.radius)
         self.aktuellerschritt+= 1
         
