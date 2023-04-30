@@ -94,12 +94,25 @@ class Rocket:
         self.color = color
         self.startplanet = startplanet
         self.predictions = []
+        self.r_x[0]= self.StartKoordinatenX   
+        self.r_z[0]= self.StartKoordiantenZ
     # Methode für die x-Komponente
     def f2(self, x, i:int):
         ## TO DO Gravitation für alle Planeten einbauen
-
+        '''
+        Testvariablen um Fehler zu finden
+        '''
         r0 = np.sqrt(self.r_x[i]**2 + self.r_z[i]**2)
-        x=( -(G*self.startplanet.mass/r0**2) - (Luftwiederstand*x**2*np.sign(self.v_z[i]) * p_0 * np.exp(-abs((r0-self.startplanet.radius)) / h_s))/(2 * self.KoerperMasse) ) * (self.r_x[1]/r0) #Extrakraft x einbauen
+        a= (G*self.startplanet.mass/r0**2)
+        b = Luftwiederstand*x**2*np.sign(self.v_z[i])
+        c = p_0 * np.exp(-abs((r0-self.startplanet.radius)) / h_s)
+        d= (2 * self.KoerperMasse)  * (self.r_x[i]/r0)
+        e = (self.r_x[i]/r0)
+        '''
+        
+        '''
+        r0 = np.sqrt(self.r_x[i]**2 + self.r_z[i]**2)
+        x=( -(G*self.startplanet.mass/r0**2) - (Luftwiederstand*x**2*np.sign(self.v_z[i]) * p_0 * np.exp(-abs((r0-self.startplanet.radius)) / h_s))/(2 * self.KoerperMasse) ) * (self.r_x[i]/r0) #Extrakraft x einbauen
         #y=-(G*m_E/(r_x**2 + r_z**2)**1.5) * r_x - c*x**2*np.sign(x)
         if self.aktuellerschritt == self.aktuellerrechenschritt:
             if x_schub!=0:
@@ -117,24 +130,23 @@ class Rocket:
         return z
     # Berechnung nach Runge-Kutta Verfahren
     def berechneNaechstenSchritt(self, i: int):
-        global  dt
         # z-Komponente
         k1 = self.f1(self.v_z[i],i)
-        k2 = self.f1(self.v_z[i] + k1*dt/2,i)
-        k3 = self.f1(self.v_z[i] + k2*dt/2,i)
-        k4 = self.f1(self.v_z[i] + k3*dt/2,i)
+        k2 = self.f1(self.v_z[i] + k1*self.dt/2,i)
+        k3 = self.f1(self.v_z[i] + k2*self.dt/2,i)
+        k4 = self.f1(self.v_z[i] + k3*self.dt/2,i)
         k = (k1 + 2*k2 + 2*k3 + k4)/6
-        self.v_z[i+1] = self.v_z[i] + k*dt
-        self.r_z[i+1] = self.r_z[i] + self.v_z[i]*dt
+        self.v_z[i+1] = self.v_z[i] + k*self.dt
+        self.r_z[i+1] = self.r_z[i] + self.v_z[i]*self.dt
 
         # x-Komponente
         k1 = self.f2(self.v_x[i],i)
-        k2 = self.f2(self.v_x[i] + k1*dt/2,i)
-        k3 = self.f2(self.v_x[i] + k2*dt/2,i)
-        k4 = self.f2(self.v_x[i] + k3*dt/2,i)
+        k2 = self.f2(self.v_x[i] + k1*self.dt/2,i)
+        k3 = self.f2(self.v_x[i] + k2*self.dt/2,i)
+        k4 = self.f2(self.v_x[i] + k3*self.dt/2,i)
         k = (k1 + 2*k2 + 2*k3 + k4)/6
-        self.v_x[i+1] = self.v_x[i] + k*dt
-        self.r_x[i+1] = self.r_x[i] + self.v_x[i]*dt
+        self.v_x[i+1] = self.v_x[i] + k*self.dt
+        self.r_x[i+1] = self.r_x[i] + self.v_x[i]*self.dt
     def update_scale(self,scale):
         self.radius *= scale
     def draw(self, window, move_x, move_y, powerchanged):
