@@ -124,7 +124,7 @@ class Rocket:
         r0 = np.sqrt(self.r_x[i]**2 + self.r_z[i]**2)
         z=( -(G*self.startplanet.mass/r0**2) - (Luftwiederstand*x**2*np.sign(self.v_z[i]) * p_0 * np.exp(-abs((r0-self.startplanet.radius)) / h_s))/(2 * self.KoerperMasse) ) * (self.r_z[i]/r0) #Extrakraft z einbauen
         #y=-(G*m_E/(r_x**2 + r_z**2)**1.5) * r_z - c*x**2*np.sign(x)
-        if AktuellerSchritt == AktuellerRechenschritt:
+        if self.aktuellerschritt == self.aktuellerrechenschritt:
             if z_schub!=0:
                 z += FallBeschleunigung*z_schub
         return z
