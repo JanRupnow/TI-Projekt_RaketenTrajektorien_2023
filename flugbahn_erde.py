@@ -24,7 +24,6 @@ pygame.display.set_caption("Solar System Simulation")
 ### Solarsystem Variablen 
 AU = 149.6e6 * 1000  # Astronomical unit
 G = 6.67428e-11  # Gravitational constant
-TIMESTEP = 1  # Seconds in 2 years
 SCALE = 200 / AU
 ### Generelle Variablen
 Luftwiederstand = 0.0162        # Luftwiderstandsbeiwert
@@ -40,6 +39,7 @@ Endzeit = 200000                # [s]
 Rechenschritte = 100000
 t=np.linspace(Startzeit, Endzeit, Rechenschritte)
 dt=(Endzeit-Startzeit)/Rechenschritte
+TIMESTEP = dt
 AktuellerSchritt = 0
 AktuellerRechenschritt = 0
 x_last_update_time = 0
@@ -83,8 +83,8 @@ class Rocket:
         self.KoerperMasse = koerpermasse
         self.TreibstoffMasse = treibstoffmasse
         ## Berechnung der Startposition der Rakete abhängig vom Startplaneten ohne Skalierung
-        self.StartKoordinatenX = startplanet.x/SCALE + startplanet.radius/SCALE * np.sin(startwinkel * np.pi / 180)
-        self.StartKoordiantenZ = startplanet.y/SCALE + startplanet.radius/SCALE * np.cos(startwinkel * np.pi / 180)
+        self.StartKoordinatenX = startplanet.x + startplanet.radius/SCALE * np.sin(startwinkel * np.pi / 180)
+        self.StartKoordiantenZ = startplanet.y + startplanet.radius/SCALE * np.cos(startwinkel * np.pi / 180)
         self.r_x= np.zeros(Rechenschritte)   # x-Position [m]
         self.r_z= np.zeros(Rechenschritte)   # z-Position [m]
         self.v_x=np.zeros(Rechenschritte)    # x-Geschwindigkeit [m/s]
@@ -94,23 +94,14 @@ class Rocket:
         self.color = color
         self.startplanet = startplanet
         self.predictions = []
+        self.v_x[0] = 10000
+        self.v_z[0] = 10000
         self.r_x[0]= self.StartKoordinatenX   
         self.r_z[0]= self.StartKoordiantenZ
     # Methode für die x-Komponente
     def f2(self, x, i:int):
         ## TO DO Gravitation für alle Planeten einbauen
-        '''
-        Testvariablen um Fehler zu finden
-        '''
         r0 = np.sqrt(self.r_x[i]**2 + self.r_z[i]**2)
-        a= (G*self.startplanet.mass/r0**2)
-        b = Luftwiederstand*x**2*np.sign(self.v_z[i])
-        c = p_0 * np.exp(-abs((r0-self.startplanet.radius)) / h_s)
-        d= (2 * self.KoerperMasse)  * (self.r_x[i]/r0)
-        e = (self.r_x[i]/r0)
-        '''
-        
-        '''
         r0 = np.sqrt(self.r_x[i]**2 + self.r_z[i]**2)
         x=( -(G*self.startplanet.mass/r0**2) - (Luftwiederstand*x**2*np.sign(self.v_z[i]) * p_0 * np.exp(-abs((r0-self.startplanet.radius)) / h_s))/(2 * self.KoerperMasse) ) * (self.r_x[i]/r0) #Extrakraft x einbauen
         #y=-(G*m_E/(r_x**2 + r_z**2)**1.5) * r_x - c*x**2*np.sign(x)
@@ -159,11 +150,10 @@ class Rocket:
         
 
         ## Checke den Fehler nicht 
-            self.predictions = np.array((self.r_z[self.aktuellerschritt:self.aktuellerrechenschritt]*SCALE+move_x, self.r_x[self.aktuellerschritt:self.aktuellerrechenschritt]*SCALE+move_y)).T
+            self.predictions = np.array((self.r_z[self.aktuellerschritt:self.aktuellerrechenschritt]*SCALE+move_x+WIDTH/2, self.r_x[self.aktuellerschritt:self.aktuellerrechenschritt]*SCALE+move_y+ HEIGHT/2)).T
 
         pygame.draw.lines(window, self.color, False, self.predictions, 1)
-        
-        pygame.draw.circle(window,self.color,(self.r_x[self.aktuellerschritt]*SCALE+move_x , self.r_x[self.aktuellerschritt]*SCALE+move_y),1000000,2)
+        pygame.draw.circle(window,self.color,(self.r_x[self.aktuellerschritt]*SCALE+move_x , self.r_z[self.aktuellerschritt]*SCALE+move_y),self.radius)
         self.aktuellerschritt+= 1
         
 class Planet:
@@ -190,7 +180,9 @@ class Planet:
                 y = y * SCALE + HEIGHT / 2
                 updated_points.append((x + move_x, y + move_y))
             if draw_line:
-                pygame.draw.lines(window, self.color, False, updated_points, 1)
+                pygame.draw.lines(window, self.color, False, updated_points, 1)   
+        v = x+move_x
+        v2 = y+move_y
         pygame.draw.circle(window, self.color, (x + move_x, y + move_y), self.radius)
         if not self.sun:
             distance_text = FONT_2.render(f"{round(self.distance_to_sun * 1.057 * 10 ** -16, 8)} light years", True,
@@ -272,7 +264,7 @@ def main():
 
     planets = [neptune, uranus, saturn, jupiter, mars, earth, venus, mercury, sun]
 
-    rocket = Rocket(45,0,0,10000,earth,5,(255,255,255))
+    rocket = Rocket(45,0,0,10000,earth,20,(255,255,255))
     while run:
         clock.tick(60)
         WINDOW.fill(COLOR_UNIVERSE)
