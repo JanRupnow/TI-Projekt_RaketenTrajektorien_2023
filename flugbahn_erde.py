@@ -35,9 +35,9 @@ p_0 = 1.225 # Luftdichte auf Meereshöhe [kg/m^3]
 h_s = 8400  # Skalenhöhe [m]
 
 ### Zeit-Variablen
-Startzeit = 0                   # [s]
-Endzeit = 200000                # [s]
+Startzeit = 0                   # [s]                # [s]
 Rechenschritte = 100000
+Endzeit = Rechenschritte*5
 t=np.linspace(Startzeit, Endzeit, Rechenschritte)
 dt=(Endzeit-Startzeit)/Rechenschritte
 TIMESTEP = 60*60*24*2
@@ -144,6 +144,7 @@ class Rocket:
     def draw(self, window, move_x, move_y, powerchanged):
         a = len(self.predictions)
         if powerchanged or len(self.predictions)<2 or 0==0:
+            self.aktuellerrechenschritt = self.aktuellerschritt
             for i in range(1000):
                 self.berechneNaechstenSchritt(self.aktuellerrechenschritt)
                 self.aktuellerrechenschritt += 1
