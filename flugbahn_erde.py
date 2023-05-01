@@ -246,15 +246,15 @@ def main():
                 rocket.z_schub += 1
                 rocket.powerchanged = True
             # Raketenboost Links   
-            elif event.type == pygame.KEYDOWN and event.key == pygame.K_a and rocket.z_schub<10:
+            elif event.type == pygame.KEYDOWN and event.key == pygame.K_a and rocket.x_schub>-10:
                 rocket.x_schub -= 1
                 rocket.powerchanged = True
             # Raketenboost Unten
-            elif event.type == pygame.KEYDOWN and event.key == pygame.K_s and rocket.z_schub<10:
+            elif event.type == pygame.KEYDOWN and event.key == pygame.K_s and rocket.z_schub>-10:
                 rocket.z_schub -= 1
                 rocket.powerchanged = True
             # Raketenboost Rechts
-            elif event.type == pygame.KEYDOWN and event.key == pygame.K_d and rocket.z_schub<10:
+            elif event.type == pygame.KEYDOWN and event.key == pygame.K_d and rocket.x_schub<10:
                 rocket.x_schub += 1
                 rocket.powerchanged = True
 
