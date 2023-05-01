@@ -148,8 +148,9 @@ class Rocket:
             for i in range(1000):
                 self.berechneNaechstenSchritt(self.aktuellerrechenschritt)
                 self.aktuellerrechenschritt += 1
-        # move_x and move_y verschieben je nach bewegung des Bildschirm    
-        pygame.draw.lines(window, self.color, False, np.array((self.r_z[self.aktuellerschritt:self.aktuellerrechenschritt]*SCALE+move_x+WIDTH/2-200, self.r_x[self.aktuellerschritt:self.aktuellerrechenschritt]*SCALE+move_y+ HEIGHT/2+200)).T, 1)
+                
+        # move_x and move_y verschieben je nach bewegung des Bildschirm
+        pygame.draw.lines(window, self.color, False, np.array((self.r_x[self.aktuellerschritt:self.aktuellerrechenschritt]*SCALE+move_x+WIDTH/2, self.r_z[self.aktuellerschritt:self.aktuellerrechenschritt]*SCALE+move_y+ HEIGHT/2)).T, 1)
         pygame.draw.circle(window,self.color,(self.r_x[self.aktuellerschritt]*SCALE+move_x+WIDTH/2 , self.r_z[self.aktuellerschritt]*SCALE+move_y+HEIGHT/2),self.radius)
         self.aktuellerschritt+= 1
         
