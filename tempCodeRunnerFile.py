@@ -1,2 +1,0 @@
-
-        self.radius *= scale
