@@ -1,7 +1,5 @@
 import pygame
 import math
-import keyboard
-import time
 import numpy as np
 
 
@@ -27,9 +25,7 @@ AU = 149.6e6 * 1000  # Astronomical unit
 G = 6.67428e-11  # Gravitational constant
 SCALE = 200 / AU
 ### Generelle Variablen
-Luftwiederstand = 0.0162        # Luftwiderstandsbeiwert
-z_schub = 0                     # aktuell nicht genutzt     
-x_schub = 0                     #  - Verwendung zur Einstellung des Schubs
+Luftwiederstand = 0.0162        # Luftwiderstandsbeiwert                     #  - Verwendung zur Einstellung des Schubs
 FallBeschleunigung = 9.81       # [m/s^2]
 p_0 = 1.225 # Luftdichte auf Meereshöhe [kg/m^3]
 h_s = 8400  # Skalenhöhe [m]
@@ -43,37 +39,6 @@ dt=(Endzeit-Startzeit)/Rechenschritte
 TIMESTEP = 60*60*24*2
 AktuellerSchritt = 0
 AktuellerRechenschritt = 0
-x_last_update_time = 0
-z_last_update_time = 0
-WAIT_TIME = 1 
-
-### Methoden
-# Funktion zur Verarbeitung der Schubes
-def on_key_press(event):
-    global x_schub, z_schub, x_last_update_time, z_last_update_time
-    current_time = time.time()
-    if event.name == "w":
-        if current_time - z_last_update_time >= WAIT_TIME:
-            z_schub += 1
-            z_last_update_time = current_time
-    elif event.name == "s":
-        if current_time - z_last_update_time >= WAIT_TIME:
-            z_schub -= 1
-            z_last_update_time = current_time
-    elif event.name == "d":
-        if current_time - x_last_update_time >= WAIT_TIME:
-            x_schub += 1
-            x_last_update_time = current_time
-    elif event.name == "a":
-        if current_time - x_last_update_time >= WAIT_TIME:
-            x_schub -= 1
-            x_last_update_time = current_time
-
-    # Überprüfen, ob die Position innerhalb des erlaubten Bereichs liegt
-    x_schub = max(-10, min(x_schub, 10))
-    z_schub = max(-5, min(z_schub, 5))
-
-
 
 class Rocket:
     def __init__(self, startwinkel, abwurfwinkel,treibstoffmasse, koerpermasse, startplanet, radius, color):
@@ -92,6 +57,9 @@ class Rocket:
         self.v_z=np.zeros(Rechenschritte)    # z-Geschwindigkeit [m/s]               
         self.c = Luftwiederstand/self.KoerperMasse
         self.radius = radius
+        self.z_schub = 0                     # aktuell nicht genutzt     
+        self.x_schub = 0  
+        self.powerchanged = False   
         self.color = color
         self.startplanet = startplanet
         self.predictions = []
@@ -107,8 +75,8 @@ class Rocket:
         x=( -(G*self.startplanet.mass/r0**2) - (Luftwiederstand*x**2*np.sign(self.v_z[i]) * p_0 * np.exp(-abs((r0-self.startplanet.radius)) / h_s))/(2 * self.KoerperMasse) ) * (self.r_x[i]/r0) #Extrakraft x einbauen
         #y=-(G*m_E/(r_x**2 + r_z**2)**1.5) * r_x - c*x**2*np.sign(x)
         if self.aktuellerschritt == self.aktuellerrechenschritt:
-            if x_schub!=0:
-                x += FallBeschleunigung*x_schub
+            if self.x_schub!=0:
+                x += FallBeschleunigung*self.x_schub
         return x
     # Methode für die z-Komponente
     def f1(self, x,i:int):
@@ -117,8 +85,8 @@ class Rocket:
         z=( -(G*self.startplanet.mass/r0**2) - (Luftwiederstand*x**2*np.sign(self.v_z[i]) * p_0 * np.exp(-abs((r0-self.startplanet.radius)) / h_s))/(2 * self.KoerperMasse) ) * (self.r_z[i]/r0) #Extrakraft z einbauen
         #y=-(G*m_E/(r_x**2 + r_z**2)**1.5) * r_z - c*x**2*np.sign(x)
         if self.aktuellerschritt == self.aktuellerrechenschritt:
-            if z_schub!=0:
-                z += FallBeschleunigung*z_schub
+            if self.z_schub!=0:
+                z += FallBeschleunigung*self.z_schub
         return z
     # Berechnung nach Runge-Kutta Verfahren
     def berechneNaechstenSchritt(self, i: int):
@@ -141,13 +109,13 @@ class Rocket:
         self.r_x[i+1] = self.r_x[i] + self.v_x[i]*self.dt
     def update_scale(self,scale):
         self.radius *= scale
-    def draw(self, window, move_x, move_y, powerchanged):
-        a = len(self.predictions)
-        if powerchanged or len(self.predictions)<2 or 0==0:
+    def draw(self, window, move_x, move_y):
+        if self.powerchanged or self.aktuellerschritt==0:
             self.aktuellerrechenschritt = self.aktuellerschritt
             for i in range(1000):
                 self.berechneNaechstenSchritt(self.aktuellerrechenschritt)
                 self.aktuellerrechenschritt += 1
+            self.powerchanged = False
                 
         # move_x and move_y verschieben je nach bewegung des Bildschirm
         pygame.draw.lines(window, self.color, False, np.array((self.r_x[self.aktuellerschritt:self.aktuellerrechenschritt]*SCALE+move_x+WIDTH/2, self.r_z[self.aktuellerschritt:self.aktuellerrechenschritt]*SCALE+move_y+ HEIGHT/2)).T, 1)
@@ -266,16 +234,34 @@ def main():
         WINDOW.fill(COLOR_UNIVERSE)
         
         for event in pygame.event.get():
+
             if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and
                                              (event.key == pygame.K_x or event.key == pygame.K_ESCAPE)):
                 run = False
+            # Raketenboost Oben
+            elif event.type == pygame.KEYDOWN and event.key == pygame.K_w and rocket.z_schub<10:
+                rocket.z_schub += 1
+                rocket.powerchanged = True
+            # Raketenboost Links   
+            elif event.type == pygame.KEYDOWN and event.key == pygame.K_a and rocket.z_schub<10:
+                rocket.x_schub -= 1
+                rocket.powerchanged = True
+            # Raketenboost Unten
+            elif event.type == pygame.KEYDOWN and event.key == pygame.K_s and rocket.z_schub<10:
+                rocket.z_schub -= 1
+                rocket.powerchanged = True
+            # Raketenboost Rechts
+            elif event.type == pygame.KEYDOWN and event.key == pygame.K_d and rocket.z_schub<10:
+                rocket.x_schub += 1
+                rocket.powerchanged = True
+
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
                 pause = not pause
-            elif event.type == pygame.KEYDOWN and event.key == pygame.K_d:
+            elif event.type == pygame.KEYDOWN and event.key == pygame.K_p:
                 show_distance = not show_distance
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_c:
                 move_x, move_y = -sun.x * sun.SCALE, -sun.y * sun.SCALE
-            elif event.type == pygame.KEYDOWN and event.key == pygame.K_s:
+            elif event.type == pygame.KEYDOWN and event.key == pygame.K_u:
                 draw_line = not draw_line
             elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 5:
                 SCALE *= 0.75
@@ -302,7 +288,7 @@ def main():
             move_y -= distance
 
         ### Rocket 
-        rocket.draw(WINDOW,move_x,move_y, powerchanged)
+        rocket.draw(WINDOW,move_x,move_y)
         for planet in planets:
             if not pause:
                 planet.update_position(planets)
@@ -315,9 +301,9 @@ def main():
         WINDOW.blit(fps_text, (15, 15))
         text_surface = FONT_1.render("Press X or ESC to exit", True, COLOR_WHITE)
         WINDOW.blit(text_surface, (15, 45))
-        text_surface = FONT_1.render("Press D to turn on/off distance", True, COLOR_WHITE)
+        text_surface = FONT_1.render("Press P to turn on/off distance", True, COLOR_WHITE)
         WINDOW.blit(text_surface, (15, 75))
-        text_surface = FONT_1.render("Press S to turn on/off drawing orbit lines", True, COLOR_WHITE)
+        text_surface = FONT_1.render("Press U to turn on/off drawing orbit lines", True, COLOR_WHITE)
         WINDOW.blit(text_surface, (15, 105))
         text_surface = FONT_1.render("Use mouse or arrow keys to move around", True, COLOR_WHITE)
         WINDOW.blit(text_surface, (15, 135))
