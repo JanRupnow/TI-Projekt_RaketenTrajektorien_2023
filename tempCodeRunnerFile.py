@@ -1,2 +1,2 @@
 
-        # x-Komponente
+        self.radius *= scale
