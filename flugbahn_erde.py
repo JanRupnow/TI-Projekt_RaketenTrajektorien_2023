@@ -48,9 +48,10 @@ class Rocket:
         self.AbwurfWinkel = abwurfwinkel # Winkel des Starts auf der Erde [°C]
         self.KoerperMasse = koerpermasse
         self.TreibstoffMasse = treibstoffmasse
+        self.startwinkel = startwinkel
         ## Berechnung der Startposition der Rakete abhängig vom Startplaneten ohne Skalierung
-        self.StartKoordinatenX = startplanet.x + startplanet.radius/SCALE * np.sin(startwinkel * np.pi / 180)
-        self.StartKoordiantenZ = startplanet.y + startplanet.radius/SCALE * np.cos(startwinkel * np.pi / 180)
+        self.StartKoordinatenX = startplanet.x + startplanet.radius/SCALE * np.sin(self.startwinkel * np.pi / 180)
+        self.StartKoordiantenZ = startplanet.y + startplanet.radius/SCALE * np.cos(self.startwinkel * np.pi / 180)
         self.r_x= np.zeros(Rechenschritte)   # x-Position [m]
         self.r_z= np.zeros(Rechenschritte)   # z-Position [m]
         self.v_x=np.zeros(Rechenschritte)    # x-Geschwindigkeit [m/s]
@@ -67,6 +68,7 @@ class Rocket:
         self.v_z[0] = 10e6
         self.r_x[0]= self.StartKoordinatenX   
         self.r_z[0]= self.StartKoordiantenZ
+        self.rocketstarted = False
     # Methode für die x-Komponente
     def f2(self, x, i:int):
         ## TO DO Gravitation für alle Planeten einbauen
@@ -109,22 +111,29 @@ class Rocket:
         self.r_x[i+1] = self.r_x[i] + self.v_x[i]*self.dt
     def update_scale(self,scale):
         self.radius *= scale
-    def draw(self, window, move_x, move_y):
-        if self.powerchanged or self.aktuellerschritt==0:
-            self.aktuellerrechenschritt = self.aktuellerschritt
-            for i in range(1000):
+    def draw(self, window, move_x, move_y, planets):
+        if self.rocketstarted:
+            if self.powerchanged or self.aktuellerschritt==0:
+                self.aktuellerrechenschritt = self.aktuellerschritt
+                for i in range(1000):
+                    self.berechneNaechstenSchritt(self.aktuellerrechenschritt)
+                    self.aktuellerrechenschritt += 1
+                self.powerchanged = False
+            else:
                 self.berechneNaechstenSchritt(self.aktuellerrechenschritt)
                 self.aktuellerrechenschritt += 1
-            self.powerchanged = False
-        else:
-            self.berechneNaechstenSchritt(self.aktuellerrechenschritt)
-            self.aktuellerrechenschritt += 1
                 
-        # move_x and move_y verschieben je nach bewegung des Bildschirm
-        pygame.draw.lines(window, self.color, False, np.array((self.r_x[self.aktuellerschritt:self.aktuellerrechenschritt]*SCALE+move_x+WIDTH/2, self.r_z[self.aktuellerschritt:self.aktuellerrechenschritt]*SCALE+move_y+ HEIGHT/2)).T, 1)
-        pygame.draw.circle(window,self.color,(self.r_x[self.aktuellerschritt]*SCALE+move_x+WIDTH/2 , self.r_z[self.aktuellerschritt]*SCALE+move_y+HEIGHT/2),self.radius)
-        self.aktuellerschritt+= 1
-        
+            # move_x and move_y verschieben je nach bewegung des Bildschirm
+            pygame.draw.lines(window, self.color, False, np.array((self.r_x[self.aktuellerschritt:self.aktuellerrechenschritt]*SCALE+move_x+WIDTH/2, self.r_z[self.aktuellerschritt:self.aktuellerrechenschritt]*SCALE+move_y+ HEIGHT/2)).T, 1)
+            pygame.draw.circle(window,self.color,(self.r_x[self.aktuellerschritt]*SCALE+move_x+WIDTH/2 , self.r_z[self.aktuellerschritt]*SCALE+move_y+HEIGHT/2),self.radius)
+            self.aktuellerschritt+= 1
+        else:
+            startplanet = next(filter(lambda x: x.name == self.startplanet.name, planets),None)
+            pygame.draw.circle(window,self.color,(startplanet.x + startplanet.radius/SCALE * np.sin(self.startwinkel * np.pi / 180)*SCALE+move_x+WIDTH/2 , startplanet.y + startplanet.radius/SCALE * np.cos(self.startwinkel * np.pi / 180)*SCALE+move_y+HEIGHT/2),self.radius)
+            self.StartKoordinatenX = startplanet.x + startplanet.radius/SCALE * np.sin(self.startwinkel * np.pi / 180)
+            self.StartKoordiantenZ = startplanet.y + startplanet.radius/SCALE * np.cos(self.startwinkel * np.pi / 180)
+            self.r_x[0]= self.StartKoordinatenX   
+            self.r_z[0]= self.StartKoordiantenZ
 class Planet:
     def __init__(self, x, y, radius, color, mass,name):
         self.x = x
@@ -191,7 +200,6 @@ class Planet:
 
 
 def main():
-    powerchanged = False
     global SCALE
     run = True
     pause = False
@@ -246,18 +254,22 @@ def main():
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_w and rocket.z_schub<10:
                 rocket.z_schub += 1
                 rocket.powerchanged = True
+                rocket.rocketstarted = True
             # Raketenboost Links   
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_a and rocket.x_schub>-10:
                 rocket.x_schub -= 1
                 rocket.powerchanged = True
+                rocket.rocketstarted = True
             # Raketenboost Unten
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_s and rocket.z_schub>-10:
                 rocket.z_schub -= 1
                 rocket.powerchanged = True
+                rocket.rocketstarted = True
             # Raketenboost Rechts
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_d and rocket.x_schub<10:
                 rocket.x_schub += 1
                 rocket.powerchanged = True
+                rocket.rocketstarted = True
 
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
                 pause = not pause
@@ -293,7 +305,7 @@ def main():
 
         ### Rocket 
         if not pause:
-            rocket.draw(WINDOW,move_x,move_y)
+            rocket.draw(WINDOW,move_x,move_y, planets)
         for planet in planets:
             if not pause:
                 planet.update_position(planets)
