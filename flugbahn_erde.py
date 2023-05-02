@@ -309,10 +309,11 @@ def main():
         for planet in planets:
             if not pause:
                 planet.update_position(planets)
-            if show_distance:
-                planet.draw(WINDOW, 1, move_x, move_y, draw_line)
-            else:
-                planet.draw(WINDOW, 0, move_x, move_y, draw_line)
+            if not (planet.y*SCALE-planet.radius < move_y-HEIGHT/2 or planet.y*SCALE+planet.radius > move_y+HEIGHT/2 or planet.x*SCALE-planet.radius < move_x-WIDTH/2 or planet.x*SCALE-2*planet.radius > move_x+WIDTH/2):
+                if show_distance :
+                    planet.draw(WINDOW, 1, move_x, move_y, draw_line)
+                else:
+                    planet.draw(WINDOW, 0, move_x, move_y, draw_line)
         if not pause:
             rocket.draw(WINDOW,move_x,move_y, planets)
         fps_text = FONT_1.render("FPS: " + str(int(clock.get_fps())), True, COLOR_WHITE)
@@ -325,7 +326,7 @@ def main():
         WINDOW.blit(text_surface, (15, 105))
         text_surface = FONT_1.render("Use mouse or arrow keys to move around", True, COLOR_WHITE)
         WINDOW.blit(text_surface, (15, 135))
-        text_surface = FONT_1.render("Press C to center", True, COLOR_WHITE)
+        text_surface = FONT_1.render("Press C to center to the Sun or B to Center to the rocket", True, COLOR_WHITE)
         WINDOW.blit(text_surface, (15, 165))
         text_surface = FONT_1.render("Press Space to pause/unpause", True, COLOR_WHITE)
         WINDOW.blit(text_surface, (15, 195))
@@ -349,7 +350,6 @@ def main():
         WINDOW.blit(uranus_surface, (15, 495))
         neptune_surface = FONT_1.render("- Neptune", True, COLOR_NEPTUNE)
         WINDOW.blit(neptune_surface, (15, 525))
-
         pygame.display.update()
 
     pygame.quit()
