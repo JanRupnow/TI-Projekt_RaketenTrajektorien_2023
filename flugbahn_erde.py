@@ -276,7 +276,7 @@ def main():
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_p:
                 show_distance = not show_distance
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_c:
-                move_x, move_y = -sun.x * sun.SCALE, -sun.y * sun.SCALE
+                move_x, move_y = -sun.x * SCALE, -sun.y * SCALE
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_u:
                 draw_line = not draw_line
             elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 5:
@@ -304,8 +304,6 @@ def main():
             move_y -= distance
 
         ### Rocket 
-        if not pause:
-            rocket.draw(WINDOW,move_x,move_y, planets)
         for planet in planets:
             if not pause:
                 planet.update_position(planets)
@@ -313,7 +311,8 @@ def main():
                 planet.draw(WINDOW, 1, move_x, move_y, draw_line)
             else:
                 planet.draw(WINDOW, 0, move_x, move_y, draw_line)
-
+        if not pause:
+            rocket.draw(WINDOW,move_x,move_y, planets)
         fps_text = FONT_1.render("FPS: " + str(int(clock.get_fps())), True, COLOR_WHITE)
         WINDOW.blit(fps_text, (15, 15))
         text_surface = FONT_1.render("Press X or ESC to exit", True, COLOR_WHITE)
