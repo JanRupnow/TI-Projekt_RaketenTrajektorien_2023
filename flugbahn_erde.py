@@ -292,7 +292,8 @@ def main():
             move_y -= distance
 
         ### Rocket 
-        rocket.draw(WINDOW,move_x,move_y)
+        if not pause:
+            rocket.draw(WINDOW,move_x,move_y)
         for planet in planets:
             if not pause:
                 planet.update_position(planets)
