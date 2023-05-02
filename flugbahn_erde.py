@@ -277,6 +277,8 @@ def main():
                 show_distance = not show_distance
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_c:
                 move_x, move_y = -sun.x * SCALE, -sun.y * SCALE
+            elif event.type == pygame.KEYDOWN and event.key == pygame.K_b:
+                move_x, move_y = -rocket.r_x[rocket.aktuellerschritt] * SCALE, -rocket.r_z[rocket.aktuellerschritt] * SCALE    
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_u:
                 draw_line = not draw_line
             elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 5:
