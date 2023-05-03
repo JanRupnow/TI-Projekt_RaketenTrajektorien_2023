@@ -2,7 +2,6 @@ import pygame
 import math
 import numpy as np
 
-
 pygame.init()
 WIDTH, HEIGHT = pygame.display.Info().current_w, pygame.display.Info().current_h
 WINDOW = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
@@ -72,7 +71,6 @@ class Rocket:
     # Methode für die x-Komponente
     def f2(self, x, i:int):
         ## TO DO Gravitation für alle Planeten einbauen
-        r0 = np.sqrt(self.r_x[i]**2 + self.r_z[i]**2)
         r0 = np.sqrt(self.r_x[i]**2 + self.r_z[i]**2)
         x=( -(G*self.startplanet.mass/r0**2) - (Luftwiederstand*x**2*np.sign(self.v_z[i]) * p_0 * np.exp(-abs((r0-self.startplanet.radius)) / h_s))/(2 * self.KoerperMasse) ) * (self.r_x[i]/r0) #Extrakraft x einbauen
         #y=-(G*m_E/(r_x**2 + r_z**2)**1.5) * r_x - c*x**2*np.sign(x)
