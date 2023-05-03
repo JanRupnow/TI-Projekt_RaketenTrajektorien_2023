@@ -71,8 +71,8 @@ class Rocket:
     # Methode für die x-Komponente
     def f2(self, x, i:int):
         ## TO DO Gravitation für alle Planeten einbauen
-        r0 = np.sqrt(self.r_x[i]**2 + self.r_z[i]**2)
-        x=( -(G*self.startplanet.mass/r0**2) - (Luftwiederstand*x**2*np.sign(self.v_z[i]) * p_0 * np.exp(-abs((r0-self.startplanet.radius)) / h_s))/(2 * self.KoerperMasse) ) * (self.r_x[i]/r0) #Extrakraft x einbauen
+        r0 = np.sqrt( (self.r_x[i] - self.startplanet.x)**2 + (self.r_z[i] - self.startplanet.y)**2)
+        x=( -(G*self.startplanet.mass/r0**2) - (Luftwiederstand*x**2*np.sign(self.v_z[i]) * p_0 * np.exp(-abs((r0-self.startplanet.radius)) / h_s))/(2 * self.KoerperMasse) ) * ((self.r_x[i] - self.startplanet.x)/r0) #Extrakraft x einbauen
         #y=-(G*m_E/(r_x**2 + r_z**2)**1.5) * r_x - c*x**2*np.sign(x)
         if self.aktuellerschritt == self.aktuellerrechenschritt:
             if self.x_schub!=0:
@@ -81,8 +81,8 @@ class Rocket:
     # Methode für die z-Komponente
     def f1(self, x,i:int):
         ## TO DO Gravitation für alle Planeten einbauen
-        r0 = np.sqrt(self.r_x[i]**2 + self.r_z[i]**2)
-        z=( -(G*self.startplanet.mass/r0**2) - (Luftwiederstand*x**2*np.sign(self.v_z[i]) * p_0 * np.exp(-abs((r0-self.startplanet.radius)) / h_s))/(2 * self.KoerperMasse) ) * (self.r_z[i]/r0) #Extrakraft z einbauen
+        r0 = np.sqrt( (self.r_x[i] - self.startplanet.x)**2 + (self.r_z[i] - self.startplanet.y)**2)
+        z=( -(G*self.startplanet.mass/r0**2) - (Luftwiederstand*x**2*np.sign(self.v_z[i]) * p_0 * np.exp(-abs((r0-self.startplanet.radius)) / h_s))/(2 * self.KoerperMasse) ) * ((self.r_z[i] - self.startplanet.y)/r0) #Extrakraft z einbauen
         #y=-(G*m_E/(r_x**2 + r_z**2)**1.5) * r_z - c*x**2*np.sign(x)
         if self.aktuellerschritt == self.aktuellerrechenschritt:
             if self.z_schub!=0:
@@ -145,7 +145,18 @@ class Planet:
         self.x_vel = 0
         self.y_vel = 0
         self.name = name
-
+    def drawlineonly(self, window,move_x, move_y, draw_line):
+        x = self.x * SCALE + WIDTH / 2
+        y = self.y * SCALE + HEIGHT / 2
+        if len(self.orbit) > 2:
+            updated_points = []
+            for point in self.orbit:
+                x, y = point
+                x = x * SCALE + WIDTH / 2
+                y = y * SCALE + HEIGHT / 2
+                updated_points.append((x + move_x, y + move_y))
+            if draw_line:
+                pygame.draw.lines(window, self.color, False, updated_points, 1) 
     def draw(self, window, show, move_x, move_y, draw_line):
         x = self.x * SCALE + WIDTH / 2
         y = self.y * SCALE + HEIGHT / 2
@@ -237,6 +248,7 @@ def main():
     neptune.y_vel = 5.43 * 1000
 
     planets = [neptune, uranus, saturn, jupiter, mars, earth, venus, mercury, sun]
+    
 
     rocket = Rocket(45,0,0,10000,earth,5,(255,255,255))
     while run:
@@ -303,15 +315,18 @@ def main():
         if keys[pygame.K_DOWN] or mouse_y == window_h - 1:
             move_y -= distance
 
-        ### Rocket 
+        ### Rocket           
         for planet in planets:
             if not pause:
                 planet.update_position(planets)
-            if not (planet.y*SCALE-planet.radius < move_y-HEIGHT/2 or planet.y*SCALE+planet.radius > move_y+HEIGHT/2 or planet.x*SCALE-planet.radius < move_x-WIDTH/2 or planet.x*SCALE-2*planet.radius > move_x+WIDTH/2):
+            # Ohne Radius verschwinden die Balken bugs im Screen
+            if not (planet.y*SCALE+planet.radius < -move_y-HEIGHT/2 or planet.y*SCALE-planet.radius > -move_y+HEIGHT/2 or planet.x*SCALE+planet.radius < -move_x-WIDTH/2 or planet.x*SCALE-planet.radius > -move_x+WIDTH/2):
                 if show_distance :
                     planet.draw(WINDOW, 1, move_x, move_y, draw_line)
                 else:
                     planet.draw(WINDOW, 0, move_x, move_y, draw_line)
+            else: 
+                planet.drawlineonly(WINDOW, move_x, move_y, draw_line)
         if not pause:
             rocket.draw(WINDOW,move_x,move_y, planets)
         fps_text = FONT_1.render("FPS: " + str(int(clock.get_fps())), True, COLOR_WHITE)
@@ -349,7 +364,6 @@ def main():
         neptune_surface = FONT_1.render("- Neptune", True, COLOR_NEPTUNE)
         WINDOW.blit(neptune_surface, (15, 525))
         pygame.display.update()
-
     pygame.quit()
 
 
