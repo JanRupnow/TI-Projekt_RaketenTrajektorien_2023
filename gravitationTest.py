@@ -320,7 +320,8 @@ def main():
                 planet.draw(WINDOW, 0, move_x, move_y, draw_line)
 
         ### Rocket 
-        rocket.draw(WINDOW,move_x,move_y)
+        if not pause:
+            rocket.draw(WINDOW,move_x,move_y)
 
         fps_text = FONT_1.render("FPS: " + str(int(clock.get_fps())), True, COLOR_WHITE)
         WINDOW.blit(fps_text, (15, 15))
