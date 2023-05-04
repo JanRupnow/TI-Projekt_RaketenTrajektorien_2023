@@ -176,7 +176,7 @@ class Planet:
             pygame.draw.circle(window, self.color, (x + move_x, y + move_y), 2)
         #pygame.draw.circle(window, self.color, (x + move_x, y + move_y), self.radius)
         if not self.sun:
-            distance_text = FONT_2.render(f"{round(self.distance_to_sun * 1.057 * 10 ** -16, 8)} light years to "+self.name, True,
+            distance_text = FONT_2.render(self.name+ ": "+str(round(self.distance_to_rocket * 1.057 * 10 ** -16, 8))+ "light years", True,
                                           COLOR_WHITE)
             if show:
                 window.blit(distance_text, (x - distance_text.get_width() / 2 + move_x,
@@ -195,7 +195,8 @@ class Planet:
         force_y = math.sin(theta) * force
         return force_x, force_y
 
-    def update_position(self, planets):
+    def update_position(self, planets, rocket):
+        self.distance_to_rocket = math.sqrt((self.x-rocket.r_x[rocket.aktuellerschritt])**2+(self.y-rocket.r_z[rocket.aktuellerschritt])**2)
         total_fx = total_fy = 0
         for planet in planets:
             if self == planet:
@@ -323,7 +324,7 @@ def main():
         ### Rocket           
         for planet in planets:
             if not pause:
-                planet.update_position(planets)
+                planet.update_position(planets, rocket)
             # Ohne Radius verschwinden die Balken bugs im Screen
             if not (planet.y*SCALE+planet.radius*SCALE < -move_y-HEIGHT/2 or planet.y*SCALE-planet.radius*SCALE > -move_y+HEIGHT/2 or planet.x*SCALE+planet.radius*SCALE < -move_x-WIDTH/2 or planet.x*SCALE-planet.radius*SCALE > -move_x+WIDTH/2):
                 if show_distance :
