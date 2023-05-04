@@ -253,6 +253,7 @@ def main():
     neptune = Planet(-30.178 * AU, 0, 24764  * 10 ** 3, COLOR_NEPTUNE, 1.024 * 10 ** 26,"Neptun")
     neptune.y_vel = 5.43 * 1000
 
+
     planets = [neptune, uranus, saturn, jupiter, mars, earth, venus, mercury, sun]
     
 
