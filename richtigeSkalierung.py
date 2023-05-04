@@ -174,12 +174,11 @@ class Planet:
             pygame.draw.circle(window, self.color, (x + move_x, y + move_y), self.radius * SCALE)
         else:
             pygame.draw.circle(window, self.color, (x + move_x, y + move_y), 2)
-        #pygame.draw.circle(window, self.color, (x + move_x, y + move_y), self.radius)
-        if not self.sun:
-            distance_text = FONT_2.render(self.name+ ": "+str(round(self.distance_to_rocket * 1.057 * 10 ** -16, 8))+ "light years", True,
+        #pygame.draw.circle(window, self.color, (x + move_x, y + move_y), self.radius
+        distance_text = FONT_2.render(self.name+ ": "+str(round(self.distance_to_rocket * 1.057 * 10 ** -16, 8))+ "light years", True,
                                           COLOR_WHITE)
-            if show:
-                window.blit(distance_text, (x - distance_text.get_width() / 2 + move_x,
+        if show:
+            window.blit(distance_text, (x - distance_text.get_width() / 2 + move_x,
                                             y - distance_text.get_height() / 2 - 20 + move_y))
 
     def attraction(self, other):
