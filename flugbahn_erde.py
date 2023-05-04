@@ -1,6 +1,7 @@
 import pygame
 import math
 import numpy as np
+import json
 
 pygame.init()
 WIDTH, HEIGHT = pygame.display.Info().current_w, pygame.display.Info().current_h
@@ -252,10 +253,16 @@ def main():
     neptune = Planet(-30.178 * AU, 0, 24764 * SCALE * 10 ** 3, COLOR_NEPTUNE, 1.024 * 10 ** 26,"Neptun")
     neptune.y_vel = 5.43 * 1000
 
-    planets = [neptune, uranus, saturn, jupiter, mars, earth, venus, mercury, sun]
+    planets =[neptune, uranus, saturn, jupiter, mars, earth, venus, mercury, sun]
     
 
-    rocket = Rocket(45,0,0,10000,earth,5,(255,255,255))
+
+    ##json Datei für Raketen Parameter
+    with open ("TI-Projekt_RaketenTrajektorien_2023\parameterRakete.json" ,"r") as params:
+        rocket_params = json.load(params)
+
+
+    rocket = Rocket(rocket_params["startwinkel"],rocket_params["abwurfwinkel"],rocket_params["treibstoffmasse"],rocket_params["koerpermasse"],planets[rocket_params["startplanet"]],rocket_params["radius"],rocket_params["color"])
     while run:
         clock.tick(60)
         WINDOW.fill(COLOR_UNIVERSE)
