@@ -50,8 +50,8 @@ class Rocket:
         self.TreibstoffMasse = treibstoffmasse
         self.startwinkel = startwinkel
         ## Berechnung der Startposition der Rakete abhängig vom Startplaneten ohne Skalierung
-        self.StartKoordinatenX = startplanet.x + startplanet.radius/SCALE * np.sin(self.startwinkel * np.pi / 180)
-        self.StartKoordiantenZ = startplanet.y + startplanet.radius/SCALE * np.cos(self.startwinkel * np.pi / 180)
+        self.StartKoordinatenX = startplanet.x + startplanet.radius * np.sin(self.startwinkel * np.pi / 180)
+        self.StartKoordiantenZ = startplanet.y + startplanet.radius * np.cos(self.startwinkel * np.pi / 180)
         self.r_x= np.zeros(Rechenschritte)   # x-Position [m]
         self.r_z= np.zeros(Rechenschritte)   # z-Position [m]
         self.v_x=np.zeros(Rechenschritte)    # x-Geschwindigkeit [m/s]
@@ -110,27 +110,28 @@ class Rocket:
         self.r_x[i+1] = self.r_x[i] + self.v_x[i]*self.dt
     def update_scale(self,scale):
         self.radius *= scale
-    def draw(self, window, move_x, move_y, planets):
+    def draw(self, window, move_x, move_y, planets, paused):
         if self.rocketstarted:
-            if self.powerchanged or self.aktuellerschritt==0:
-                self.aktuellerrechenschritt = self.aktuellerschritt
-                for i in range(1000):
+            if not paused:
+                if self.powerchanged or self.aktuellerschritt==0:
+                    self.aktuellerrechenschritt = self.aktuellerschritt
+                    for i in range(1000):
+                        self.berechneNaechstenSchritt(self.aktuellerrechenschritt)
+                        self.aktuellerrechenschritt += 1
+                    self.powerchanged = False
+                else:
                     self.berechneNaechstenSchritt(self.aktuellerrechenschritt)
                     self.aktuellerrechenschritt += 1
-                self.powerchanged = False
-            else:
-                self.berechneNaechstenSchritt(self.aktuellerrechenschritt)
-                self.aktuellerrechenschritt += 1
-                
             # move_x and move_y verschieben je nach bewegung des Bildschirm
             pygame.draw.lines(window, self.color, False, np.array((self.r_x[self.aktuellerschritt:self.aktuellerrechenschritt]*SCALE+move_x+WIDTH/2, self.r_z[self.aktuellerschritt:self.aktuellerrechenschritt]*SCALE+move_y+ HEIGHT/2)).T, 1)
             pygame.draw.circle(window,self.color,(self.r_x[self.aktuellerschritt]*SCALE+move_x+WIDTH/2 , self.r_z[self.aktuellerschritt]*SCALE+move_y+HEIGHT/2),self.radius)
-            self.aktuellerschritt+= 1
+            if not paused:
+                self.aktuellerschritt+= 1
         else:
             startplanet = next(filter(lambda x: x.name == self.startplanet.name, planets),None)
-            pygame.draw.circle(window,self.color,(startplanet.x + startplanet.radius/SCALE * np.sin(self.startwinkel * np.pi / 180)*SCALE+move_x+WIDTH/2 , startplanet.y + startplanet.radius/SCALE * np.cos(self.startwinkel * np.pi / 180)*SCALE+move_y+HEIGHT/2),self.radius)
-            self.StartKoordinatenX = startplanet.x + startplanet.radius/SCALE * np.sin(self.startwinkel * np.pi / 180)
-            self.StartKoordiantenZ = startplanet.y + startplanet.radius/SCALE * np.cos(self.startwinkel * np.pi / 180)
+            pygame.draw.circle(window,self.color,(startplanet.x + startplanet.radius * np.sin(self.startwinkel * np.pi / 180) *SCALE+move_x+WIDTH/2 , startplanet.y + startplanet.radius * np.cos(self.startwinkel * np.pi / 180)*SCALE+move_y+HEIGHT/2),self.radius)
+            self.StartKoordinatenX = startplanet.x + startplanet.radius * np.sin(self.startwinkel * np.pi / 180)
+            self.StartKoordiantenZ = startplanet.y + startplanet.radius * np.cos(self.startwinkel * np.pi / 180)
             self.r_x[0]= self.StartKoordinatenX   
             self.r_z[0]= self.StartKoordiantenZ
 class Planet:
@@ -171,16 +172,15 @@ class Planet:
             if draw_line:
                 pygame.draw.lines(window, self.color, False, updated_points, 1)   
         
-        if self.radius > 2:
-            pygame.draw.circle(window, self.color, (x + move_x, y + move_y), self.radius)
+        if self.radius * SCALE> 2:
+            pygame.draw.circle(window, self.color, (x + move_x, y + move_y), self.radius * SCALE)
         else:
             pygame.draw.circle(window, self.color, (x + move_x, y + move_y), 2)
-        #pygame.draw.circle(window, self.color, (x + move_x, y + move_y), self.radius)
-        if not self.sun:
-            distance_text = FONT_2.render(f"{round(self.distance_to_sun * 1.057 * 10 ** -16, 8)} light years to "+self.name, True,
+        #pygame.draw.circle(window, self.color, (x + move_x, y + move_y), self.radius
+        distance_text = FONT_2.render(self.name+ ": "+str(round(self.distance_to_rocket * 1.057 * 10 ** -16, 8))+ "light years", True,
                                           COLOR_WHITE)
-            if show:
-                window.blit(distance_text, (x - distance_text.get_width() / 2 + move_x,
+        if show:
+            window.blit(distance_text, (x - distance_text.get_width() / 2 + move_x,
                                             y - distance_text.get_height() / 2 - 20 + move_y))
 
     def attraction(self, other):
@@ -196,7 +196,8 @@ class Planet:
         force_y = math.sin(theta) * force
         return force_x, force_y
 
-    def update_position(self, planets):
+    def update_position(self, planets, rocket):
+        self.distance_to_rocket = math.sqrt((self.x-rocket.r_x[rocket.aktuellerschritt])**2+(self.y-rocket.r_z[rocket.aktuellerschritt])**2)
         total_fx = total_fy = 0
         for planet in planets:
             if self == planet:
@@ -226,42 +227,38 @@ def main():
 
     # Metric from: https://nssdc.gsfc.nasa.gov/planetary/factsheet/
 
-    sun = Planet(0, 0, 695 * SCALE * 10 ** 6, COLOR_SUN, 1.98892 * 10 ** 30,"Sonne")
+    sun = Planet(0, 0, 695 * 10 ** 6, COLOR_SUN, 1.98892 * 10 ** 30,"Sonne")
     sun.sun = True
 
-    mercury = Planet(-0.387 * AU, 0, 2439 * SCALE * 10 ** 3, COLOR_MERCURY, 3.30 * 10 ** 23,"Merkur")
+    mercury = Planet(-0.387 * AU, 0, 2439 * 10 ** 3, COLOR_MERCURY, 3.30 * 10 ** 23,"Merkur")
     mercury.y_vel = 47.4 * 1000
 
-    venus = Planet(-0.723 * AU, 0, 6052 * SCALE * 10 ** 3, COLOR_VENUS, 4.8685 * 10 ** 24,"Venus")
+    venus = Planet(-0.723 * AU, 0, 6052 * 10 ** 3, COLOR_VENUS, 4.8685 * 10 ** 24,"Venus")
     venus.y_vel = 35.02 * 1000
 
-    earth = Planet(-1 * AU, 0, 6378 * SCALE * 10 ** 3, COLOR_EARTH, 5.9722 * 10 ** 24,"Erde")
+    earth = Planet(-1 * AU, 0, 6378 * 10 ** 3, COLOR_EARTH, 5.9722 * 10 ** 24,"Erde")
     earth.y_vel = 29.783 * 1000
 
-    mars = Planet(-1.524 * AU, 0, 3394 * SCALE * 10 ** 3, COLOR_MARS, 6.39 * 10 ** 23,"Mars")
+    mars = Planet(-1.524 * AU, 0, 3394  * 10 ** 3, COLOR_MARS, 6.39 * 10 ** 23,"Mars")
     mars.y_vel = 24.077 * 1000
 
-    jupiter = Planet(-5.204 * AU, 0, 71492 * SCALE * 10 ** 3, COLOR_JUPITER, 1.898 * 10 ** 27,"Jupiter")
+    jupiter = Planet(-5.204 * AU, 0, 71492 * 10 ** 3, COLOR_JUPITER, 1.898 * 10 ** 27,"Jupiter")
     jupiter.y_vel = 13.06 * 1000
 
-    saturn = Planet(-9.573 * AU, 0, 60268 * SCALE * 10 ** 3, COLOR_SATURN, 5.683 * 10 ** 26,"Saturn")
+    saturn = Planet(-9.573 * AU, 0, 60268  * 10 ** 3, COLOR_SATURN, 5.683 * 10 ** 26,"Saturn")
     saturn.y_vel = 9.68 * 1000
 
-    uranus = Planet(-19.165 * AU, 0, 25559 * SCALE * 10 ** 3, COLOR_URANUS, 8.681 * 10 ** 25,"Uranus")
+    uranus = Planet(-19.165 * AU, 0, 25559  * 10 ** 3, COLOR_URANUS, 8.681 * 10 ** 25,"Uranus")
     uranus.y_vel = 6.80 * 1000
 
-    neptune = Planet(-30.178 * AU, 0, 24764 * SCALE * 10 ** 3, COLOR_NEPTUNE, 1.024 * 10 ** 26,"Neptun")
+    neptune = Planet(-30.178 * AU, 0, 24764  * 10 ** 3, COLOR_NEPTUNE, 1.024 * 10 ** 26,"Neptun")
     neptune.y_vel = 5.43 * 1000
 
-    planets =[neptune, uranus, saturn, jupiter, mars, earth, venus, mercury, sun]
+
+    planets = [neptune, uranus, saturn, jupiter, mars, earth, venus, mercury, sun]
     
-
-
-    ##json Datei für Raketen Parameter
     with open ("parameterRakete.json" ,"r") as params:
         rocket_params = json.load(params)
-
-
     rocket = Rocket(rocket_params["startwinkel"],rocket_params["abwurfwinkel"],rocket_params["treibstoffmasse"],rocket_params["koerpermasse"],planets[rocket_params["startplanet"]],rocket_params["radius"],rocket_params["color"])
     while run:
         clock.tick(60)
@@ -304,11 +301,17 @@ def main():
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_u:
                 draw_line = not draw_line
             elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 5:
+                mouseX, mouseY = pygame.mouse.get_pos()
+                move_x-=(mouse_x-WIDTH/2)/2
+                move_y-=(mouse_y-HEIGHT/2)/2
                 SCALE *= 0.75
                 rocket.update_scale(0.75)
                 for planet in planets:
                     planet.update_scale(0.75)
             elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 4:
+                mouseX, mouseY = pygame.mouse.get_pos()
+                move_x-=(mouse_x-WIDTH/2)/2
+                move_y-=(mouse_y-HEIGHT/2)/2
                 SCALE *= 1.25
                 rocket.update_scale(1.25)
                 for planet in planets:
@@ -326,21 +329,20 @@ def main():
             move_y += distance
         if keys[pygame.K_DOWN] or mouse_y == window_h - 1:
             move_y -= distance
-
+        
         ### Rocket           
         for planet in planets:
             if not pause:
-                planet.update_position(planets)
+                planet.update_position(planets, rocket)
             # Ohne Radius verschwinden die Balken bugs im Screen
-            if not (planet.y*SCALE+planet.radius < -move_y-HEIGHT/2 or planet.y*SCALE-planet.radius > -move_y+HEIGHT/2 or planet.x*SCALE+planet.radius < -move_x-WIDTH/2 or planet.x*SCALE-planet.radius > -move_x+WIDTH/2):
+            if not (planet.y*SCALE+planet.radius*SCALE < -move_y-HEIGHT/2 or planet.y*SCALE-planet.radius*SCALE > -move_y+HEIGHT/2 or planet.x*SCALE+planet.radius*SCALE < -move_x-WIDTH/2 or planet.x*SCALE-planet.radius*SCALE > -move_x+WIDTH/2):
                 if show_distance :
                     planet.draw(WINDOW, 1, move_x, move_y, draw_line)
                 else:
                     planet.draw(WINDOW, 0, move_x, move_y, draw_line)
             else: 
                 planet.drawlineonly(WINDOW, move_x, move_y, draw_line)
-        if not pause:
-            rocket.draw(WINDOW,move_x,move_y, planets)
+        rocket.draw(WINDOW,move_x,move_y, planets, pause)
         fps_text = FONT_1.render("FPS: " + str(int(clock.get_fps())), True, COLOR_WHITE)
         WINDOW.blit(fps_text, (15, 15))
         text_surface = FONT_1.render("Press X or ESC to exit", True, COLOR_WHITE)
