@@ -1,0 +1,9 @@
+{
+    "startwinkel": 45 ,
+    "abwurfwinkel": 45 ,
+    "treibstoffmasse": 100,
+    "koerpermasse": 100,
+    "startplanet" : "Erde",
+    "radius" : 100,
+    "color" : [255,255,255]
+}
