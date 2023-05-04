@@ -109,22 +109,23 @@ class Rocket:
         self.r_x[i+1] = self.r_x[i] + self.v_x[i]*self.dt
     def update_scale(self,scale):
         self.radius *= scale
-    def draw(self, window, move_x, move_y, planets):
+    def draw(self, window, move_x, move_y, planets, paused):
         if self.rocketstarted:
-            if self.powerchanged or self.aktuellerschritt==0:
-                self.aktuellerrechenschritt = self.aktuellerschritt
-                for i in range(1000):
+            if not paused:
+                if self.powerchanged or self.aktuellerschritt==0:
+                    self.aktuellerrechenschritt = self.aktuellerschritt
+                    for i in range(1000):
+                        self.berechneNaechstenSchritt(self.aktuellerrechenschritt)
+                        self.aktuellerrechenschritt += 1
+                    self.powerchanged = False
+                else:
                     self.berechneNaechstenSchritt(self.aktuellerrechenschritt)
                     self.aktuellerrechenschritt += 1
-                self.powerchanged = False
-            else:
-                self.berechneNaechstenSchritt(self.aktuellerrechenschritt)
-                self.aktuellerrechenschritt += 1
-                
             # move_x and move_y verschieben je nach bewegung des Bildschirm
             pygame.draw.lines(window, self.color, False, np.array((self.r_x[self.aktuellerschritt:self.aktuellerrechenschritt]*SCALE+move_x+WIDTH/2, self.r_z[self.aktuellerschritt:self.aktuellerrechenschritt]*SCALE+move_y+ HEIGHT/2)).T, 1)
             pygame.draw.circle(window,self.color,(self.r_x[self.aktuellerschritt]*SCALE+move_x+WIDTH/2 , self.r_z[self.aktuellerschritt]*SCALE+move_y+HEIGHT/2),self.radius)
-            self.aktuellerschritt+= 1
+            if not paused:
+                self.aktuellerschritt+= 1
         else:
             startplanet = next(filter(lambda x: x.name == self.startplanet.name, planets),None)
             pygame.draw.circle(window,self.color,(startplanet.x + startplanet.radius * np.sin(self.startwinkel * np.pi / 180) *SCALE+move_x+WIDTH/2 , startplanet.y + startplanet.radius * np.cos(self.startwinkel * np.pi / 180)*SCALE+move_y+HEIGHT/2),self.radius)
@@ -332,8 +333,7 @@ def main():
                     planet.draw(WINDOW, 0, move_x, move_y, draw_line)
             else: 
                 planet.drawlineonly(WINDOW, move_x, move_y, draw_line)
-        if not pause:
-            rocket.draw(WINDOW,move_x,move_y, planets)
+        rocket.draw(WINDOW,move_x,move_y, planets, pause)
         fps_text = FONT_1.render("FPS: " + str(int(clock.get_fps())), True, COLOR_WHITE)
         WINDOW.blit(fps_text, (15, 15))
         text_surface = FONT_1.render("Press X or ESC to exit", True, COLOR_WHITE)
