@@ -258,7 +258,7 @@ def main():
 
 
     ##json Datei für Raketen Parameter
-    with open ("TI-Projekt_RaketenTrajektorien_2023\parameterRakete.json" ,"r") as params:
+    with open ("parameterRakete.json" ,"r") as params:
         rocket_params = json.load(params)
 
 
