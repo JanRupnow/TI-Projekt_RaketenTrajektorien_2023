@@ -25,13 +25,13 @@ AU = 149.6e6 * 1000  # Astronomical unit
 G = 6.67428e-11  # Gravitational constant
 SCALE = 200 / AU
 ### Generelle Variablen
-Luftwiederstand = 0.0162        # Luftwiderstandsbeiwert                     #  - Verwendung zur Einstellung des Schubs
+Luftwiederstand = 0.0162        # Luftwiderstandsbeiwert                    
 FallBeschleunigung = 9.81       # [m/s^2]
 p_0 = 1.225 # Luftdichte auf Meereshöhe [kg/m^3]
 h_s = 8400  # Skalenhöhe [m]
 
 ### Zeit-Variablen
-Startzeit = 0                   # [s]                # [s]
+Startzeit = 0                
 Rechenschritte = 100000
 Endzeit = Rechenschritte*5
 t=np.linspace(Startzeit, Endzeit, Rechenschritte)
@@ -136,6 +136,7 @@ class Rocket:
             self.r_z[0]= self.StartKoordiantenZ
 class Planet:
     def __init__(self, x, y, radius, color, mass,name):
+        # Planeten Konstruktor
         self.x = x
         self.y = y
         self.radius = radius
@@ -148,6 +149,7 @@ class Planet:
         self.y_vel = 0
         self.name = name
     def drawlineonly(self, window,move_x, move_y, draw_line):
+        # Funktion wird genutzt um die Planeten Orbits darzustellen die außerhalb des Bildschirms sind und deshalb nicht gezeichnet werden
         x = self.x * SCALE + WIDTH / 2
         y = self.y * SCALE + HEIGHT / 2
         if len(self.orbit) > 2:
@@ -250,13 +252,15 @@ def main():
 
     uranus = Planet(-19.165 * AU, 0, 25559  * 10 ** 3, COLOR_URANUS, 8.681 * 10 ** 25,"Uranus")
     uranus.y_vel = 6.80 * 1000
-
+ 
     neptune = Planet(-30.178 * AU, 0, 24764  * 10 ** 3, COLOR_NEPTUNE, 1.024 * 10 ** 26,"Neptun")
     neptune.y_vel = 5.43 * 1000
 
-
-    planets = [neptune, uranus, saturn, jupiter, mars, earth, venus, mercury, sun]
+    moon = Planet(-1*AU-378_000_000,0,1750*10**3,(220,220,220),73*10**21,"Mond")
+    moon.y_vel = 1.022*1000
+    planets = [moon,neptune, uranus, saturn, jupiter, mars,earth, venus, mercury, sun,]
     
+    # Konstruktor Werte definiert in der JSON Datei
     with open ("parameterRakete.json" ,"r") as params:
         rocket_params = json.load(params)
     rocket = Rocket(rocket_params["startwinkel"],rocket_params["abwurfwinkel"],rocket_params["treibstoffmasse"],rocket_params["koerpermasse"],planets[rocket_params["startplanet"]],rocket_params["radius"],rocket_params["color"])
