@@ -299,11 +299,17 @@ def main():
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_u:
                 draw_line = not draw_line
             elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 5:
+                mouseX, mouseY = pygame.mouse.get_pos()
+                move_x-=(mouse_x-WIDTH/2)/2
+                move_y-=(mouse_y-HEIGHT/2)/2
                 SCALE *= 0.75
                 rocket.update_scale(0.75)
                 for planet in planets:
                     planet.update_scale(0.75)
             elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 4:
+                mouseX, mouseY = pygame.mouse.get_pos()
+                move_x-=(mouse_x-WIDTH/2)/2
+                move_y-=(mouse_y-HEIGHT/2)/2
                 SCALE *= 1.25
                 rocket.update_scale(1.25)
                 for planet in planets:
@@ -321,7 +327,7 @@ def main():
             move_y += distance
         if keys[pygame.K_DOWN] or mouse_y == window_h - 1:
             move_y -= distance
-
+        
         ### Rocket           
         for planet in planets:
             if not pause:
