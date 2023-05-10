@@ -4,7 +4,7 @@ import numpy as np
 from planet import *
 from konstanten import *
 from rocket import *
-
+import datetime
 pygame.init()
 WIDTH, HEIGHT = pygame.display.Info().current_w, pygame.display.Info().current_h
 WINDOW = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
@@ -14,9 +14,12 @@ FONT_2 = pygame.font.SysFont("Trebuchet MS", 16)
 pygame.display.set_caption("Solar System Simulation")
 
 
+now = datetime.datetime.now()
+
 
 def main():
-    global SCALE, TIMESTEP
+    time_passed = datetime.timedelta(seconds=0)
+    global SCALE, TIMESTEP, now
     run = True
     pause = False
     show_distance = False
@@ -124,7 +127,9 @@ def main():
                 for planet in planets:
                     planet.timestep = rocket.timestep = TIMESTEP
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_i:
-                index = max(alleZeitschritte.index(TIMESTEP)-1, 0)
+                try: 
+                    index = max(alleZeitschritte.index(TIMESTEP)-1, 0)
+                catch
                 TIMESTEP = alleZeitschritte[index]
                 rocket.timestep = TIMESTEP
                 rocket.timestepChanged = True
@@ -194,8 +199,13 @@ def main():
         neptune_surface = FONT_1.render("- Neptune", True, COLOR_NEPTUNE)
         WINDOW.blit(neptune_surface, (15, 525))
 
-        text_surface = FONT_1.render(f"Time step: {TIMESTEP}s", True, COLOR_WHITE)
-        WINDOW.blit(text_surface, (500, 15))
+        time_passed += datetime.timedelta(seconds=TIMESTEP)
+        text_surface = FONT_1.render(f"Time step: {TIMESTEP}x", True, COLOR_WHITE)
+        WINDOW.blit(text_surface, (1500, 15))
+        text_actual_time = FONT_1.render(f'Current time: {(now+time_passed).strftime("%d/%m/%Y, %H:%M:%S")}', True, COLOR_WHITE)
+        WINDOW.blit(text_actual_time, (1500, 45))
+        text_time_passed = FONT_1.render(f'Passed time: {time_passed}', True, COLOR_WHITE)
+        WINDOW.blit(text_time_passed, (1500, 75))
 
         pygame.display.update()
     pygame.quit()
