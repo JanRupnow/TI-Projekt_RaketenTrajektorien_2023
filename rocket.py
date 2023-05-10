@@ -5,7 +5,8 @@ class Rocket:
     def __init__(self, startwinkel, abwurfwinkel,treibstoffmasse, koerpermasse, startplanet, radius, color):
         self.aktuellerschritt = AktuellerSchritt
         self.aktuellerrechenschritt = AktuellerRechenschritt
-        self.dt = dt
+        self.timestep = TIMESTEP
+        self.timestepChanged = False
         self.AbwurfWinkel = abwurfwinkel # Winkel des Starts auf der Erde [°C]
         self.KoerperMasse = koerpermasse
         self.TreibstoffMasse = treibstoffmasse
@@ -54,32 +55,33 @@ class Rocket:
     def berechneNaechstenSchritt(self, i: int):
         # z-Komponente
         k1 = self.f1(self.v_z[i],i)
-        k2 = self.f1(self.v_z[i] + k1*self.dt/2,i)
-        k3 = self.f1(self.v_z[i] + k2*self.dt/2,i)
-        k4 = self.f1(self.v_z[i] + k3*self.dt/2,i)
+        k2 = self.f1(self.v_z[i] + k1*self.timestep/2,i)
+        k3 = self.f1(self.v_z[i] + k2*self.timestep/2,i)
+        k4 = self.f1(self.v_z[i] + k3*self.timestep/2,i)
         k = (k1 + 2*k2 + 2*k3 + k4)/6
-        self.v_z[i+1] = self.v_z[i] + k*self.dt
-        self.r_z[i+1] = self.r_z[i] + self.v_z[i]*self.dt
+        self.v_z[i+1] = self.v_z[i] + k*self.timestep
+        self.r_z[i+1] = self.r_z[i] + self.v_z[i]*self.timestep
 
         # x-Komponente
         k1 = self.f2(self.v_x[i],i)
-        k2 = self.f2(self.v_x[i] + k1*self.dt/2,i)
-        k3 = self.f2(self.v_x[i] + k2*self.dt/2,i)
-        k4 = self.f2(self.v_x[i] + k3*self.dt/2,i)
+        k2 = self.f2(self.v_x[i] + k1*self.timestep/2,i)
+        k3 = self.f2(self.v_x[i] + k2*self.timestep/2,i)
+        k4 = self.f2(self.v_x[i] + k3*self.timestep/2,i)
         k = (k1 + 2*k2 + 2*k3 + k4)/6
-        self.v_x[i+1] = self.v_x[i] + k*self.dt
-        self.r_x[i+1] = self.r_x[i] + self.v_x[i]*self.dt
+        self.v_x[i+1] = self.v_x[i] + k*self.timestep
+        self.r_x[i+1] = self.r_x[i] + self.v_x[i]*self.timestep
     def update_scale(self,scale):
         self.radius *= scale
     def draw(self, window, move_x, move_y, planets, paused, scale, width, height):
         if self.rocketstarted:
             if not paused:
-                if self.powerchanged or self.aktuellerschritt==0:
+                if self.powerchanged or self.aktuellerschritt==0 or self.timestepChanged:
                     self.aktuellerrechenschritt = self.aktuellerschritt
                     for i in range(1000):
                         self.berechneNaechstenSchritt(self.aktuellerrechenschritt)
                         self.aktuellerrechenschritt += 1
                     self.powerchanged = False
+                    self.timestepChanged = False
                 else:
                     self.berechneNaechstenSchritt(self.aktuellerrechenschritt)
                     self.aktuellerrechenschritt += 1

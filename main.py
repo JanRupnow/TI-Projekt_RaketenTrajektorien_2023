@@ -16,7 +16,7 @@ pygame.display.set_caption("Solar System Simulation")
 
 
 def main():
-    global SCALE
+    global SCALE, TIMESTEP
     run = True
     pause = False
     show_distance = False
@@ -116,6 +116,20 @@ def main():
                 rocket.update_scale(1.25)
                 for planet in planets:
                     planet.update_scale(1.25)
+            elif event.type == pygame.KEYDOWN and event.key == pygame.K_o:
+                index = min(alleZeitschritte.index(TIMESTEP)+1, len(alleZeitschritte)-1)
+                TIMESTEP = alleZeitschritte[index]
+                rocket.timestep = TIMESTEP
+                rocket.timestepChanged = True
+                for planet in planets:
+                    planet.timestep = rocket.timestep = TIMESTEP
+            elif event.type == pygame.KEYDOWN and event.key == pygame.K_i:
+                index = max(alleZeitschritte.index(TIMESTEP)-1, 0)
+                TIMESTEP = alleZeitschritte[index]
+                rocket.timestep = TIMESTEP
+                rocket.timestepChanged = True
+                for planet in planets:
+                    planet.timestep = rocket.timestep = TIMESTEP
 
         keys = pygame.key.get_pressed()
         mouse_x, mouse_y = pygame.mouse.get_pos()
@@ -159,6 +173,8 @@ def main():
         WINDOW.blit(text_surface, (15, 195))
         text_surface = FONT_1.render("Use scroll-wheel to zoom", True, COLOR_WHITE)
         WINDOW.blit(text_surface, (15, 225))
+        text_surface = FONT_1.render("Use I to reduce and O to increase the time step", True, COLOR_WHITE)
+        WINDOW.blit(text_surface, (15, 255))
         sun_surface = FONT_1.render("- Sun", True, COLOR_SUN)
         WINDOW.blit(sun_surface, (15, 285))
         mercury_surface = FONT_1.render("- Mercury", True, COLOR_MERCURY)
@@ -177,6 +193,10 @@ def main():
         WINDOW.blit(uranus_surface, (15, 495))
         neptune_surface = FONT_1.render("- Neptune", True, COLOR_NEPTUNE)
         WINDOW.blit(neptune_surface, (15, 525))
+
+        text_surface = FONT_1.render(f"Time step: {TIMESTEP}s", True, COLOR_WHITE)
+        WINDOW.blit(text_surface, (500, 15))
+
         pygame.display.update()
     pygame.quit()
 

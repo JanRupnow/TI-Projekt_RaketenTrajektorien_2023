@@ -15,6 +15,7 @@ class Planet:
         self.x_vel = 0
         self.y_vel = 0
         self.name = name
+        self.timestep = TIMESTEP
     def drawlineonly(self, window,move_x, move_y, draw_line,scale, width, height):
         x = self.x * scale + width / 2
         y = self.y * scale + height / 2
@@ -73,10 +74,10 @@ class Planet:
             fx, fy = self.attraction(planet)
             total_fx += fx
             total_fy += fy
-        self.x_vel += total_fx / self.mass * TIMESTEP
-        self.y_vel += total_fy / self.mass * TIMESTEP
-        self.x += self.x_vel * TIMESTEP
-        self.y += self.y_vel * TIMESTEP
+        self.x_vel += total_fx / self.mass * self.timestep
+        self.y_vel += total_fy / self.mass * self.timestep
+        self.x += self.x_vel * self.timestep
+        self.y += self.y_vel * self.timestep
         self.orbit.append((self.x, self.y))
 
     def update_scale(self, scale):
