@@ -62,7 +62,7 @@ def main():
     planets = [moon,neptune, uranus, saturn, jupiter, mars,earth, venus, mercury, sun,]
     
 
-    rocket = Rocket(45,0,0,10000,earth,5,(255,255,255))
+    rocket = Rocket(45,0,0,10000,earth,2,(255,255,255))
     while run:
         clock.tick(60)
         WINDOW.fill(COLOR_UNIVERSE)
@@ -73,23 +73,23 @@ def main():
                                              (event.key == pygame.K_x or event.key == pygame.K_ESCAPE)):
                 run = False
             # Raketenboost Oben
-            elif event.type == pygame.KEYDOWN and event.key == pygame.K_w and rocket.z_schub<10:
-                rocket.z_schub += 1
+            elif event.type == pygame.KEYDOWN and event.key == pygame.K_w and rocket.thrust<10:
+                rocket.thrust += 1
                 rocket.powerchanged = True
                 rocket.rocketstarted = True
             # Raketenboost Links   
-            elif event.type == pygame.KEYDOWN and event.key == pygame.K_a and rocket.x_schub>-10:
-                rocket.x_schub -= 1
+            elif event.type == pygame.KEYDOWN and event.key == pygame.K_a and rocket.angle>-45:
+                rocket.angle -= 1
                 rocket.powerchanged = True
                 rocket.rocketstarted = True
             # Raketenboost Unten
-            elif event.type == pygame.KEYDOWN and event.key == pygame.K_s and rocket.z_schub>-10:
-                rocket.z_schub -= 1
+            elif event.type == pygame.KEYDOWN and event.key == pygame.K_s and rocket.thrust>0:
+                rocket.thrust -= 1
                 rocket.powerchanged = True
                 rocket.rocketstarted = True
             # Raketenboost Rechts
-            elif event.type == pygame.KEYDOWN and event.key == pygame.K_d and rocket.x_schub<10:
-                rocket.x_schub += 1
+            elif event.type == pygame.KEYDOWN and event.key == pygame.K_d and rocket.angle<45:
+                rocket.angle += 1
                 rocket.powerchanged = True
                 rocket.rocketstarted = True
 
@@ -210,6 +210,11 @@ def main():
         WINDOW.blit(rocket_fuel, (1500, 135))
         rocket_maxQ = FONT_1.render(f'MaxQ: %', True, COLOR_WHITE)
         WINDOW.blit(rocket_maxQ, (1500, 165))
+
+        thrust_text = FONT_1.render(f'Thrust: {rocket.thrust}m/s^2', True, COLOR_WHITE)
+        WINDOW.blit(thrust_text, (1500, 970))
+        angle_text = FONT_1.render(f'Angle: {rocket.angle}°', True, COLOR_WHITE)
+        WINDOW.blit(angle_text, (1500, 1000))
         pygame.display.update()
     pygame.quit()
 

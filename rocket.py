@@ -1,6 +1,7 @@
 import numpy as np
 from konstanten import *
 import pygame
+import math
 class Rocket:
     def __init__(self, startwinkel, abwurfwinkel,treibstoffmasse, koerpermasse, startplanet, radius, color):
         self.aktuellerschritt = AktuellerSchritt
@@ -20,14 +21,14 @@ class Rocket:
         self.v_z=np.zeros(Rechenschritte)    # z-Geschwindigkeit [m/s]               
         self.c = Luftwiederstand/self.KoerperMasse
         self.radius = radius
-        self.z_schub = 0                     # aktuell nicht genutzt     
-        self.x_schub = 0  
+        self.thrust = 0                     # aktuell nicht genutzt     
+        self.angle = 0  
         self.powerchanged = False   
         self.color = color
         self.startplanet = startplanet
         self.predictions = []
-        self.v_x[0] = 10e6
-        self.v_z[0] = 10e6
+        self.v_x[0] = 10e3
+        self.v_z[0] = 10e3
         self.r_x[0]= self.StartKoordinatenX   
         self.r_z[0]= self.StartKoordiantenZ
         self.rocketstarted = False
@@ -37,9 +38,10 @@ class Rocket:
         r0 = np.sqrt( (self.r_x[i] - self.startplanet.x)**2 + (self.r_z[i] - self.startplanet.y)**2)
         x=( -(G*self.startplanet.mass/r0**2) - (Luftwiederstand*x**2*np.sign(self.v_z[i]) * p_0 * np.exp(-abs((r0-self.startplanet.radius)) / h_s))/(2 * self.KoerperMasse) ) * ((self.r_x[i] - self.startplanet.x)/r0) #Extrakraft x einbauen
         #y=-(G*m_E/(r_x**2 + r_z**2)**1.5) * r_x - c*x**2*np.sign(x)
-        if self.aktuellerschritt == self.aktuellerrechenschritt:
-            if self.x_schub!=0:
-                x += FallBeschleunigung*self.x_schub
+        #if self.aktuellerschritt == self.aktuellerrechenschritt:
+            #if self.x_schub!=0:
+        if self.thrust != 0:
+            x += FallBeschleunigung*math.cos(math.atan2(self.v_z[i], self.v_x[i]) + self.angle*np.pi/180)*self.thrust
         return x
     # Methode für die z-Komponente
     def f1(self, x,i:int):
@@ -47,9 +49,9 @@ class Rocket:
         r0 = np.sqrt( (self.r_x[i] - self.startplanet.x)**2 + (self.r_z[i] - self.startplanet.y)**2)
         z=( -(G*self.startplanet.mass/r0**2) - (Luftwiederstand*x**2*np.sign(self.v_z[i]) * p_0 * np.exp(-abs((r0-self.startplanet.radius)) / h_s))/(2 * self.KoerperMasse) ) * ((self.r_z[i] - self.startplanet.y)/r0) #Extrakraft z einbauen
         #y=-(G*m_E/(r_x**2 + r_z**2)**1.5) * r_z - c*x**2*np.sign(x)
-        if self.aktuellerschritt == self.aktuellerrechenschritt:
-            if self.z_schub!=0:
-                z += FallBeschleunigung*self.z_schub
+
+        if self.thrust != 0:
+            z += FallBeschleunigung*math.sin(math.atan2(self.v_z[i], self.v_x[i]) + self.angle*np.pi/180)*self.thrust
         return z
     # Berechnung nach Runge-Kutta Verfahren
     def berechneNaechstenSchritt(self, i: int):
@@ -86,8 +88,9 @@ class Rocket:
                     self.berechneNaechstenSchritt(self.aktuellerrechenschritt)
                     self.aktuellerrechenschritt += 1
             # move_x and move_y verschieben je nach bewegung des Bildschirm
-            pygame.draw.lines(window, self.color, False, np.array((self.r_x[self.aktuellerschritt:self.aktuellerrechenschritt]*scale+move_x+width/2, self.r_z[self.aktuellerschritt:self.aktuellerrechenschritt]*scale+move_y+ height/2)).T, 1)
-            pygame.draw.circle(window,self.color,(self.r_x[self.aktuellerschritt]*scale+move_x+width/2 , self.r_z[self.aktuellerschritt]*scale+move_y+height/2),self.radius)
+            if self.aktuellerrechenschritt > 2:
+                pygame.draw.lines(window, self.color, False, np.array((self.r_x[self.aktuellerschritt:self.aktuellerrechenschritt]*scale+move_x+width/2, self.r_z[self.aktuellerschritt:self.aktuellerrechenschritt]*scale+move_y+ height/2)).T, 1)
+                pygame.draw.circle(window,self.color,(self.r_x[self.aktuellerschritt]*scale+move_x+width/2 , self.r_z[self.aktuellerschritt]*scale+move_y+height/2),self.radius)
             if not paused:
                 self.aktuellerschritt+= 1
         else:
