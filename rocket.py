@@ -8,7 +8,7 @@ module = sys.modules['__main__']
 path, name = os.path.split(module.__file__)
 path = os.path.join(path, 'Rocket.png')
 img0 = pygame.image.load(path)
-
+img0 = pygame.transform.scale_by(img0, 0.5)
 class Rocket:
     def __init__(self, startwinkel, abwurfwinkel,treibstoffmasse, koerpermasse, startplanet, radius, color):
         self.aktuellerschritt = AktuellerSchritt
@@ -42,7 +42,9 @@ class Rocket:
 
         #self.imgage = img0
     # Methode für die x-Komponente
-    def f2(self, x, i:int):
+    def f2(self, x, i:int, planets):
+        #for planet in planets:
+         #   if planet.distance_to_rocket < 100*plaen
         ## TO DO Gravitation für alle Planeten einbauen
         r0 = np.sqrt( (self.r_x[i] - self.startplanet.x)**2 + (self.r_z[i] - self.startplanet.y)**2)
         x=( -(G*self.startplanet.mass/r0**2) - (Luftwiederstand*x**2*np.sign(self.v_z[i]) * p_0 * np.exp(-abs((r0-self.startplanet.radius)) / h_s))/(2 * self.KoerperMasse) ) * ((self.r_x[i] - self.startplanet.x)/r0) #Extrakraft x einbauen
@@ -53,7 +55,7 @@ class Rocket:
             x += math.cos(math.atan2(self.v_z[i], self.v_x[i]) + self.angle*np.pi/180)*self.thrust
         return x
     # Methode für die z-Komponente
-    def f1(self, x,i:int):
+    def f1(self, x,i:int, planets):
         ## TO DO Gravitation für alle Planeten einbauen
         r0 = np.sqrt( (self.r_x[i] - self.startplanet.x)**2 + (self.r_z[i] - self.startplanet.y)**2)
         z=( -(G*self.startplanet.mass/r0**2) - (Luftwiederstand*x**2*np.sign(self.v_z[i]) * p_0 * np.exp(-abs((r0-self.startplanet.radius)) / h_s))/(2 * self.KoerperMasse) ) * ((self.r_z[i] - self.startplanet.y)/r0) #Extrakraft z einbauen
@@ -63,21 +65,21 @@ class Rocket:
             z += math.sin(math.atan2(self.v_z[i], self.v_x[i]) + self.angle*np.pi/180)*self.thrust
         return z
     # Berechnung nach Runge-Kutta Verfahren
-    def berechneNaechstenSchritt(self, i: int):
+    def berechneNaechstenSchritt(self, i: int, planets):
         # z-Komponente
-        k1 = self.f1(self.v_z[i],i)
-        k2 = self.f1(self.v_z[i] + k1*self.timestep/2,i)
-        k3 = self.f1(self.v_z[i] + k2*self.timestep/2,i)
-        k4 = self.f1(self.v_z[i] + k3*self.timestep/2,i)
+        k1 = self.f1(self.v_z[i],i, planets)
+        k2 = self.f1(self.v_z[i] + k1*self.timestep/2,i, planets)
+        k3 = self.f1(self.v_z[i] + k2*self.timestep/2,i, planets)
+        k4 = self.f1(self.v_z[i] + k3*self.timestep/2,i, planets)
         k = (k1 + 2*k2 + 2*k3 + k4)/6
         self.v_z[i+1] = self.v_z[i] + k*self.timestep
         self.r_z[i+1] = self.r_z[i] + self.v_z[i]*self.timestep
 
         # x-Komponente
-        k1 = self.f2(self.v_x[i],i)
-        k2 = self.f2(self.v_x[i] + k1*self.timestep/2,i)
-        k3 = self.f2(self.v_x[i] + k2*self.timestep/2,i)
-        k4 = self.f2(self.v_x[i] + k3*self.timestep/2,i)
+        k1 = self.f2(self.v_x[i],i, planets)
+        k2 = self.f2(self.v_x[i] + k1*self.timestep/2,i, planets)
+        k3 = self.f2(self.v_x[i] + k2*self.timestep/2,i, planets)
+        k4 = self.f2(self.v_x[i] + k3*self.timestep/2,i, planets)
         k = (k1 + 2*k2 + 2*k3 + k4)/6
         self.v_x[i+1] = self.v_x[i] + k*self.timestep
         self.r_x[i+1] = self.r_x[i] + self.v_x[i]*self.timestep
@@ -90,19 +92,19 @@ class Rocket:
                 if self.powerchanged or self.aktuellerschritt==0 or self.timestepChanged:
                     self.aktuellerrechenschritt = self.aktuellerschritt
                     for i in range(1000):
-                        self.berechneNaechstenSchritt(self.aktuellerrechenschritt)
+                        self.berechneNaechstenSchritt(self.aktuellerrechenschritt, planets)
                         self.aktuellerrechenschritt += 1
                     self.powerchanged = False
                     self.timestepChanged = False
                 else:
-                    self.berechneNaechstenSchritt(self.aktuellerrechenschritt)
+                    self.berechneNaechstenSchritt(self.aktuellerrechenschritt, planets)
                     self.aktuellerrechenschritt += 1
             # move_x and move_y verschieben je nach bewegung des Bildschirm
             if self.aktuellerrechenschritt > 2:
                 pygame.draw.lines(window, self.color, False, np.array((self.r_x[self.aktuellerschritt:self.aktuellerrechenschritt]*scale+move_x+width/2, self.r_z[self.aktuellerschritt:self.aktuellerrechenschritt]*scale+move_y+ height/2)).T, 1)
                 #pygame.draw.circle(window,self.color,(self.r_x[self.aktuellerschritt]*scale+move_x+width/2 , self.r_z[self.aktuellerschritt]*scale+move_y+height/2),self.radius)
                 
-                img = pygame.transform.scale_by(img0, max(min(0.05*self.radius, 0.5), 0.05))
+                img = pygame.transform.scale_by(img0, max(min(0.1*self.radius, 1), 0.1))
                 img = pygame.transform.rotate(img, math.atan2(self.v_z[self.aktuellerschritt], self.v_x[self.aktuellerschritt]) * (-180) /np.pi - 90)
                 #img = pygame.transform.rotozoom(img0, math.atan2(self.v_z[self.aktuellerschritt], self.v_x[self.aktuellerschritt]), max(0.05, self.radius))
                 window.blit(img, (self.r_x[self.aktuellerschritt]*scale+move_x+width/2 -img.get_width()/2 , self.r_z[self.aktuellerschritt]*scale+move_y+height/2 - img.get_height()/2))

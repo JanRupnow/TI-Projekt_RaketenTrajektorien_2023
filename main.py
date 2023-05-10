@@ -61,7 +61,7 @@ def main():
 
     moon = Planet(-1*AU-378_000_000,0,1750*10**3,(220,220,220),73*10**21,"Mond")
     moon.y_vel = earth.y_vel+1.022*1000
-    planets = [moon,neptune, uranus, saturn, jupiter, mars,earth, venus, mercury, sun,]
+    planets = [moon,neptune, uranus, saturn, jupiter, mars,earth, venus, mercury, sun]
     
 
     rocket = Rocket(45,0,0,10000,earth,2,(255,255,255))
@@ -74,7 +74,7 @@ def main():
             if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and
                                              (event.key == pygame.K_x or event.key == pygame.K_ESCAPE)):
                 run = False
-            # Raketenboost Oben
+            # Raketenboost erhöhen
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_w and rocket.thrust<10:
                 rocket.thrust += 1
                 rocket.powerchanged = True
@@ -83,7 +83,7 @@ def main():
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_a and rocket.angle>-45:
                 rocket.angle -= 1
                 rocket.powerchanged = True
-            # Raketenboost Unten
+            # Raketenboost verrigern
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_s and rocket.thrust>0:
                 rocket.thrust -= 1
                 rocket.powerchanged = True
@@ -110,16 +110,14 @@ def main():
                 move_y-=(mouse_y-HEIGHT/2)/2
                 SCALE *= 0.75
                 rocket.update_scale(0.75)
-                for planet in planets:
-                    planet.update_scale(0.75)
+                
             elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 4:
                 mouse_x, mouse_y = pygame.mouse.get_pos()
                 move_x-=(mouse_x-WIDTH/2)/2
                 move_y-=(mouse_y-HEIGHT/2)/2
                 SCALE *= 1.25
                 rocket.update_scale(1.25)
-                for planet in planets:
-                    planet.update_scale(1.25)
+                
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_o:
                 index = min(alleZeitschritte.index(TIMESTEP)+1, len(alleZeitschritte)-1)
                 TIMESTEP = alleZeitschritte[index]

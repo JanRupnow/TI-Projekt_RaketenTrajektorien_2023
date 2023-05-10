@@ -25,7 +25,6 @@ h_s = 8400  # Skalenhöhe [m]
 Startzeit = 0                   # [s]                # [s]
 Rechenschritte = 100000
 Endzeit = Rechenschritte*5
-t=np.linspace(Startzeit, Endzeit, Rechenschritte)
 #dt=(Endzeit-Startzeit)/Rechenschritte
 TIMESTEP = 100
 AktuellerSchritt = 0
