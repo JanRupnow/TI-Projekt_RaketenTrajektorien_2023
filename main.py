@@ -5,6 +5,7 @@ from planet import *
 from konstanten import *
 from rocket import *
 import datetime
+import sys
 pygame.init()
 WIDTH, HEIGHT = pygame.display.Info().current_w, pygame.display.Info().current_h
 WINDOW = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
@@ -19,7 +20,7 @@ now = datetime.datetime.now()
 
 def main():
     time_passed = datetime.timedelta(seconds=0)
-    global SCALE, TIMESTEP, now
+    global SCALE, TIMESTEP, now, img0
     run = True
     pause = False
     show_distance = False
@@ -27,6 +28,7 @@ def main():
     move_x = 0
     move_y = 0
     draw_line = True
+    zoomrocket = False
 
     # Metric from: https://nssdc.gsfc.nasa.gov/planetary/factsheet/
 
@@ -81,18 +83,17 @@ def main():
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_a and rocket.angle>-45:
                 rocket.angle -= 1
                 rocket.powerchanged = True
-                rocket.rocketstarted = True
             # Raketenboost Unten
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_s and rocket.thrust>0:
                 rocket.thrust -= 1
                 rocket.powerchanged = True
-                rocket.rocketstarted = True
             # Raketenboost Rechts
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_d and rocket.angle<45:
                 rocket.angle += 1
                 rocket.powerchanged = True
-                rocket.rocketstarted = True
 
+            elif event.type == pygame.KEYDOWN and event.key == pygame.K_f:
+                zoomrocket = not zoomrocket
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
                 pause = not pause
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_p:
@@ -104,7 +105,7 @@ def main():
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_u:
                 draw_line = not draw_line
             elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 5:
-                mouseX, mouseY = pygame.mouse.get_pos()
+                mouse_y, mouse_x = pygame.mouse.get_pos()
                 move_x-=(mouse_x-WIDTH/2)/2
                 move_y-=(mouse_y-HEIGHT/2)/2
                 SCALE *= 0.75
@@ -112,7 +113,7 @@ def main():
                 for planet in planets:
                     planet.update_scale(0.75)
             elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 4:
-                mouseX, mouseY = pygame.mouse.get_pos()
+                mouse_x, mouse_y = pygame.mouse.get_pos()
                 move_x-=(mouse_x-WIDTH/2)/2
                 move_y-=(mouse_y-HEIGHT/2)/2
                 SCALE *= 1.25
@@ -147,6 +148,8 @@ def main():
         if keys[pygame.K_DOWN] or mouse_y == window_h - 1:
             move_y -= distance
         
+        if zoomrocket:
+            move_x, move_y = -rocket.r_x[rocket.aktuellerschritt] * SCALE, -rocket.r_z[rocket.aktuellerschritt] * SCALE
         ### Rocket           
         for planet in planets:
             if not pause:
@@ -161,6 +164,8 @@ def main():
                 planet.drawlineonly(WINDOW, move_x, move_y, draw_line, SCALE, WIDTH, HEIGHT)
         rocket.draw(WINDOW,move_x,move_y, planets, pause, SCALE, WIDTH, HEIGHT)
         fps_text = FONT_1.render("FPS: " + str(int(clock.get_fps())), True, COLOR_WHITE)
+
+        ### Menü implementieren zur Übersicht der Tasten
         WINDOW.blit(fps_text, (15, 15))
         text_surface = FONT_1.render("Press X or ESC to exit", True, COLOR_WHITE)
         WINDOW.blit(text_surface, (15, 45))
@@ -178,33 +183,35 @@ def main():
         WINDOW.blit(text_surface, (15, 225))
         text_surface = FONT_1.render("Use I to reduce and O to increase the time step", True, COLOR_WHITE)
         WINDOW.blit(text_surface, (15, 255))
+        text_surface = FONT_1.render("Press F to automatically center the rocket", True, COLOR_WHITE)
+        WINDOW.blit(text_surface, (15, 285))
         sun_surface = FONT_1.render("- Sun", True, COLOR_SUN)
-        WINDOW.blit(sun_surface, (15, 285))
+        WINDOW.blit(sun_surface, (15, 315))
         mercury_surface = FONT_1.render("- Mercury", True, COLOR_MERCURY)
-        WINDOW.blit(mercury_surface, (15, 315))
+        WINDOW.blit(mercury_surface, (15, 345))
         venus_surface = FONT_1.render("- Venus", True, COLOR_VENUS)
-        WINDOW.blit(venus_surface, (15, 345))
+        WINDOW.blit(venus_surface, (15, 375))
         earth_surface = FONT_1.render("- Earth", True, COLOR_EARTH)
-        WINDOW.blit(earth_surface, (15, 375))
+        WINDOW.blit(earth_surface, (15, 405))
         mars_surface = FONT_1.render("- Mars", True, COLOR_MARS)
-        WINDOW.blit(mars_surface, (15, 405))
+        WINDOW.blit(mars_surface, (15, 435))
         jupiter_surface = FONT_1.render("- Jupiter", True, COLOR_JUPITER)
-        WINDOW.blit(jupiter_surface, (15, 435))
+        WINDOW.blit(jupiter_surface, (15, 465))
         saturn_surface = FONT_1.render("- Saturn", True, COLOR_SATURN)
-        WINDOW.blit(saturn_surface, (15, 465))
+        WINDOW.blit(saturn_surface, (15, 495))
         uranus_surface = FONT_1.render("- Uranus", True, COLOR_URANUS)
-        WINDOW.blit(uranus_surface, (15, 495))
+        WINDOW.blit(uranus_surface, (15, 525))
         neptune_surface = FONT_1.render("- Neptune", True, COLOR_NEPTUNE)
-        WINDOW.blit(neptune_surface, (15, 525))
-
-        time_passed += datetime.timedelta(seconds=TIMESTEP)
+        WINDOW.blit(neptune_surface, (15, 555))
+        if not pause:
+            time_passed += datetime.timedelta(seconds=TIMESTEP)
         text_surface = FONT_1.render(f"Time step: {TIMESTEP}x", True, COLOR_WHITE)
         WINDOW.blit(text_surface, (1500, 15))
         text_actual_time = FONT_1.render(f'Current time: {(now+time_passed).strftime("%d/%m/%Y, %H:%M:%S")}', True, COLOR_WHITE)
         WINDOW.blit(text_actual_time, (1500, 45))
         text_time_passed = FONT_1.render(f'Passed time: {time_passed}', True, COLOR_WHITE)
         WINDOW.blit(text_time_passed, (1500, 75))
-        rocket_velocity = FONT_1.render(f'Rocket Speed: {round(rocket.getAbsoluteVelocity()*3.6)}km/h', True, COLOR_WHITE)
+        rocket_velocity = FONT_1.render(f'Rocket Speed: {round(rocket.getAbsoluteVelocity()*3.6/1000)}km/h', True, COLOR_WHITE)
         WINDOW.blit(rocket_velocity, (1500, 105))
         rocket_fuel = FONT_1.render(f'Rocket Fuel: %', True, COLOR_WHITE)
         WINDOW.blit(rocket_fuel, (1500, 135))

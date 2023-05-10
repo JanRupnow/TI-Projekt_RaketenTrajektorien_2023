@@ -1,1 +1,1 @@
-d
+r("Press X or ESC to exit"

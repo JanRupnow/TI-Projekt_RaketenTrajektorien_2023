@@ -2,6 +2,13 @@ import numpy as np
 from konstanten import *
 import pygame
 import math
+import sys
+import os
+module = sys.modules['__main__']
+path, name = os.path.split(module.__file__)
+path = os.path.join(path, 'Rocket.png')
+img0 = pygame.image.load(path)
+
 class Rocket:
     def __init__(self, startwinkel, abwurfwinkel,treibstoffmasse, koerpermasse, startplanet, radius, color):
         self.aktuellerschritt = AktuellerSchritt
@@ -27,11 +34,13 @@ class Rocket:
         self.color = color
         self.startplanet = startplanet
         self.predictions = []
-        self.v_x[0] = 10e3
-        self.v_z[0] = 10e3
+        self.v_x[0] = 0
+        self.v_z[0] = 0
         self.r_x[0]= self.StartKoordinatenX   
         self.r_z[0]= self.StartKoordiantenZ
         self.rocketstarted = False
+
+        #self.imgage = img0
     # Methode für die x-Komponente
     def f2(self, x, i:int):
         ## TO DO Gravitation für alle Planeten einbauen
@@ -41,7 +50,7 @@ class Rocket:
         #if self.aktuellerschritt == self.aktuellerrechenschritt:
             #if self.x_schub!=0:
         if self.thrust != 0:
-            x += FallBeschleunigung*math.cos(math.atan2(self.v_z[i], self.v_x[i]) + self.angle*np.pi/180)*self.thrust
+            x += math.cos(math.atan2(self.v_z[i], self.v_x[i]) + self.angle*np.pi/180)*self.thrust
         return x
     # Methode für die z-Komponente
     def f1(self, x,i:int):
@@ -51,7 +60,7 @@ class Rocket:
         #y=-(G*m_E/(r_x**2 + r_z**2)**1.5) * r_z - c*x**2*np.sign(x)
 
         if self.thrust != 0:
-            z += FallBeschleunigung*math.sin(math.atan2(self.v_z[i], self.v_x[i]) + self.angle*np.pi/180)*self.thrust
+            z += math.sin(math.atan2(self.v_z[i], self.v_x[i]) + self.angle*np.pi/180)*self.thrust
         return z
     # Berechnung nach Runge-Kutta Verfahren
     def berechneNaechstenSchritt(self, i: int):
@@ -75,6 +84,7 @@ class Rocket:
     def update_scale(self,scale):
         self.radius *= scale
     def draw(self, window, move_x, move_y, planets, paused, scale, width, height):
+        global img0
         if self.rocketstarted:
             if not paused:
                 if self.powerchanged or self.aktuellerschritt==0 or self.timestepChanged:
@@ -90,7 +100,12 @@ class Rocket:
             # move_x and move_y verschieben je nach bewegung des Bildschirm
             if self.aktuellerrechenschritt > 2:
                 pygame.draw.lines(window, self.color, False, np.array((self.r_x[self.aktuellerschritt:self.aktuellerrechenschritt]*scale+move_x+width/2, self.r_z[self.aktuellerschritt:self.aktuellerrechenschritt]*scale+move_y+ height/2)).T, 1)
-                pygame.draw.circle(window,self.color,(self.r_x[self.aktuellerschritt]*scale+move_x+width/2 , self.r_z[self.aktuellerschritt]*scale+move_y+height/2),self.radius)
+                #pygame.draw.circle(window,self.color,(self.r_x[self.aktuellerschritt]*scale+move_x+width/2 , self.r_z[self.aktuellerschritt]*scale+move_y+height/2),self.radius)
+                
+                img = pygame.transform.scale_by(img0, max(min(0.05*self.radius, 0.5), 0.05))
+                img = pygame.transform.rotate(img, math.atan2(self.v_z[self.aktuellerschritt], self.v_x[self.aktuellerschritt]) * (-180) /np.pi - 90)
+                #img = pygame.transform.rotozoom(img0, math.atan2(self.v_z[self.aktuellerschritt], self.v_x[self.aktuellerschritt]), max(0.05, self.radius))
+                window.blit(img, (self.r_x[self.aktuellerschritt]*scale+move_x+width/2 -img.get_width()/2 , self.r_z[self.aktuellerschritt]*scale+move_y+height/2 - img.get_height()/2))
             if not paused:
                 self.aktuellerschritt+= 1
         else:
