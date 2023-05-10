@@ -97,3 +97,10 @@ class Rocket:
             self.StartKoordiantenZ = startplanet.y + startplanet.radius * np.cos(self.startwinkel * np.pi / 180)
             self.r_x[0]= self.StartKoordinatenX   
             self.r_z[0]= self.StartKoordiantenZ
+            
+    # in m/s
+    def getAbsoluteVelocity(self):
+        if self.rocketstarted:
+            return np.sqrt(self.v_x[self.aktuellerschritt]**2 + self.v_z[self.aktuellerschritt]**2)
+        else:
+            return 0

@@ -126,10 +126,8 @@ def main():
                 rocket.timestepChanged = True
                 for planet in planets:
                     planet.timestep = rocket.timestep = TIMESTEP
-            elif event.type == pygame.KEYDOWN and event.key == pygame.K_i:
-                try: 
-                    index = max(alleZeitschritte.index(TIMESTEP)-1, 0)
-                catch
+            elif event.type == pygame.KEYDOWN and event.key == pygame.K_i: 
+                index = max(alleZeitschritte.index(TIMESTEP)-1, 0)
                 TIMESTEP = alleZeitschritte[index]
                 rocket.timestep = TIMESTEP
                 rocket.timestepChanged = True
@@ -206,7 +204,12 @@ def main():
         WINDOW.blit(text_actual_time, (1500, 45))
         text_time_passed = FONT_1.render(f'Passed time: {time_passed}', True, COLOR_WHITE)
         WINDOW.blit(text_time_passed, (1500, 75))
-
+        rocket_velocity = FONT_1.render(f'Rocket Speed: {round(rocket.getAbsoluteVelocity()*3.6)}km/h', True, COLOR_WHITE)
+        WINDOW.blit(rocket_velocity, (1500, 105))
+        rocket_fuel = FONT_1.render(f'Rocket Fuel: %', True, COLOR_WHITE)
+        WINDOW.blit(rocket_fuel, (1500, 135))
+        rocket_maxQ = FONT_1.render(f'MaxQ: %', True, COLOR_WHITE)
+        WINDOW.blit(rocket_maxQ, (1500, 165))
         pygame.display.update()
     pygame.quit()
 
