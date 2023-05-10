@@ -55,7 +55,7 @@ def main():
     neptune.y_vel = 5.43 * 1000
 
     moon = Planet(-1*AU-378_000_000,0,1750*10**3,(220,220,220),73*10**21,"Mond")
-    moon.y_vel = 1.022*1000
+    moon.y_vel = earth.y_vel+1.022*1000
     planets = [moon,neptune, uranus, saturn, jupiter, mars,earth, venus, mercury, sun,]
     
 
