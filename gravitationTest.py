@@ -49,8 +49,8 @@ class Rocket:
         self.KoerperMasse = koerpermasse
         self.TreibstoffMasse = treibstoffmasse
         ## Berechnung der Startposition der Rakete abhängig vom Startplaneten ohne Skalierung
-        self.StartKoordinatenX = startplanet.x + startplanet.radius/SCALE * np.sin(startwinkel * np.pi / 180)
-        self.StartKoordiantenZ = startplanet.y + startplanet.radius/SCALE * np.cos(startwinkel * np.pi / 180)
+        self.StartKoordinatenX = startplanet.r_x[self.aktuellerschritt] + startplanet.radius/SCALE * np.sin(startwinkel * np.pi / 180)
+        self.StartKoordiantenZ = startplanet.r_z[self.aktuellerschritt] + startplanet.radius/SCALE * np.cos(startwinkel * np.pi / 180)
         self.r_x= np.zeros(Rechenschritte)   # x-Position [m]
         self.r_z= np.zeros(Rechenschritte)   # z-Position [m]
         self.v_x=np.zeros(Rechenschritte)    # x-Geschwindigkeit [m/s]

@@ -36,31 +36,31 @@ def main():
     sun.sun = True
 
     mercury = Planet(-0.387 * AU, 0, 2439 * 10 ** 3, COLOR_MERCURY, 3.30 * 10 ** 23,"Merkur")
-    mercury.y_vel = 47.4 * 1000
+    mercury.v_z[0] = 47.4 * 1000
 
     venus = Planet(-0.723 * AU, 0, 6052 * 10 ** 3, COLOR_VENUS, 4.8685 * 10 ** 24,"Venus")
-    venus.y_vel = 35.02 * 1000
+    venus.v_z[0] = 35.02 * 1000
 
     earth = Planet(-1 * AU, 0, 6378 * 10 ** 3, COLOR_EARTH, 5.9722 * 10 ** 24,"Erde")
-    earth.y_vel = 29.783 * 1000
+    earth.v_z[0] = 29.783 * 1000
 
     mars = Planet(-1.524 * AU, 0, 3394  * 10 ** 3, COLOR_MARS, 6.39 * 10 ** 23,"Mars")
-    mars.y_vel = 24.077 * 1000
+    mars.v_z[0] = 24.077 * 1000
 
     jupiter = Planet(-5.204 * AU, 0, 71492 * 10 ** 3, COLOR_JUPITER, 1.898 * 10 ** 27,"Jupiter")
-    jupiter.y_vel = 13.06 * 1000
+    jupiter.v_z[0] = 13.06 * 1000
 
     saturn = Planet(-9.573 * AU, 0, 60268  * 10 ** 3, COLOR_SATURN, 5.683 * 10 ** 26,"Saturn")
-    saturn.y_vel = 9.68 * 1000
+    saturn.v_z[0] = 9.68 * 1000
 
     uranus = Planet(-19.165 * AU, 0, 25559  * 10 ** 3, COLOR_URANUS, 8.681 * 10 ** 25,"Uranus")
-    uranus.y_vel = 6.80 * 1000
+    uranus.v_z[0] = 6.80 * 1000
 
     neptune = Planet(-30.178 * AU, 0, 24764  * 10 ** 3, COLOR_NEPTUNE, 1.024 * 10 ** 26,"Neptun")
-    neptune.y_vel = 5.43 * 1000
+    neptune.v_z[0] = 5.43 * 1000
 
     moon = Planet(-1*AU-378_000_000,0,1750*10**3,(220,220,220),73*10**21,"Mond")
-    moon.y_vel = earth.y_vel+1.022*1000
+    moon.v_z[0] = earth.v_z[0]+1.022*1000
     planets = [moon,neptune, uranus, saturn, jupiter, mars,earth, venus, mercury, sun]
     
 
@@ -99,7 +99,7 @@ def main():
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_p:
                 show_distance = not show_distance
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_c:
-                move_x, move_y = -sun.x * SCALE, -sun.y * SCALE
+                move_x, move_y = -sun.r_x[sun.aktuellerschritt] * SCALE, -sun.r_z[sun.aktuellerschritt] * SCALE
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_b:
                 move_x, move_y = -rocket.r_x[rocket.aktuellerschritt] * SCALE, -rocket.r_z[rocket.aktuellerschritt] * SCALE    
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_u:
@@ -149,18 +149,22 @@ def main():
         if zoomrocket:
             move_x, move_y = -rocket.r_x[rocket.aktuellerschritt] * SCALE, -rocket.r_z[rocket.aktuellerschritt] * SCALE
         ### Rocket           
-        for planet in planets:
-            if not pause:
-                planet.update_position(planets, rocket)
-            # Ohne Radius verschwinden die Balken bugs im Screen
-            if not (planet.y*SCALE+planet.radius*SCALE < -move_y-HEIGHT/2 or planet.y*SCALE-planet.radius*SCALE > -move_y+HEIGHT/2 or planet.x*SCALE+planet.radius*SCALE < -move_x-WIDTH/2 or planet.x*SCALE-planet.radius*SCALE > -move_x+WIDTH/2):
-                if show_distance :
-                    planet.draw(WINDOW, 1, move_x, move_y, draw_line,SCALE, WIDTH, HEIGHT)
-                else:
-                    planet.draw(WINDOW, 0, move_x, move_y, draw_line,SCALE, WIDTH, HEIGHT)
-            else: 
-                planet.drawlineonly(WINDOW, move_x, move_y, draw_line, SCALE, WIDTH, HEIGHT)
         rocket.draw(WINDOW,move_x,move_y, planets, pause, SCALE, WIDTH, HEIGHT)
+        if rocket.rocketstarted:
+            for planet in planets:
+                #if not pause:
+                #    planet.update_position(planets, rocket)
+                # Ohne Radius verschwinden die Balken bugs im Screen
+                if not (planet.r_z[planet.aktuellerschritt]*SCALE+planet.radius*SCALE < -move_y-HEIGHT/2 
+                        or planet.r_z[planet.aktuellerschritt]*SCALE-planet.radius*SCALE > -move_y+HEIGHT/2 
+                        or planet.r_z[planet.aktuellerschritt]*SCALE+planet.radius*SCALE < -move_x-WIDTH/2 
+                        or planet.r_x[planet.aktuellerschritt]*SCALE-planet.radius*SCALE > -move_x+WIDTH/2):
+                    if show_distance :
+                        planet.draw(WINDOW, 1, move_x, move_y, draw_line,SCALE, WIDTH, HEIGHT, pause)
+                    else:
+                        planet.draw(WINDOW, 0, move_x, move_y, draw_line,SCALE, WIDTH, HEIGHT, pause)
+                else: 
+                    planet.drawlineonly(WINDOW, move_x, move_y, draw_line, SCALE, WIDTH, HEIGHT, pause)
         fps_text = FONT_1.render("FPS: " + str(int(clock.get_fps())), True, COLOR_WHITE)
 
         ### Menü implementieren zur Übersicht der Tasten

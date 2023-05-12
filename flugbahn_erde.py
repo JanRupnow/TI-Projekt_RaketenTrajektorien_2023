@@ -129,9 +129,9 @@ class Rocket:
                 self.aktuellerschritt+= 1
         else:
             startplanet = next(filter(lambda x: x.name == self.startplanet.name, planets),None)
-            pygame.draw.circle(window,self.color,(startplanet.x + startplanet.radius * np.sin(self.startwinkel * np.pi / 180) *SCALE+move_x+WIDTH/2 , startplanet.y + startplanet.radius * np.cos(self.startwinkel * np.pi / 180)*SCALE+move_y+HEIGHT/2),self.radius)
-            self.StartKoordinatenX = startplanet.x + startplanet.radius * np.sin(self.startwinkel * np.pi / 180)
-            self.StartKoordiantenZ = startplanet.y + startplanet.radius * np.cos(self.startwinkel * np.pi / 180)
+            pygame.draw.circle(window,self.color,(startplanet.r_x[self.aktuellerschritt] + startplanet.radius * np.sin(self.startwinkel * np.pi / 180) *SCALE+move_x+WIDTH/2 , startplanet.r_z[self.aktuellerschritt] + startplanet.radius * np.cos(self.startwinkel * np.pi / 180)*SCALE+move_y+HEIGHT/2),self.radius)
+            self.StartKoordinatenX = startplanet.r_x[self.aktuellerschritt] + startplanet.radius * np.sin(self.startwinkel * np.pi / 180)
+            self.StartKoordiantenZ = startplanet.r_z[self.aktuellerschritt] + startplanet.radius * np.cos(self.startwinkel * np.pi / 180)
             self.r_x[0]= self.StartKoordinatenX   
             self.r_z[0]= self.StartKoordiantenZ
 class Planet:

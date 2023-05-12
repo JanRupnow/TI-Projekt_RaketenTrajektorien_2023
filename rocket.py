@@ -20,12 +20,12 @@ class Rocket:
         self.TreibstoffMasse = treibstoffmasse
         self.startwinkel = startwinkel
         ## Berechnung der Startposition der Rakete abhängig vom Startplaneten ohne Skalierung
-        self.StartKoordinatenX = startplanet.x + startplanet.radius * np.sin(self.startwinkel * np.pi / 180)
-        self.StartKoordiantenZ = startplanet.y + startplanet.radius * np.cos(self.startwinkel * np.pi / 180)
-        self.r_x= np.zeros(Rechenschritte)   # x-Position [m]
-        self.r_z= np.zeros(Rechenschritte)   # z-Position [m]
-        self.v_x=np.zeros(Rechenschritte)    # x-Geschwindigkeit [m/s]
-        self.v_z=np.zeros(Rechenschritte)    # z-Geschwindigkeit [m/s]               
+        self.StartKoordinatenX = startplanet.r_x[self.aktuellerschritt] + startplanet.radius * np.sin(self.startwinkel * np.pi / 180)
+        self.StartKoordiantenZ = startplanet.r_z[self.aktuellerschritt] + startplanet.radius * np.cos(self.startwinkel * np.pi / 180)
+        self.r_x= np.zeros(LEN_OF_PREDICTIONS_ARRAY)   # x-Position [m]
+        self.r_z= np.zeros(LEN_OF_PREDICTIONS_ARRAY)   # z-Position [m]
+        self.v_x=np.zeros(LEN_OF_PREDICTIONS_ARRAY)    # x-Geschwindigkeit [m/s]
+        self.v_z=np.zeros(LEN_OF_PREDICTIONS_ARRAY)    # z-Geschwindigkeit [m/s]               
         self.c = Luftwiederstand/self.KoerperMasse
         self.radius = radius
         self.thrust = 0                     # aktuell nicht genutzt     
@@ -48,8 +48,8 @@ class Rocket:
         #for planet in planets:
          #   if planet.distance_to_rocket < 100*plaen
         ## TO DO Gravitation für alle Planeten einbauen
-        r0 = np.sqrt( (self.r_x[i] - self.startplanet.x)**2 + (self.r_z[i] - self.startplanet.y)**2)
-        x=( -(G*self.startplanet.mass/r0**2) - (Luftwiederstand*x**2*np.sign(self.v_z[i]) * p_0 * np.exp(-abs((r0-self.startplanet.radius)) / h_s))/(2 * self.KoerperMasse) ) * ((self.r_x[i] - self.startplanet.x)/r0) #Extrakraft x einbauen
+        r0 = np.sqrt( (self.r_x[i] - self.startplanet.r_x[i])**2 + (self.r_z[i] - self.startplanet.r_z[i])**2)
+        x=( -(G*self.startplanet.mass/r0**2) - (Luftwiederstand*x**2*np.sign(self.v_z[i]) * p_0 * np.exp(-abs((r0-self.startplanet.radius)) / h_s))/(2 * self.KoerperMasse) ) * ((self.r_x[i] - self.startplanet.r_x[i])/r0) #Extrakraft x einbauen
         #y=-(G*m_E/(r_x**2 + r_z**2)**1.5) * r_x - c*x**2*np.sign(x)
         #if self.aktuellerschritt == self.aktuellerrechenschritt:
             #if self.x_schub!=0:
@@ -59,15 +59,16 @@ class Rocket:
     # Methode für die z-Komponente
     def f1(self, x,i:int, planets):
         ## TO DO Gravitation für alle Planeten einbauen
-        r0 = np.sqrt( (self.r_x[i] - self.startplanet.x)**2 + (self.r_z[i] - self.startplanet.y)**2)
-        z=( -(G*self.startplanet.mass/r0**2) - (Luftwiederstand*x**2*np.sign(self.v_z[i]) * p_0 * np.exp(-abs((r0-self.startplanet.radius)) / h_s))/(2 * self.KoerperMasse) ) * ((self.r_z[i] - self.startplanet.y)/r0) #Extrakraft z einbauen
-        #y=-(G*m_E/(r_x**2 + r_z**2)**1.5) * r_z - c*x**2*np.sign(x)
+        r0 = np.sqrt( (self.r_x[i] - self.startplanet.r_x[i])**2 + (self.r_z[i] - self.startplanet.r_z[i])**2)
+        z=( -(G*self.startplanet.mass/r0**2) - (Luftwiederstand*x**2*np.sign(self.v_z[i]) * p_0 * np.exp(-abs((r0-self.startplanet.radius)) / h_s))/(2 * self.KoerperMasse) ) * ((self.r_z[i] - self.startplanet.r_z[i])/r0) #Extrakraft z einbauen
+        # TODO muss die Geschwindigkeit relativ zum Planet sein? Eigentlich ja oder?
 
         if self.thrust != 0:
             z += math.sin(math.atan2(self.v_z[i], self.v_x[i]) + self.angle*np.pi/180)*self.thrust
         return z
     # Berechnung nach Runge-Kutta Verfahren
     def berechneNaechstenSchritt(self, i: int, planets):
+        
         # z-Komponente
         k1 = self.f1(self.v_z[i],i, planets)
         k2 = self.f1(self.v_z[i] + k1*self.timestep/2,i, planets)
@@ -85,6 +86,7 @@ class Rocket:
         k = (k1 + 2*k2 + 2*k3 + k4)/6
         self.v_x[i+1] = self.v_x[i] + k*self.timestep
         self.r_x[i+1] = self.r_x[i] + self.v_x[i]*self.timestep
+
     def update_scale(self,scale):
         self.radius *= scale
         if self.radius > MIN_ROCKET_RADIUS:
@@ -94,14 +96,26 @@ class Rocket:
         if self.rocketstarted:
             if not paused:
                 if self.powerchanged or self.aktuellerschritt==0 or self.timestepChanged:
+                    firstTime = self.aktuellerrechenschritt == 0
                     self.aktuellerrechenschritt = self.aktuellerschritt
-                    for i in range(1000):
+                    for i in range(NUM_OF_PREDICTIONS):
+                        if firstTime or self.timestepChanged:
+                            for planet in planets:
+                                planet.predictNext(self.aktuellerrechenschritt, planets)
                         self.berechneNaechstenSchritt(self.aktuellerrechenschritt, planets)
                         self.aktuellerrechenschritt += 1
+
+                    if not (firstTime or self.timestepChanged):
+                        for planet in planets:
+                            planet.predictNext(self.aktuellerrechenschritt-1, planets)
+
                     self.powerchanged = False
                     self.timestepChanged = False
+
                 else:
                     self.berechneNaechstenSchritt(self.aktuellerrechenschritt, planets)
+                    for planet in planets:
+                        planet.predictNext(self.aktuellerrechenschritt, planets)
                     self.aktuellerrechenschritt += 1
             # move_x and move_y verschieben je nach bewegung des Bildschirm
             if self.aktuellerrechenschritt > 2:
@@ -115,12 +129,25 @@ class Rocket:
                 else:
                     pygame.draw.circle(window, self.color, (self.r_x[self.aktuellerschritt]*scale+move_x+width/2, self.r_z[self.aktuellerschritt]*scale+move_y+height/2), MIN_ROCKET_RADIUS)
             if not paused:
-                self.aktuellerschritt+= 1
+                self.aktuellerschritt += 1
+                for planet in planets:
+                    planet.aktuellerschritt += 1
+
+                if self.aktuellerschritt >= (NUM_OF_PREDICTIONS):
+                    self.r_x[1:NUM_OF_PREDICTIONS+1] = self.r_x[NUM_OF_PREDICTIONS:]
+                    self.r_z[1:NUM_OF_PREDICTIONS+1] = self.r_z[NUM_OF_PREDICTIONS:]
+                    self.v_x[1:NUM_OF_PREDICTIONS+1] = self.v_x[NUM_OF_PREDICTIONS:]
+                    self.v_z[1:NUM_OF_PREDICTIONS+1] = self.v_z[NUM_OF_PREDICTIONS:]
+                    self.aktuellerschritt = 1
+                    self.aktuellerrechenschritt = NUM_OF_PREDICTIONS
+
+                    for planet in planets:
+                        planet.resetArray()
         else:
             startplanet = next(filter(lambda x: x.name == self.startplanet.name, planets),None)
-            pygame.draw.circle(window,self.color,(startplanet.x + startplanet.radius * np.sin(self.startwinkel * np.pi / 180) *scale+move_x+width/2 , startplanet.y + startplanet.radius * np.cos(self.startwinkel * np.pi / 180)*scale+move_y+height/2),self.radius)
-            self.StartKoordinatenX = startplanet.x + startplanet.radius * np.sin(self.startwinkel * np.pi / 180)
-            self.StartKoordiantenZ = startplanet.y + startplanet.radius * np.cos(self.startwinkel * np.pi / 180)
+            pygame.draw.circle(window,self.color,(startplanet.r_x[self.aktuellerschritt] + startplanet.radius * np.sin(self.startwinkel * np.pi / 180) *scale+move_x+width/2 , startplanet.r_z[self.aktuellerschritt] + startplanet.radius * np.cos(self.startwinkel * np.pi / 180)*scale+move_y+height/2),self.radius)
+            self.StartKoordinatenX = startplanet.r_x[self.aktuellerschritt] + startplanet.radius * np.sin(self.startwinkel * np.pi / 180)
+            self.StartKoordiantenZ = startplanet.r_z[self.aktuellerschritt] + startplanet.radius * np.cos(self.startwinkel * np.pi / 180)
             self.r_x[0]= self.StartKoordinatenX   
             self.r_z[0]= self.StartKoordiantenZ
             
