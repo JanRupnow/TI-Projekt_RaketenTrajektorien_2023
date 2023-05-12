@@ -110,6 +110,7 @@ class Rocket:
                 if self.scaleChanged:
                     self.img = pygame.transform.scale_by(img0, max(min(0.1*self.radius, 1), 0.1))
                     self.img = pygame.transform.rotate(self.img, math.atan2(self.v_z[self.aktuellerschritt], self.v_x[self.aktuellerschritt]) * (-180) /np.pi - 90)
+                    self.scaleChanged = False
                 #img = pygame.transform.rotozoom(img0, math.atan2(self.v_z[self.aktuellerschritt], self.v_x[self.aktuellerschritt]), max(0.05, self.radius))
                 window.blit(self.img, (self.r_x[self.aktuellerschritt]*scale+move_x+width/2 -self.img.get_width()/2 , self.r_z[self.aktuellerschritt]*scale+move_y+height/2 - self.img.get_height()/2))
             if not paused:
