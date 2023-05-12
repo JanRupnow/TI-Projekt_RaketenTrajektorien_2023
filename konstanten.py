@@ -31,3 +31,5 @@ AktuellerSchritt = 0
 AktuellerRechenschritt = 0
 alleZeitschritte = [1, 5, 10, 25, 100, 500, 1000, 2500, 10000, 25000, 100000]
 
+
+MIN_ROCKET_RADIUS = 2

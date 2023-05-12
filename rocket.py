@@ -40,8 +40,7 @@ class Rocket:
         self.r_z[0]= self.StartKoordiantenZ
         self.rocketstarted = False
         self.img = img0
-        self.notRotatedImg = img0
-        self.scaleChanged = True
+        self.notRotatedImg = pygame.transform.scale_by(img0, min(0.1*self.radius, 1))
 
         #self.imgage = img0
     # Methode für die x-Komponente
@@ -88,7 +87,8 @@ class Rocket:
         self.r_x[i+1] = self.r_x[i] + self.v_x[i]*self.timestep
     def update_scale(self,scale):
         self.radius *= scale
-        self.scaleChanged = True
+        if self.radius > MIN_ROCKET_RADIUS:
+            self.notRotatedImg = pygame.transform.scale_by(img0, max(min(0.1*self.radius, 1), 0.1))
     def draw(self, window, move_x, move_y, planets, paused, scale, width, height):
         global img0
         if self.rocketstarted:
@@ -108,12 +108,12 @@ class Rocket:
                 pygame.draw.lines(window, self.color, False, np.array((self.r_x[self.aktuellerschritt:self.aktuellerrechenschritt]*scale+move_x+width/2, self.r_z[self.aktuellerschritt:self.aktuellerrechenschritt]*scale+move_y+ height/2)).T, 1)
                 #pygame.draw.circle(window,self.color,(self.r_x[self.aktuellerschritt]*scale+move_x+width/2 , self.r_z[self.aktuellerschritt]*scale+move_y+height/2),self.radius)
                 
-                if self.scaleChanged:
-                    self.notRotatedImg = pygame.transform.scale_by(img0, max(min(0.1*self.radius, 1), 0.1))
-                    self.scaleChanged = False
-                self.img = pygame.transform.rotate(self.notRotatedImg, math.atan2(self.v_z[self.aktuellerschritt], self.v_x[self.aktuellerschritt]) * (-180) /np.pi - 90)
-                #img = pygame.transform.rotozoom(img0, math.atan2(self.v_z[self.aktuellerschritt], self.v_x[self.aktuellerschritt]), max(0.05, self.radius))
-                window.blit(self.img, (self.r_x[self.aktuellerschritt]*scale+move_x+width/2 -self.img.get_width()/2 , self.r_z[self.aktuellerschritt]*scale+move_y+height/2 - self.img.get_height()/2))
+                if self.radius >= MIN_ROCKET_RADIUS:
+                    self.img = pygame.transform.rotate(self.notRotatedImg, math.atan2(self.v_z[self.aktuellerschritt], self.v_x[self.aktuellerschritt]) * (-180) /np.pi - 90)
+                    #img = pygame.transform.rotozoom(img0, math.atan2(self.v_z[self.aktuellerschritt], self.v_x[self.aktuellerschritt]), max(0.05, self.radius))
+                    window.blit(self.img, (self.r_x[self.aktuellerschritt]*scale+move_x+width/2 -self.img.get_width()/2 , self.r_z[self.aktuellerschritt]*scale+move_y+height/2 - self.img.get_height()/2))
+                else:
+                    pygame.draw.circle(window, self.color, (self.r_x[self.aktuellerschritt]*scale+move_x+width/2, self.r_z[self.aktuellerschritt]*scale+move_y+height/2), MIN_ROCKET_RADIUS)
             if not paused:
                 self.aktuellerschritt+= 1
         else:
