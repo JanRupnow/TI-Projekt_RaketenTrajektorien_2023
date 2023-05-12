@@ -40,7 +40,7 @@ class Rocket:
         self.r_z[0]= self.StartKoordiantenZ
         self.rocketstarted = False
         self.img = img0
-        self.scaleChanged = False
+        self.scaleChanged = True
 
         #self.imgage = img0
     # Methode für die x-Komponente
