@@ -101,13 +101,13 @@ class Rocket:
                     for i in range(NUM_OF_PREDICTIONS):
                         if firstTime or self.timestepChanged:
                             for planet in planets:
-                                planet.predictNext(self.aktuellerrechenschritt, planets)
+                                planet.predictNext(self.aktuellerrechenschritt, planets, paused)
                         self.berechneNaechstenSchritt(self.aktuellerrechenschritt, planets)
                         self.aktuellerrechenschritt += 1
 
                     if not (firstTime or self.timestepChanged):
                         for planet in planets:
-                            planet.predictNext(self.aktuellerrechenschritt-1, planets)
+                            planet.predictNext(self.aktuellerrechenschritt-1, planets, paused)
 
                     self.powerchanged = False
                     self.timestepChanged = False
@@ -115,7 +115,7 @@ class Rocket:
                 else:
                     self.berechneNaechstenSchritt(self.aktuellerrechenschritt, planets)
                     for planet in planets:
-                        planet.predictNext(self.aktuellerrechenschritt, planets)
+                        planet.predictNext(self.aktuellerrechenschritt, planets, paused)
                     self.aktuellerrechenschritt += 1
             # move_x and move_y verschieben je nach bewegung des Bildschirm
             if self.aktuellerrechenschritt > 2:
