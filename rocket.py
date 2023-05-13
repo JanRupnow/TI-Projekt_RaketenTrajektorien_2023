@@ -134,13 +134,7 @@ class Rocket:
                     planet.aktuellerschritt += 1
 
                 if self.aktuellerschritt >= (NUM_OF_PREDICTIONS):
-                    self.r_x[1:NUM_OF_PREDICTIONS+1] = self.r_x[NUM_OF_PREDICTIONS:]
-                    self.r_z[1:NUM_OF_PREDICTIONS+1] = self.r_z[NUM_OF_PREDICTIONS:]
-                    self.v_x[1:NUM_OF_PREDICTIONS+1] = self.v_x[NUM_OF_PREDICTIONS:]
-                    self.v_z[1:NUM_OF_PREDICTIONS+1] = self.v_z[NUM_OF_PREDICTIONS:]
-                    self.aktuellerschritt = 1
-                    self.aktuellerrechenschritt = NUM_OF_PREDICTIONS
-
+                    self.resetArray()
                     for planet in planets:
                         planet.resetArray()
         else:
@@ -157,3 +151,10 @@ class Rocket:
             return np.sqrt(self.v_x[self.aktuellerschritt]**2 + self.v_z[self.aktuellerschritt]**2)
         else:
             return 0
+    def resetArray(self):
+        self.r_x[1:NUM_OF_PREDICTIONS+1] = self.r_x[NUM_OF_PREDICTIONS:]
+        self.r_z[1:NUM_OF_PREDICTIONS+1] = self.r_z[NUM_OF_PREDICTIONS:]
+        self.v_x[1:NUM_OF_PREDICTIONS+1] = self.v_x[NUM_OF_PREDICTIONS:]
+        self.v_z[1:NUM_OF_PREDICTIONS+1] = self.v_z[NUM_OF_PREDICTIONS:]
+        self.aktuellerschritt = 1
+        self.aktuellerrechenschritt = NUM_OF_PREDICTIONS
