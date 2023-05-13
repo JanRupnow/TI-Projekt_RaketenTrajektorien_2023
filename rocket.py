@@ -34,8 +34,8 @@ class Rocket:
         self.color = color
         self.startplanet = startplanet
         self.predictions = []
-        self.v_x[0] = 0
-        self.v_z[0] = 0
+        self.v_x[0] = self.startplanet.v_x[0]
+        self.v_z[0] = self.startplanet.v_z[0]
         self.r_x[0]= self.StartKoordinatenX   
         self.r_z[0]= self.StartKoordiantenZ
         self.rocketstarted = False
