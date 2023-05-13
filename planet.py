@@ -22,17 +22,13 @@ class Planet:
         self.r_z[0] = y
 
     def drawlineonly(self, window,move_x, move_y, draw_line,scale, width, height, pause):
-        if self.name == "Mond":
-            print(self.aktuellerschritt)
-            print(self.aktuellerrechenschritt)
-            print(np.array((self.r_x[self.aktuellerschritt:self.aktuellerrechenschritt]*scale+move_x+width/2, self.r_z[self.aktuellerschritt:self.aktuellerrechenschritt]*scale+move_y+ height/2)).T)
         if draw_line:
             pygame.draw.lines(window, self.color, False, np.array((self.r_x[self.aktuellerschritt:self.aktuellerrechenschritt]*scale+move_x+width/2, self.r_z[self.aktuellerschritt:self.aktuellerrechenschritt]*scale+move_y+ height/2)).T, 1)
         
 
     def draw(self, window, show, move_x, move_y, draw_line, scale, width, height, pause):
         self.drawlineonly(window, move_x, move_y, draw_line, scale, width, height, True)
-        pygame.draw.circle(window, self.color, (self.r_x[self.aktuellerschritt], self.r_z[self.aktuellerschritt]), max(self.radius * scale, 2))
+        pygame.draw.circle(window, self.color, (self.r_x[self.aktuellerschritt]*scale+move_x+width/2, self.r_z[self.aktuellerschritt]*scale+move_y+ height/2), max(self.radius * scale, 2))
 
         if show:
             distance_to_rocket = np.sqrt(self.r_x[self.aktuellerschritt]**2 + self.r_z[self.aktuellerschritt]**2)
