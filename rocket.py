@@ -98,13 +98,7 @@ class Rocket:
                 if self.powerchanged or self.aktuellerschritt==0 or self.timestepChanged:
                     firstTime = self.aktuellerrechenschritt == 0
                     self.aktuellerrechenschritt = self.aktuellerschritt
-                    for i in range(NUM_OF_PREDICTIONS):
-                        if firstTime or self.timestepChanged:
-                            for planet in planets:
-                                planet.predictNext(self.aktuellerrechenschritt, planets, paused)
-                        self.berechneNaechstenSchritt(self.aktuellerrechenschritt, planets)
-                        self.aktuellerrechenschritt += 1
-
+                    self.calculateNewCalculationOfPredictions(firstTime, planets, paused)
                     if not (firstTime or self.timestepChanged):
                         for planet in planets:
                             planet.predictNext(self.aktuellerrechenschritt-1, planets, paused)
@@ -113,10 +107,7 @@ class Rocket:
                     self.timestepChanged = False
 
                 else:
-                    self.berechneNaechstenSchritt(self.aktuellerrechenschritt, planets)
-                    for planet in planets:
-                        planet.predictNext(self.aktuellerrechenschritt, planets, paused)
-                    self.aktuellerrechenschritt += 1
+                    self.calculateOnePrediction(planets, paused)
             # move_x and move_y verschieben je nach bewegung des Bildschirm
             if self.aktuellerrechenschritt > 2:
                 pygame.draw.lines(window, self.color, False, np.array((self.r_x[self.aktuellerschritt:self.aktuellerrechenschritt]*scale+move_x+width/2, self.r_z[self.aktuellerschritt:self.aktuellerrechenschritt]*scale+move_y+ height/2)).T, 1)
@@ -139,11 +130,7 @@ class Rocket:
                         planet.resetArray()
         else:
             startplanet = next(filter(lambda x: x.name == self.startplanet.name, planets),None)
-            pygame.draw.circle(window,self.color,(startplanet.r_x[self.aktuellerschritt] + startplanet.radius * np.sin(self.startwinkel * np.pi / 180) *scale+move_x+width/2 , startplanet.r_z[self.aktuellerschritt] + startplanet.radius * np.cos(self.startwinkel * np.pi / 180)*scale+move_y+height/2),self.radius)
-            self.StartKoordinatenX = startplanet.r_x[self.aktuellerschritt] + startplanet.radius * np.sin(self.startwinkel * np.pi / 180)
-            self.StartKoordiantenZ = startplanet.r_z[self.aktuellerschritt] + startplanet.radius * np.cos(self.startwinkel * np.pi / 180)
-            self.r_x[0]= self.StartKoordinatenX   
-            self.r_z[0]= self.StartKoordiantenZ
+            self.drawBeforeStarting(startplanet, window, scale, width, height, move_x, move_y)
             
     # in m/s
     def getAbsoluteVelocity(self):
@@ -158,3 +145,22 @@ class Rocket:
         self.v_z[1:NUM_OF_PREDICTIONS+1] = self.v_z[NUM_OF_PREDICTIONS:]
         self.aktuellerschritt = 1
         self.aktuellerrechenschritt = NUM_OF_PREDICTIONS
+
+    def drawBeforeStarting(self, startplanet,window, scale, width, height, move_x, move_y):
+            pygame.draw.circle(window,self.color,(startplanet.r_x[self.aktuellerschritt] + startplanet.radius * np.sin(self.startwinkel * np.pi / 180) *scale+move_x+width/2 , startplanet.r_z[self.aktuellerschritt] + startplanet.radius * np.cos(self.startwinkel * np.pi / 180)*scale+move_y+height/2),self.radius)
+            self.StartKoordinatenX = startplanet.r_x[self.aktuellerschritt] + startplanet.radius * np.sin(self.startwinkel * np.pi / 180)
+            self.StartKoordiantenZ = startplanet.r_z[self.aktuellerschritt] + startplanet.radius * np.cos(self.startwinkel * np.pi / 180)
+            self.r_x[0]= self.StartKoordinatenX   
+            self.r_z[0]= self.StartKoordiantenZ
+    def calculateNewCalculationOfPredictions(self, firstTime, planets, paused):
+        for i in range(NUM_OF_PREDICTIONS):
+                        if firstTime or self.timestepChanged:
+                            for planet in planets:
+                                planet.predictNext(self.aktuellerrechenschritt, planets, paused)
+                        self.berechneNaechstenSchritt(self.aktuellerrechenschritt, planets)
+                        self.aktuellerrechenschritt += 1
+    def calculateOnePrediction(self, planets, paused):
+        self.berechneNaechstenSchritt(self.aktuellerrechenschritt, planets)
+        for planet in planets:
+            planet.predictNext(self.aktuellerrechenschritt, planets, paused)
+        self.aktuellerrechenschritt += 1
