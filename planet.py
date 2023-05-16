@@ -14,7 +14,7 @@ class Planet:
         self.x_vel = 0
         self.y_vel = 0
         self.name = name
-        self.timestep = TIMESTEP
+        self.timestep = timestep
     def drawlineonly(self, window,move_x, move_y, draw_line,scale, width, height):
         x = self.x * scale + width / 2
         y = self.y * scale + height / 2

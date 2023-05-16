@@ -13,7 +13,7 @@ class Rocket:
     def __init__(self, startwinkel, abwurfwinkel,treibstoffmasse, koerpermasse, startplanet, radius, color):
         self.aktuellerschritt = AktuellerSchritt
         self.aktuellerrechenschritt = AktuellerRechenschritt
-        self.timestep = TIMESTEP
+        self.timestep = timestep
         self.timestepChanged = False
         self.AbwurfWinkel = abwurfwinkel # Winkel des Starts auf der Erde [°C]
         self.KoerperMasse = koerpermasse
@@ -40,6 +40,7 @@ class Rocket:
         self.r_z[0]= self.StartKoordiantenZ
         self.rocketstarted = False
         self.img = img0
+        self.zoomOnRocket = False
         self.notRotatedImg = pygame.transform.scale_by(img0, min(0.1*self.radius, 1))
 
         #self.imgage = img0

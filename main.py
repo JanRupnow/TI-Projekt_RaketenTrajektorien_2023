@@ -4,6 +4,7 @@ import numpy as np
 from planet import *
 from konstanten import *
 from rocket import *
+from game_functions import *
 import datetime
 import sys
 pygame.init()
@@ -20,15 +21,13 @@ now = datetime.datetime.now()
 
 def main():
     time_passed = datetime.timedelta(seconds=0)
-    global SCALE, TIMESTEP, now, img0
+    global scale, timestep, now, img0, move_x, move_y
     run = True
     pause = False
     show_distance = False
     clock = pygame.time.Clock()
-    move_x = 0
-    move_y = 0
     draw_line = True
-    zoomrocket = False
+    
 
     # Metric from: https://nssdc.gsfc.nasa.gov/planetary/factsheet/
 
@@ -94,61 +93,54 @@ def main():
 
             #Zoom Rakete mit fixierung
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_1:
-                SCALE *= 100 * (StartScale/SCALE)
-                rocket.update_scale(100)
-                move_x, move_y = -earth.x * SCALE, -earth.y * SCALE
+                scale = scaleRelative(200)
+                rocket.update_scale(200)
+                move_x, move_y = automaticZoomOnRocketOnce(rocket, scale, move_x, move_y)
             #Zoom Startorbit
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_2:
-                SCALE *= 0.6 * (StartScale/SCALE)
-                rocket.update_scale(0.6)
-                move_x, move_y = -earth.x * SCALE, -earth.y * SCALE
+                scale = scaleRelative(5)
+                rocket.update_scale(5)
+                move_x, move_y = automaticZoomOnRocketOnce(rocket, scale, move_x, move_y)
             #Zoom Universum
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_3:
-                SCALE *= 0.1 * (StartScale/SCALE)
-                rocket.update_scale(0.1)
-                move_x, move_y = -sun.x * SCALE, -sun.y * SCALE
+                scale = scaleRelative(1)
+                rocket.update_scale(1)
+                move_x, move_y = automaticZoomOnRocketOnce(rocket, scale, move_x, move_y)
                 
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_f:
-                zoomrocket = not zoomrocket
+                rocket.zoomOnRocket = not rocket.zoomOnRocket
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
                 pause = not pause
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_p:
                 show_distance = not show_distance
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_c:
-                move_x, move_y = -sun.x * SCALE, -sun.y * SCALE
+                move_x, move_y = centerScreenOnPlanet(sun, scale, move_x, move_y)
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_b:
-                move_x, move_y = -rocket.r_x[rocket.aktuellerschritt] * SCALE, -rocket.r_z[rocket.aktuellerschritt] * SCALE    
+                move_x, move_y = automaticZoomOnRocketOnce(rocket, scale, move_x, move_y)
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_u:
                 draw_line = not draw_line
             elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 5:
                 mouse_y, mouse_x = pygame.mouse.get_pos()
-                move_x-=(mouse_x-WIDTH/2)/2
-                move_y-=(mouse_y-HEIGHT/2)/2
-                SCALE *= 0.75
+                move_x, move_y = mousePositionShiftScreen(mouse_x, mouse_y, move_x, move_y)
+                scale *= 0.75
                 rocket.update_scale(0.75)
                 
             elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 4:
                 mouse_x, mouse_y = pygame.mouse.get_pos()
-                move_x-=(mouse_x-WIDTH/2)/2
-                move_y-=(mouse_y-HEIGHT/2)/2
-                SCALE *= 1.25
+                move_x, move_y = mousePositionShiftScreen(mouse_x, mouse_y, move_x, move_y)
+                scale *= 1.25
                 rocket.update_scale(1.25)
                 
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_o:
-                index = min(alleZeitschritte.index(TIMESTEP)+1, len(alleZeitschritte)-1)
-                TIMESTEP = alleZeitschritte[index]
-                rocket.timestep = TIMESTEP
-                rocket.timestepChanged = True
-                for planet in planets:
-                    planet.timestep = rocket.timestep = TIMESTEP
+                timestep = shiftTimeStep(True, rocket, planets, timestep)
+                # index = min(alleZeitschritte.index(timestep)+1, len(alleZeitschritte)-1)
+                # timestep = alleZeitschritte[index]
+                # rocket.timestep = timestep
+                # rocket.timestepChanged = True
+                # for planet in planets:
+                #     planet.timestep = rocket.timestep = timestep
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_i: 
-                index = max(alleZeitschritte.index(TIMESTEP)-1, 0)
-                TIMESTEP = alleZeitschritte[index]
-                rocket.timestep = TIMESTEP
-                rocket.timestepChanged = True
-                for planet in planets:
-                    planet.timestep = rocket.timestep = TIMESTEP
-
+                timestep = shiftTimeStep(False, rocket, planets, timestep)
         keys = pygame.key.get_pressed()
         mouse_x, mouse_y = pygame.mouse.get_pos()
         window_w, window_h = pygame.display.get_surface().get_size()
@@ -162,21 +154,21 @@ def main():
         if keys[pygame.K_DOWN] or mouse_y == window_h - 1:
             move_y -= distance
         
-        if zoomrocket:
-            move_x, move_y = -rocket.r_x[rocket.aktuellerschritt] * SCALE, -rocket.r_z[rocket.aktuellerschritt] * SCALE
+        move_x, move_y = automaticZoomOnRocket(rocket, scale, move_x, move_y)
         ### Rocket           
         for planet in planets:
             if not pause:
                 planet.update_position(planets, rocket)
             # Ohne Radius verschwinden die Balken bugs im Screen
-            if not (planet.y*SCALE+planet.radius*SCALE < -move_y-HEIGHT/2 or planet.y*SCALE-planet.radius*SCALE > -move_y+HEIGHT/2 or planet.x*SCALE+planet.radius*SCALE < -move_x-WIDTH/2 or planet.x*SCALE-planet.radius*SCALE > -move_x+WIDTH/2):
+            if not (planet.y*scale+planet.radius*scale < -move_y-HEIGHT/2 or planet.y*scale-planet.radius*scale > -move_y+HEIGHT/2 or planet.x*scale+planet.radius*scale < -move_x-WIDTH/2 or planet.x*scale-planet.radius*scale > -move_x+WIDTH/2):
                 if show_distance :
-                    planet.draw(WINDOW, 1, move_x, move_y, draw_line,SCALE, WIDTH, HEIGHT)
+                    planet.draw(WINDOW, 1, move_x, move_y, draw_line,scale, WIDTH, HEIGHT)
                 else:
-                    planet.draw(WINDOW, 0, move_x, move_y, draw_line,SCALE, WIDTH, HEIGHT)
+                    planet.draw(WINDOW, 0, move_x, move_y, draw_line,scale, WIDTH, HEIGHT)
             else: 
-                planet.drawlineonly(WINDOW, move_x, move_y, draw_line, SCALE, WIDTH, HEIGHT)
-        rocket.draw(WINDOW,move_x,move_y, planets, pause, SCALE, WIDTH, HEIGHT)
+                planet.drawlineonly(WINDOW, move_x, move_y, draw_line, scale, WIDTH, HEIGHT)
+        rocket.draw(WINDOW,move_x,move_y, planets, pause, scale, WIDTH, HEIGHT)
+
         fps_text = FONT_1.render("FPS: " + str(int(clock.get_fps())), True, COLOR_WHITE)
 
         ### Menü implementieren zur Übersicht der Tasten
@@ -217,9 +209,10 @@ def main():
         WINDOW.blit(uranus_surface, (15, 525))
         neptune_surface = FONT_1.render("- Neptune", True, COLOR_NEPTUNE)
         WINDOW.blit(neptune_surface, (15, 555))
-        if not pause:
-            time_passed += datetime.timedelta(seconds=TIMESTEP)
-        text_surface = FONT_1.render(f"Time step: {TIMESTEP}x", True, COLOR_WHITE)
+
+        time_passed = addClockTime(pause, time_passed, timestep)
+
+        text_surface = FONT_1.render(f"Time step: {timestep}x", True, COLOR_WHITE)
         WINDOW.blit(text_surface, (1500, 15))
         text_actual_time = FONT_1.render(f'Current time: {(now+time_passed).strftime("%d/%m/%Y, %H:%M:%S")}', True, COLOR_WHITE)
         WINDOW.blit(text_actual_time, (1500, 45))
