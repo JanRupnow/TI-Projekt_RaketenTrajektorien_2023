@@ -136,7 +136,7 @@ class Rocket:
                         planet.resetArray()
         else:
             startplanet = next(filter(lambda x: x.name == self.startplanet.name, planets),None)
-            self.drawBeforeStarting(startplanet, window, scale, width, height, move_x, move_y)
+            self.drawAndValueBeforeStarting(startplanet, window, scale, width, height, move_x, move_y)
             
     # in m/s
     def getAbsoluteVelocity(self):
@@ -152,12 +152,14 @@ class Rocket:
         self.aktuellerschritt = 1
         self.aktuellerrechenschritt = NUM_OF_PREDICTIONS
 
-    def drawBeforeStarting(self, startplanet,window, scale, width, height, move_x, move_y):
+    def drawAndValueBeforeStarting(self, startplanet,window, scale, width, height, move_x, move_y):
             pygame.draw.circle(window,self.color,(startplanet.r_x[self.aktuellerschritt] + startplanet.radius * np.sin(self.startwinkel * np.pi / 180) *scale+move_x+width/2 , startplanet.r_z[self.aktuellerschritt] + startplanet.radius * np.cos(self.startwinkel * np.pi / 180)*scale+move_y+height/2),self.radius)
             self.StartKoordinatenX = startplanet.r_x[self.aktuellerschritt] + startplanet.radius * np.sin(self.startwinkel * np.pi / 180)
             self.StartKoordiantenZ = startplanet.r_z[self.aktuellerschritt] + startplanet.radius * np.cos(self.startwinkel * np.pi / 180)
-            self.r_x[0]= self.StartKoordinatenX   
-            self.r_z[0]= self.StartKoordiantenZ
+            self.r_x[0] = self.StartKoordinatenX   
+            self.r_z[0] = self.StartKoordiantenZ
+            self.v_x[0] = startplanet.v_x[startplanet.aktuellerschritt]
+            self.v_z[0] = startplanet.v_z[startplanet.aktuellerschritt]
     def calculateNewCalculationOfPredictions(self, firstTime, planets, paused):
         for i in range(NUM_OF_PREDICTIONS):
             if firstTime or self.timestepChanged:

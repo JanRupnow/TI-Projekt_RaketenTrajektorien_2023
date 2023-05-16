@@ -76,7 +76,7 @@ def main():
                                              (event.key == pygame.K_x or event.key == pygame.K_ESCAPE)):
                 run = False
             # Raketenboost erhöhen
-            elif event.type == pygame.KEYDOWN and event.key == pygame.K_w and rocket.thrust<10:
+            elif event.type == pygame.KEYDOWN and event.key == pygame.K_w and rocket.thrust<10 and not pause:
                 rocket.thrust += 1
                 rocket.powerchanged = True
                 rocket.rocketstarted = True
@@ -171,9 +171,6 @@ def main():
                     planet.drawlineonly(WINDOW, move_x, move_y, draw_line, scale, WIDTH, HEIGHT, pause)
 
         fps_text = FONT_1.render("FPS: " + str(int(clock.get_fps())), True, COLOR_WHITE)
-        startplanet = next(filter(lambda x: x.name == "Erde", planets),None)
-        print(startplanet.aktuellerschritt)
-        print(startplanet.aktuellerrechenschritt)
         ### Menü implementieren zur Übersicht der Tasten
         WINDOW.blit(fps_text, (15, 15))
         text_surface = FONT_1.render("Press X or ESC to exit", True, COLOR_WHITE)

@@ -1,1 +1,2 @@
-r("Press X or ESC to exit"
+
+        rocket_maxQ = FONT_1.render(f'MaxQ: %', True, COLOR_W

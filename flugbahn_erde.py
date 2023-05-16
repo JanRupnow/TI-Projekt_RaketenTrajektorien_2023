@@ -50,8 +50,8 @@ class Rocket:
         self.TreibstoffMasse = treibstoffmasse
         self.startwinkel = startwinkel
         ## Berechnung der Startposition der Rakete abhängig vom Startplaneten ohne Skalierung
-        self.StartKoordinatenX = startplanet.x + startplanet.radius * np.sin(self.startwinkel * np.pi / 180)
-        self.StartKoordiantenZ = startplanet.y + startplanet.radius * np.cos(self.startwinkel * np.pi / 180)
+        self.StartKoordinatenX = startplanet.r_x[planet.aktuellerschritt] + startplanet.radius * np.sin(self.startwinkel * np.pi / 180)
+        self.StartKoordiantenZ = startplanet.r_z[planet.aktuellerschritt] + startplanet.radius * np.cos(self.startwinkel * np.pi / 180)
         self.r_x= np.zeros(Rechenschritte)   # x-Position [m]
         self.r_z= np.zeros(Rechenschritte)   # z-Position [m]
         self.v_x=np.zeros(Rechenschritte)    # x-Geschwindigkeit [m/s]
@@ -72,8 +72,8 @@ class Rocket:
     # Methode für die x-Komponente
     def f2(self, x, i:int):
         ## TO DO Gravitation für alle Planeten einbauen
-        r0 = np.sqrt( (self.r_x[i] - self.startplanet.x)**2 + (self.r_z[i] - self.startplanet.y)**2)
-        x=( -(G*self.startplanet.mass/r0**2) - (Luftwiederstand*x**2*np.sign(self.v_z[i]) * p_0 * np.exp(-abs((r0-self.startplanet.radius)) / h_s))/(2 * self.KoerperMasse) ) * ((self.r_x[i] - self.startplanet.x)/r0) #Extrakraft x einbauen
+        r0 = np.sqrt( (self.r_x[i] - self.startplanet.r_x[planet.aktuellerschritt])**2 + (self.r_z[i] - self.startplanet.r_z[planet.aktuellerschritt])**2)
+        x=( -(G*self.startplanet.mass/r0**2) - (Luftwiederstand*x**2*np.sign(self.v_z[i]) * p_0 * np.exp(-abs((r0-self.startplanet.radius)) / h_s))/(2 * self.KoerperMasse) ) * ((self.r_x[i] - self.startplanet.r_x[planet.aktuellerschritt])/r0) #Extrakraft x einbauen
         #y=-(G*m_E/(r_x**2 + r_z**2)**1.5) * r_x - c*x**2*np.sign(x)
         if self.aktuellerschritt == self.aktuellerrechenschritt:
             if self.x_schub!=0:
@@ -82,8 +82,8 @@ class Rocket:
     # Methode für die z-Komponente
     def f1(self, x,i:int):
         ## TO DO Gravitation für alle Planeten einbauen
-        r0 = np.sqrt( (self.r_x[i] - self.startplanet.x)**2 + (self.r_z[i] - self.startplanet.y)**2)
-        z=( -(G*self.startplanet.mass/r0**2) - (Luftwiederstand*x**2*np.sign(self.v_z[i]) * p_0 * np.exp(-abs((r0-self.startplanet.radius)) / h_s))/(2 * self.KoerperMasse) ) * ((self.r_z[i] - self.startplanet.y)/r0) #Extrakraft z einbauen
+        r0 = np.sqrt( (self.r_x[i] - self.startplanet.r_x[planet.aktuellerschritt])**2 + (self.r_z[i] - self.startplanet.r_z[planet.aktuellerschritt])**2)
+        z=( -(G*self.startplanet.mass/r0**2) - (Luftwiederstand*x**2*np.sign(self.v_z[i]) * p_0 * np.exp(-abs((r0-self.startplanet.radius)) / h_s))/(2 * self.KoerperMasse) ) * ((self.r_z[i] - self.startplanet.r_z[planet.aktuellerschritt])/r0) #Extrakraft z einbauen
         #y=-(G*m_E/(r_x**2 + r_z**2)**1.5) * r_z - c*x**2*np.sign(x)
         if self.aktuellerschritt == self.aktuellerrechenschritt:
             if self.z_schub!=0:
@@ -339,7 +339,7 @@ def main():
             if not pause:
                 planet.update_position(planets, rocket)
             # Ohne Radius verschwinden die Balken bugs im Screen
-            if not (planet.y*SCALE+planet.radius*scale< -move_y-HEIGHT/2 or planet.y*SCALE-planet.radius*scale> -move_y+HEIGHT/2 or planet.x*SCALE+planet.radius*scale< -move_x-WIDTH/2 or planet.x*SCALE-planet.radius*scale> -move_x+WIDTH/2):
+            if not (planet.r_z[planet.aktuellerschritt]*SCALE+planet.radius*scale< -move_y-HEIGHT/2 or planet.r_z[planet.aktuellerschritt]*SCALE-planet.radius*scale> -move_y+HEIGHT/2 or planet.r_x[planet.aktuellerschritt]*SCALE+planet.radius*scale< -move_x-WIDTH/2 or planet.r_x[planet.aktuellerschritt]*SCALE-planet.radius*scale> -move_x+WIDTH/2):
                 if show_distance :
                     planet.draw(WINDOW, 1, move_x, move_y, draw_line)
                 else:

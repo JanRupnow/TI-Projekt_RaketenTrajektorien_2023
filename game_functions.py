@@ -22,7 +22,7 @@ def automaticZoomOnRocketOnce(rocket, scale, move_x, move_y):
     return move_x, move_y
 
 def centerScreenOnPlanet(planet, scale, move_x, move_y):
-     move_x, move_y = -planet.x * scale, -planet.y * scale
+     move_x, move_y = -planet.r_x[planet.aktuellerschritt] * scale, -planet.r_z[planet.aktuellerschritt] * scale
      return move_x, move_y
 
 def scaleRelative(factor):
