@@ -94,17 +94,19 @@ def main():
 
             #Zoom Rakete mit fixierung
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_1:
-                zoomrocket = not zoomrocket
-                SCALE *= 10.5
-                rocket.update_scale(10.5)
+                SCALE *= 100 * (StartScale/SCALE)
+                rocket.update_scale(100)
+                move_x, move_y = -earth.x * SCALE, -earth.y * SCALE
             #Zoom Startorbit
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_2:
+                SCALE *= 0.6 * (StartScale/SCALE)
+                rocket.update_scale(0.6)
                 move_x, move_y = -earth.x * SCALE, -earth.y * SCALE
-                SCALE *= 3.5
             #Zoom Universum
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_3:
+                SCALE *= 0.1 * (StartScale/SCALE)
+                rocket.update_scale(0.1)
                 move_x, move_y = -sun.x * SCALE, -sun.y * SCALE
-                SCALE *= 0.01
                 
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_f:
                 zoomrocket = not zoomrocket

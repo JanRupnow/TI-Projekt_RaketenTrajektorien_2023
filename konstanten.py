@@ -15,6 +15,7 @@ COLOR_NEPTUNE = (63, 84, 186)
 AU = 149.6e6 * 1000  # Astronomical unit
 G = 6.67428e-11  # Gravitational constant
 SCALE = 200 / AU
+StartScale = SCALE
 ### Generelle Variablen
 Luftwiederstand = 0.0162        # Luftwiderstandsbeiwert                     #  - Verwendung zur Einstellung des Schubs
 FallBeschleunigung = 9.81       # [m/s^2]
