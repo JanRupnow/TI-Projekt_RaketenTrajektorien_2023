@@ -199,7 +199,7 @@ class Planet:
         return force_x, force_y
 
     def update_position(self, planets, rocket):
-        self.distance_to_rocket = math.sqrt((self.x-rocket.r_x[rocket.aktuellerschritt])**2+(self.y-rocket.r_z[rocket.aktuellerschritt])**2)
+        self.distance_to_rocket = math.sqrt((self.r_x[self.aktuellerschritt]-rocket.r_x[rocket.aktuellerschritt])**2+(self.self.r_z[self.aktuellerschritt]-rocket.r_z[rocket.aktuellerschritt])**2)
         total_fx = total_fy = 0
         for planet in planets:
             if self == planet:

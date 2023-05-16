@@ -164,11 +164,11 @@ def main():
                         or planet.r_z[planet.aktuellerschritt]*scale+planet.radius*scale < -move_x-WIDTH/2 
                         or planet.r_x[planet.aktuellerschritt]*scale-planet.radius*scale > -move_x+WIDTH/2):
                     if show_distance :
-                        planet.draw(WINDOW, 1, move_x, move_y, draw_line,scale, WIDTH, HEIGHT, pause)
+                        planet.draw(WINDOW, 1, move_x, move_y, draw_line,scale, WIDTH, HEIGHT, pause, rocket)
                     else:
-                        planet.draw(WINDOW, 0, move_x, move_y, draw_line,scale, WIDTH, HEIGHT, pause)
+                        planet.draw(WINDOW, 0, move_x, move_y, draw_line,scale, WIDTH, HEIGHT, pause, rocket)
                 else: 
-                    planet.drawlineonly(WINDOW, move_x, move_y, draw_line, scale, WIDTH, HEIGHT, pause)
+                    planet.drawlineonly(WINDOW, move_x, move_y, draw_line, scale, WIDTH, HEIGHT, pause, rocket, show_distance)
 
         fps_text = FONT_1.render("FPS: " + str(int(clock.get_fps())), True, COLOR_WHITE)
         ### Menü implementieren zur Übersicht der Tasten
@@ -217,7 +217,7 @@ def main():
         WINDOW.blit(text_actual_time, (1500, 45))
         text_time_passed = FONT_1.render(f'Passed time: {time_passed}', True, COLOR_WHITE)
         WINDOW.blit(text_time_passed, (1500, 75))
-        rocket_velocity = FONT_1.render(f'Rocket Speed: {round(rocket.getAbsoluteVelocity()*3.6/1000)}km/h', True, COLOR_WHITE)
+        rocket_velocity = FONT_1.render(f'Rocket Speed: {round(rocket.getCurrentRelativeVelocity()*3.6)}km/h', True, COLOR_WHITE)
         WINDOW.blit(rocket_velocity, (1500, 105))
         rocket_fuel = FONT_1.render(f'Rocket Fuel: %', True, COLOR_WHITE)
         WINDOW.blit(rocket_fuel, (1500, 135))
