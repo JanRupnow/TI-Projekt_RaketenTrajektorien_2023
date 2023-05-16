@@ -14,7 +14,8 @@ COLOR_NEPTUNE = (63, 84, 186)
 ### Solarsystem Variablen 
 AU = 149.6e6 * 1000  # Astronomical unit
 G = 6.67428e-11  # Gravitational constant
-SCALE = 200 / AU
+scale = 200 / AU
+STARTSCALE = scale
 ### Generelle Variablen
 Luftwiederstand = 0.0162        # Luftwiderstandsbeiwert                     #  - Verwendung zur Einstellung des Schubs
 FallBeschleunigung = 9.81       # [m/s^2]
@@ -26,12 +27,13 @@ Startzeit = 0                   # [s]                # [s]
 Rechenschritte = 100000
 Endzeit = Rechenschritte*5
 #dt=(Endzeit-Startzeit)/Rechenschritte
-TIMESTEP = 100
+timestep = 100
 AktuellerSchritt = 0
 AktuellerRechenschritt = 0
 alleZeitschritte = [1, 5, 10, 25, 100, 500, 1000, 2500, 10000, 25000, 100000]
 
-
+move_x = 0
+move_y = 0
 MIN_ROCKET_RADIUS = 2
 NUM_OF_PREDICTIONS = 1000
 # muss größer als NUM_OF_PREDICTIONS sein

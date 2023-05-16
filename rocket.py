@@ -10,10 +10,10 @@ path = os.path.join(path, 'Rocket.png')
 img0 = pygame.image.load(path)
 img0 = pygame.transform.scale_by(img0, 0.5)
 class Rocket:
-    def __init__(self, startwinkel, abwurfwinkel,treibstoffmasse, koerpermasse, startplanet, radius, color):
+    def __init__(self, startwinkel, abwurfwinkel,treibstoffmasse, koerpermasse, startplanet, radius, color, sun):
         self.aktuellerschritt = AktuellerSchritt
         self.aktuellerrechenschritt = AktuellerRechenschritt
-        self.timestep = TIMESTEP
+        self.timestep = timestep
         self.timestepChanged = False
         self.AbwurfWinkel = abwurfwinkel # Winkel des Starts auf der Erde [°C]
         self.KoerperMasse = koerpermasse
@@ -41,15 +41,19 @@ class Rocket:
         self.rocketstarted = False
         self.img = img0
         self.notRotatedImg = pygame.transform.scale_by(img0, min(0.1*self.radius, 1))
-
+        self.zoomOnRocket = False
+        self.sun = sun
         #self.imgage = img0
     # Methode für die x-Komponente
     def f2(self, x, i:int, planets):
+
         #for planet in planets:
          #   if planet.distance_to_rocket < 100*plaen
         ## TO DO Gravitation für alle Planeten einbauen
+        distanceToSun = np.sqrt( (self.r_x[i] - self.sun.r_x[i])**2 + (self.r_z[i] - self.sun.r_z[i])**2)
         r0 = np.sqrt( (self.r_x[i] - self.startplanet.r_x[i])**2 + (self.r_z[i] - self.startplanet.r_z[i])**2)
         x=( -(G*self.startplanet.mass/r0**2) - (Luftwiederstand*x**2*np.sign(self.v_z[i]) * p_0 * np.exp(-abs((r0-self.startplanet.radius)) / h_s))/(2 * self.KoerperMasse) ) * ((self.r_x[i] - self.startplanet.r_x[i])/r0) #Extrakraft x einbauen
+        x -= (G*self.sun.mass/distanceToSun**2)* ((self.r_x[i] - self.sun.r_x[i])/distanceToSun)
         #y=-(G*m_E/(r_x**2 + r_z**2)**1.5) * r_x - c*x**2*np.sign(x)
         #if self.aktuellerschritt == self.aktuellerrechenschritt:
             #if self.x_schub!=0:
@@ -59,8 +63,10 @@ class Rocket:
     # Methode für die z-Komponente
     def f1(self, x,i:int, planets):
         ## TO DO Gravitation für alle Planeten einbauen
+        distanceToSun = np.sqrt( (self.r_x[i] - self.sun.r_x[i])**2 + (self.r_z[i] - self.sun.r_z[i])**2)
         r0 = np.sqrt( (self.r_x[i] - self.startplanet.r_x[i])**2 + (self.r_z[i] - self.startplanet.r_z[i])**2)
         z=( -(G*self.startplanet.mass/r0**2) - (Luftwiederstand*x**2*np.sign(self.v_z[i]) * p_0 * np.exp(-abs((r0-self.startplanet.radius)) / h_s))/(2 * self.KoerperMasse) ) * ((self.r_z[i] - self.startplanet.r_z[i])/r0) #Extrakraft z einbauen
+        z -= (G*self.sun.mass/distanceToSun**2)* ((self.r_z[i] - self.sun.r_z[i])/distanceToSun)
         # TODO muss die Geschwindigkeit relativ zum Planet sein? Eigentlich ja oder?
 
         if self.thrust != 0:
@@ -154,13 +160,13 @@ class Rocket:
             self.r_z[0]= self.StartKoordiantenZ
     def calculateNewCalculationOfPredictions(self, firstTime, planets, paused):
         for i in range(NUM_OF_PREDICTIONS):
-                        if firstTime or self.timestepChanged:
-                            for planet in planets:
-                                planet.predictNext(self.aktuellerrechenschritt, planets, paused)
-                        self.berechneNaechstenSchritt(self.aktuellerrechenschritt, planets)
-                        self.aktuellerrechenschritt += 1
+            if firstTime or self.timestepChanged:
+                for planet in planets:
+                    planet.predictNext(self.aktuellerrechenschritt, planets, paused)
+            self.berechneNaechstenSchritt(self.aktuellerrechenschritt, planets)
+            self.aktuellerrechenschritt += 1
     def calculateOnePrediction(self, planets, paused):
-        self.berechneNaechstenSchritt(self.aktuellerrechenschritt, planets)
         for planet in planets:
             planet.predictNext(self.aktuellerrechenschritt, planets, paused)
+        self.berechneNaechstenSchritt(self.aktuellerrechenschritt, planets)
         self.aktuellerrechenschritt += 1

@@ -9,7 +9,8 @@ class Planet:
         self.color = color
         self.mass = mass
         self.name = name
-        self.timestep = TIMESTEP
+        self.timestep = timestep
+        self.scaleR = radius
 
         self.r_x = np.zeros(LEN_OF_PREDICTIONS_ARRAY)
         self.r_z = np.zeros(LEN_OF_PREDICTIONS_ARRAY)
@@ -28,8 +29,7 @@ class Planet:
 
     def draw(self, window, show, move_x, move_y, draw_line, scale, width, height, pause):
         self.drawlineonly(window, move_x, move_y, draw_line, scale, width, height, True)
-        pygame.draw.circle(window, self.color, (self.r_x[self.aktuellerschritt]*scale+move_x+width/2, self.r_z[self.aktuellerschritt]*scale+move_y+ height/2), max(self.radius * scale, 2))
-
+        pygame.draw.circle(window, self.color, (self.r_x[self.aktuellerschritt]*scale+move_x+width/2, self.r_z[self.aktuellerschritt]*scale+move_y+ height/2), max(self.scaleR * scale, 2))
         if show:
             distance_to_rocket = np.sqrt(self.r_x[self.aktuellerschritt]**2 + self.r_z[self.aktuellerschritt]**2)
             distance_text = pygame.font.SysFont("Trebuchet MS", 16).render(self.name+ ": "+str(round(distance_to_rocket * 1.057 * 10 ** -16, 8))+ "light years", True,
@@ -60,10 +60,10 @@ class Planet:
         self.aktuellerrechenschritt = NUM_OF_PREDICTIONS
 
     def update_scale(self, scale):
-        self.radius *= scale
+        self.scaleR *= scale
 
     def predictNext(self, i, planets, pause):
-        #self.aktuellerrechenschritt = i
+        self.aktuellerrechenschritt = i
 
         total_fx = total_fy = 0
         for planet in planets:

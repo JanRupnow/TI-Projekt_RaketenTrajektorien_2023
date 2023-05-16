@@ -23,7 +23,7 @@ pygame.display.set_caption("Solar System Simulation")
 ### Solarsystem Variablen 
 AU = 149.6e6 * 1000  # Astronomical unit
 G = 6.67428e-11  # Gravitational constant
-SCALE = 200 / AU
+scale = 200 / AU
 ### Generelle Variablen
 Luftwiederstand = 0.0162        # Luftwiderstandsbeiwert                     #  - Verwendung zur Einstellung des Schubs
 FallBeschleunigung = 9.81       # [m/s^2]
@@ -36,7 +36,7 @@ Rechenschritte = 100000
 Endzeit = Rechenschritte*5
 t=np.linspace(Startzeit, Endzeit, Rechenschritte)
 dt=(Endzeit-Startzeit)/Rechenschritte
-TIMESTEP = 5#60*60*24*2
+timestep = 5#60*60*24*2
 AktuellerSchritt = 0
 AktuellerRechenschritt = 0
 
@@ -49,8 +49,8 @@ class Rocket:
         self.KoerperMasse = koerpermasse
         self.TreibstoffMasse = treibstoffmasse
         ## Berechnung der Startposition der Rakete abhängig vom Startplaneten ohne Skalierung
-        self.StartKoordinatenX = startplanet.r_x[self.aktuellerschritt] + startplanet.radius/SCALE * np.sin(startwinkel * np.pi / 180)
-        self.StartKoordiantenZ = startplanet.r_z[self.aktuellerschritt] + startplanet.radius/SCALE * np.cos(startwinkel * np.pi / 180)
+        self.StartKoordinatenX = startplanet.r_x[self.aktuellerschritt] + startplanet.radius/scale * np.sin(startwinkel * np.pi / 180)
+        self.StartKoordiantenZ = startplanet.r_z[self.aktuellerschritt] + startplanet.radius/scale * np.cos(startwinkel * np.pi / 180)
         self.r_x= np.zeros(Rechenschritte)   # x-Position [m]
         self.r_z= np.zeros(Rechenschritte)   # z-Position [m]
         self.v_x=np.zeros(Rechenschritte)    # x-Geschwindigkeit [m/s]
@@ -141,8 +141,8 @@ class Rocket:
             self.aktuellerrechenschritt += 1
                 
         # move_x and move_y verschieben je nach bewegung des Bildschirm
-        pygame.draw.lines(window, self.color, False, np.array((self.r_x[self.aktuellerschritt:self.aktuellerrechenschritt]*SCALE+move_x+WIDTH/2, self.r_z[self.aktuellerschritt:self.aktuellerrechenschritt]*SCALE+move_y+ HEIGHT/2)).T, 1)
-        pygame.draw.circle(window,self.color,(self.r_x[self.aktuellerschritt]*SCALE+move_x+WIDTH/2 , self.r_z[self.aktuellerschritt]*SCALE+move_y+HEIGHT/2),self.radius)
+        pygame.draw.lines(window, self.color, False, np.array((self.r_x[self.aktuellerschritt:self.aktuellerrechenschritt]*scale+move_x+WIDTH/2, self.r_z[self.aktuellerschritt:self.aktuellerrechenschritt]*scale+move_y+ HEIGHT/2)).T, 1)
+        pygame.draw.circle(window,self.color,(self.r_x[self.aktuellerschritt]*scale+move_x+WIDTH/2 , self.r_z[self.aktuellerschritt]*scale+move_y+HEIGHT/2),self.radius)
         self.aktuellerschritt+= 1
         
 class Planet:
@@ -160,14 +160,14 @@ class Planet:
         self.name = name
 
     def draw(self, window, show, move_x, move_y, draw_line):
-        x = self.x * SCALE + WIDTH / 2
-        y = self.y * SCALE + HEIGHT / 2
+        x = self.x * scale + WIDTH / 2
+        y = self.y * scale + HEIGHT / 2
         if len(self.orbit) > 2:
             updated_points = []
             for point in self.orbit:
                 x, y = point
-                x = x * SCALE + WIDTH / 2
-                y = y * SCALE + HEIGHT / 2
+                x = x * scale + WIDTH / 2
+                y = y * scale + HEIGHT / 2
                 updated_points.append((x + move_x, y + move_y))
             if draw_line:
                 pygame.draw.lines(window, self.color, False, updated_points, 1)   
@@ -200,10 +200,10 @@ class Planet:
             fx, fy = self.attraction(planet)
             total_fx += fx
             total_fy += fy
-        self.x_vel += total_fx / self.mass * TIMESTEP
-        self.y_vel += total_fy / self.mass * TIMESTEP
-        self.x += self.x_vel * TIMESTEP
-        self.y += self.y_vel * TIMESTEP
+        self.x_vel += total_fx / self.mass * timestep
+        self.y_vel += total_fy / self.mass * timestep
+        self.x += self.x_vel * timestep
+        self.y += self.y_vel * timestep
         self.orbit.append((self.x, self.y))
 
     def update_scale(self, scale):
@@ -212,7 +212,7 @@ class Planet:
 
 def main():
     powerchanged = False
-    global SCALE
+    global scale
     run = True
     pause = False
     show_distance = False
@@ -223,31 +223,31 @@ def main():
 
     # Metric from: https://nssdc.gsfc.nasa.gov/planetary/factsheet/
 
-    sun = Planet(0, 0, 30 * SCALE * 10 ** 9, COLOR_SUN, 1.98892 * 10 ** 30,"Sonne")
+    sun = Planet(0, 0, 30 * scale * 10 ** 9, COLOR_SUN, 1.98892 * 10 ** 30,"Sonne")
     sun.sun = True
 
-    mercury = Planet(-0.387 * AU, 0, 5 * SCALE * 10 ** 9, COLOR_MERCURY, 3.30 * 10 ** 23,"Merkur")
+    mercury = Planet(-0.387 * AU, 0, 5 * scale * 10 ** 9, COLOR_MERCURY, 3.30 * 10 ** 23,"Merkur")
     mercury.y_vel = 47.4 * 1000
 
-    venus = Planet(-0.723 * AU, 0, 9 * SCALE * 10 ** 9, COLOR_VENUS, 4.8685 * 10 ** 24,"Venus")
+    venus = Planet(-0.723 * AU, 0, 9 * scale * 10 ** 9, COLOR_VENUS, 4.8685 * 10 ** 24,"Venus")
     venus.y_vel = 35.02 * 1000
 
-    earth = Planet(-1 * AU, 0, 10 * SCALE * 10 ** 9, COLOR_EARTH, 5.9722 * 10 ** 24,"Erde")
+    earth = Planet(-1 * AU, 0, 10 * scale * 10 ** 9, COLOR_EARTH, 5.9722 * 10 ** 24,"Erde")
     earth.y_vel = 29.783 * 1000
 
-    mars = Planet(-1.524 * AU, 0, 5 * SCALE * 10 ** 9, COLOR_MARS, 6.39 * 10 ** 23,"Mars")
+    mars = Planet(-1.524 * AU, 0, 5 * scale * 10 ** 9, COLOR_MARS, 6.39 * 10 ** 23,"Mars")
     mars.y_vel = 24.077 * 1000
 
-    jupiter = Planet(-5.204 * AU, 0, 20 * SCALE * 10 ** 9, COLOR_JUPITER, 1.898 * 10 ** 27,"Jupiter")
+    jupiter = Planet(-5.204 * AU, 0, 20 * scale * 10 ** 9, COLOR_JUPITER, 1.898 * 10 ** 27,"Jupiter")
     jupiter.y_vel = 13.06 * 1000
 
-    saturn = Planet(-9.573 * AU, 0, 18 * SCALE * 10 ** 9, COLOR_SATURN, 5.683 * 10 ** 26,"Saturn")
+    saturn = Planet(-9.573 * AU, 0, 18 * scale * 10 ** 9, COLOR_SATURN, 5.683 * 10 ** 26,"Saturn")
     saturn.y_vel = 9.68 * 1000
 
-    uranus = Planet(-19.165 * AU, 0, 14 * SCALE * 10 ** 9, COLOR_URANUS, 8.681 * 10 ** 25,"Uranus")
+    uranus = Planet(-19.165 * AU, 0, 14 * scale * 10 ** 9, COLOR_URANUS, 8.681 * 10 ** 25,"Uranus")
     uranus.y_vel = 6.80 * 1000
 
-    neptune = Planet(-30.178 * AU, 0, 12 * SCALE * 10 ** 9, COLOR_NEPTUNE, 1.024 * 10 ** 26,"Neptun")
+    neptune = Planet(-30.178 * AU, 0, 12 * scale * 10 ** 9, COLOR_NEPTUNE, 1.024 * 10 ** 26,"Neptun")
     neptune.y_vel = 5.43 * 1000
 
     planets = [neptune, uranus, saturn, jupiter, mars, earth, venus, mercury, sun]
@@ -284,16 +284,16 @@ def main():
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_p:
                 show_distance = not show_distance
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_c:
-                move_x, move_y = -sun.x * sun.SCALE, -sun.y * sun.SCALE
+                move_x, move_y = -sun.x * sun.scale, -sun.y * sun.scale
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_u:
                 draw_line = not draw_line
             elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 5:
-                SCALE *= 0.75
+                scale *= 0.75
                 rocket.update_scale(0.75)
                 for planet in planets:
                     planet.update_scale(0.75)
             elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 4:
-                SCALE *= 1.25
+                scale *= 1.25
                 rocket.update_scale(1.25)
                 for planet in planets:
                     planet.update_scale(1.25)

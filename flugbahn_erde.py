@@ -23,7 +23,7 @@ pygame.display.set_caption("Solar System Simulation")
 ### Solarsystem Variablen 
 AU = 149.6e6 * 1000  # Astronomical unit
 G = 6.67428e-11  # Gravitational constant
-SCALE = 200 / AU
+scale= 200 / AU
 ### Generelle Variablen
 Luftwiederstand = 0.0162        # Luftwiderstandsbeiwert                    
 FallBeschleunigung = 9.81       # [m/s^2]
@@ -36,7 +36,7 @@ Rechenschritte = 100000
 Endzeit = Rechenschritte*5
 t=np.linspace(Startzeit, Endzeit, Rechenschritte)
 dt=(Endzeit-Startzeit)/Rechenschritte
-TIMESTEP = 60*60*24*2
+timestep = 60*60*24*2
 AktuellerSchritt = 0
 AktuellerRechenschritt = 0
 
@@ -150,26 +150,26 @@ class Planet:
         self.name = name
     def drawlineonly(self, window,move_x, move_y, draw_line):
         # Funktion wird genutzt um die Planeten Orbits darzustellen die außerhalb des Bildschirms sind und deshalb nicht gezeichnet werden
-        x = self.x * SCALE + WIDTH / 2
-        y = self.y * SCALE + HEIGHT / 2
+        x = self.x * scale+ WIDTH / 2
+        y = self.y * scale+ HEIGHT / 2
         if len(self.orbit) > 2:
             updated_points = []
             for point in self.orbit:
                 x, y = point
-                x = x * SCALE + WIDTH / 2
-                y = y * SCALE + HEIGHT / 2
+                x = x * scale+ WIDTH / 2
+                y = y * scale+ HEIGHT / 2
                 updated_points.append((x + move_x, y + move_y))
             if draw_line:
                 pygame.draw.lines(window, self.color, False, updated_points, 1) 
     def draw(self, window, show, move_x, move_y, draw_line):
-        x = self.x * SCALE + WIDTH / 2
-        y = self.y * SCALE + HEIGHT / 2
+        x = self.x * scale+ WIDTH / 2
+        y = self.y * scale+ HEIGHT / 2
         if len(self.orbit) > 2:
             updated_points = []
             for point in self.orbit:
                 x, y = point
-                x = x * SCALE + WIDTH / 2
-                y = y * SCALE + HEIGHT / 2
+                x = x * scale+ WIDTH / 2
+                y = y * scale+ HEIGHT / 2
                 updated_points.append((x + move_x, y + move_y))
             if draw_line:
                 pygame.draw.lines(window, self.color, False, updated_points, 1)   
@@ -207,10 +207,10 @@ class Planet:
             fx, fy = self.attraction(planet)
             total_fx += fx
             total_fy += fy
-        self.x_vel += total_fx / self.mass * TIMESTEP
-        self.y_vel += total_fy / self.mass * TIMESTEP
-        self.x += self.x_vel * TIMESTEP
-        self.y += self.y_vel * TIMESTEP
+        self.x_vel += total_fx / self.mass * timestep
+        self.y_vel += total_fy / self.mass * timestep
+        self.x += self.x_vel * timestep
+        self.y += self.y_vel * timestep
         self.orbit.append((self.x, self.y))
 
     def update_scale(self, scale):
@@ -301,14 +301,14 @@ def main():
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_c:
                 move_x, move_y = -sun.x * SCALE, -sun.y * SCALE
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_b:
-                move_x, move_y = -rocket.r_x[rocket.aktuellerschritt] * SCALE, -rocket.r_z[rocket.aktuellerschritt] * SCALE    
+                move_x, move_y = -rocket.r_x[rocket.aktuellerschritt] * SCALE, -rocket.r_z[rocket.aktuellerschritt] * scale   
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_u:
                 draw_line = not draw_line
             elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 5:
                 mouseX, mouseY = pygame.mouse.get_pos()
                 move_x-=(mouse_x-WIDTH/2)/2
                 move_y-=(mouse_y-HEIGHT/2)/2
-                SCALE *= 0.75
+                scale*= 0.75
                 rocket.update_scale(0.75)
                 for planet in planets:
                     planet.update_scale(0.75)
@@ -316,7 +316,7 @@ def main():
                 mouseX, mouseY = pygame.mouse.get_pos()
                 move_x-=(mouse_x-WIDTH/2)/2
                 move_y-=(mouse_y-HEIGHT/2)/2
-                SCALE *= 1.25
+                scale*= 1.25
                 rocket.update_scale(1.25)
                 for planet in planets:
                     planet.update_scale(1.25)
@@ -339,7 +339,7 @@ def main():
             if not pause:
                 planet.update_position(planets, rocket)
             # Ohne Radius verschwinden die Balken bugs im Screen
-            if not (planet.y*SCALE+planet.radius*SCALE < -move_y-HEIGHT/2 or planet.y*SCALE-planet.radius*SCALE > -move_y+HEIGHT/2 or planet.x*SCALE+planet.radius*SCALE < -move_x-WIDTH/2 or planet.x*SCALE-planet.radius*SCALE > -move_x+WIDTH/2):
+            if not (planet.y*SCALE+planet.radius*scale< -move_y-HEIGHT/2 or planet.y*SCALE-planet.radius*scale> -move_y+HEIGHT/2 or planet.x*SCALE+planet.radius*scale< -move_x-WIDTH/2 or planet.x*SCALE-planet.radius*scale> -move_x+WIDTH/2):
                 if show_distance :
                     planet.draw(WINDOW, 1, move_x, move_y, draw_line)
                 else:
