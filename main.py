@@ -76,7 +76,7 @@ def main():
                                              (event.key == pygame.K_x or event.key == pygame.K_ESCAPE)):
                 run = False
             # Raketenboost erhöhen
-            elif event.type == pygame.KEYDOWN and event.key == pygame.K_w and rocket.thrust<10 and not pause:
+            elif event.type == pygame.KEYDOWN and event.key == pygame.K_w and rocket.thrust<10 and (rocket.rocketstarted or  not pause):
                 rocket.thrust += 1
                 rocket.powerchanged = True
                 rocket.rocketstarted = True
