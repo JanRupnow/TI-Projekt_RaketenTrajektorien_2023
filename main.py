@@ -159,10 +159,8 @@ def main():
                 #if not pause:
                 #    planet.update_position(planets, rocket)
                 # Ohne Radius verschwinden die Balken bugs im Screen
-                if not (planet.r_z[planet.aktuellerschritt]*scale+planet.radius*scale < -move_y-HEIGHT/2 
-                        or planet.r_z[planet.aktuellerschritt]*scale-planet.radius*scale > -move_y+HEIGHT/2 
-                        or planet.r_z[planet.aktuellerschritt]*scale+planet.radius*scale < -move_x-WIDTH/2 
-                        or planet.r_x[planet.aktuellerschritt]*scale-planet.radius*scale > -move_x+WIDTH/2):
+
+                if isInScreen(scale, planet, move_x, move_y, HEIGHT, WIDTH):
                     if show_distance :
                         planet.draw(WINDOW, 1, move_x, move_y, draw_line,scale, WIDTH, HEIGHT, pause, rocket)
                     else:

@@ -47,3 +47,10 @@ def shiftTimeStep(shiftUp, rocket, planets, timestep):
     for planet in planets:
         planet.timestep = rocket.timestep = timestep
     return timestep
+
+
+def isInScreen(scale, planet, move_x, move_y, height, width):
+    inScreen = planet.r_z[planet.aktuellerschritt]*scale+planet.radius*scale > -move_y-height/2
+    inScreen = inScreen or planet.r_z[planet.aktuellerschritt]*scale-planet.radius*scale < -move_y+height/2
+    inScreen = inScreen or planet.r_z[planet.aktuellerschritt]*scale+planet.radius*scale > -move_x-width/2
+    return inScreen or planet.r_x[planet.aktuellerschritt]*scale-planet.radius*scale < -move_x+width/2
