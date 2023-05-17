@@ -1,6 +1,6 @@
 import math
 import pygame
-from konstanten import *
+from variables.konstanten import *
 
 class Planet:
 

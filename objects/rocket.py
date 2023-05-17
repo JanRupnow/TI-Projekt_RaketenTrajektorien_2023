@@ -1,14 +1,16 @@
 import numpy as np
-from konstanten import *
+from variables.konstanten import *
 import pygame
 import math
 import sys
 import os
+
 module = sys.modules['__main__']
 path, name = os.path.split(module.__file__)
-path = os.path.join(path, 'Rocket.png')
+path = os.path.join(path, './image_sources/Rocket.png')
 img0 = pygame.image.load(path)
 img0 = pygame.transform.scale_by(img0, 0.5)
+
 class Rocket:
     def __init__(self, startwinkel, abwurfwinkel,treibstoffmasse, koerpermasse, startplanet, radius, color, sun):
         self.aktuellerschritt = AktuellerSchritt

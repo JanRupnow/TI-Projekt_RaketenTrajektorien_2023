@@ -1,4 +1,5 @@
 import numpy as np
+import pygame
 
 COLOR_WHITE = (255, 255, 255)
 COLOR_UNIVERSE = (36, 36, 36)
@@ -38,3 +39,5 @@ MIN_ROCKET_RADIUS = 2
 NUM_OF_PREDICTIONS = 1000
 # muss größer als NUM_OF_PREDICTIONS sein
 LEN_OF_PREDICTIONS_ARRAY = NUM_OF_PREDICTIONS*2
+pygame.init()
+WIDTH, HEIGHT = pygame.display.Info().current_w, pygame.display.Info().current_h
