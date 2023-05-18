@@ -10,14 +10,19 @@ import json
 manager = pg.UIManager((WIDTH,HEIGHT))
 UI_REFRESH_RATE = clock.tick(60)/1000
 
+allTextInputs = {}
+
 def changeHotKeyFromInput(event,hotkey):
     if event.type == pg.UI_TEXT_ENTRY_FINISHED and event.ui_object_id == removeSpaces(hotkey[1]):
-        jsonfile = open("./variables/hotkeys/current_hotkeys.json")
+        jsonfile = open("./variables/hotkeys/current_hotkeys.json", "r+")
         hotkey[0] = ord(event.text)
-        newJson = keys.updateKeyInJson(jsonfile,hotkey)
+        newJson = keys.updateKeyInJson(json.load(jsonfile),hotkey)
         #parsed = json.loads(newJson)
         #print(json.dumps(parsed, indent=4))
+
+        jsonfile.truncate()
         json.dump(newJson, jsonfile, indent=4, ensure_ascii=False)
+        #print(test)
     return hotkey[0]
 
 def changeAllHotKeysFromInput(event,hotkeys):
@@ -35,6 +40,8 @@ def createUiTextBoxAndTextEntry(hotkey,position_x, position_y):
                                              object_id = removeSpaces(hotkey[1]))
     TEXT_INPUT.length_limit = 1
     TEXT_INPUT.set_text(getStringOfAscii(hotkey[0]))
+    
+    return TEXT_BOX, TEXT_INPUT
 
 def createUiCloseButton():
     label = createUiButton("Close Settings", 0,0)
@@ -107,6 +114,8 @@ def showHotKeySettings():
                 showGUI = False
             if event.type == pg.UI_BUTTON_PRESSED and event.ui_object_id == "ResetControls_label":
                 keys.resetOverwriteCurrent()
+                manager.clear_and_reset()     
+                InitializeSettingsUI()
             if checkKeyDown(event, keys.H_closeWindow[0]):
                 showGUI = False
             changeAllHotKeysFromInput(event, keys.listHotKeys)
