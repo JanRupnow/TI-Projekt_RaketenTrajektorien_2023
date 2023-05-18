@@ -7,7 +7,7 @@ import datetime
 from DtoProcessEvent import DTOProcessEvent
 from methods.initialise_planets import *
 from views.main_view import *
-
+from views.start_view import *
 
 FONT_1 = pygame.font.SysFont("Trebuchet MS", 21)
 FONT_2 = pygame.font.SysFont("Trebuchet MS", 16)
@@ -98,4 +98,6 @@ def main():
 
 
 if __name__ == "__main__":
+    # shows the start ui until start is clicked
+    showStartUI()
     main()
