@@ -17,4 +17,6 @@ H_shiftTimeStepDown = pygame.K_i
 H_showDistance = pygame.K_p
 H_pauseSimulation = pygame.K_SPACE
 H_leaveSimulation = pygame.K_ESCAPE
+H_openHotKeySettings = pygame.K_F1
+H_closeWindow = pygame.K_ESCAPE
 
