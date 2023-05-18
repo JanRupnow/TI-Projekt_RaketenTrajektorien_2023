@@ -6,9 +6,11 @@ from variables.konstanten import *
 from methods.support_methods import *
 
 manager = pg.UIManager((WIDTH,HEIGHT))
+UI_REFRESH_RATE = clock.tick(60)/1000
 
 def changeHotKeyFromInput(event,hotkey):
-    if event.type == pg.UI_TEXT_ENTRY_FINISHED and event.ui_object_id == removeSpaces(hotkey[1]+"_text"):
+    if event.type == pg.UI_TEXT_ENTRY_FINISHED and event.ui_object_id == removeSpaces(hotkey[1]):
+        print(0)
         hotkey[0] = ord(event.text)
     return hotkey[0]
 
@@ -29,19 +31,22 @@ def createUiTextBoxAndTextEntry(hotkey,position_x, position_y):
     TEXT_INPUT.set_text(getStringOfAscii(hotkey[0]))
 
 def createUiCloseButton():
-    pg.elements.UIButton(relative_rect=pygame.Rect((0,0), (WIDTH*0.07,HEIGHT*0.07)),
-                         text="Close Settings",
+    label = createUiButton("Close Settings", 0,0)
+    return label
+def createUiButton(text, position_x,position_y):
+    return pg.elements.UIButton(relative_rect=pygame.Rect((position_x,position_y), (WIDTH*0.07,HEIGHT*0.07)),
+                         text=text,
                          manager=manager,
-                         object_id="close_button")
+                         object_id=removeSpaces(text+"_label"))
 
 def createUiSettingsTitleLabel():
-    title_label = createUiSettingsLabel("Settings", WIDTH*0.45, 0.15*HEIGHT)
+    title_label = createUiLabel("Settings", WIDTH*0.45, 0.15*HEIGHT)
     title_label.text_horiz_alignment = "center"
     title_label.rebuild()
     return title_label
     
 
-def createUiSettingsLabel(text, position_x, position_y):
+def createUiLabel(text, position_x, position_y):
     return pg.elements.UILabel(relative_rect=pygame.Rect((position_x,position_y), (WIDTH*0.1,HEIGHT*0.05)),
                                text=text,
                                manager=manager,
@@ -49,23 +54,23 @@ def createUiSettingsLabel(text, position_x, position_y):
 
     
 def createUiSettingsTopicLabel(text, position_x, position_y):
-    label = createUiSettingsLabel(text, position_x, position_y)
+    label = createUiLabel(text, position_x, position_y)
     label.text_horiz_alignment = "left"
     label.text_colour = "red"
     label.rebuild()
     return label
 
 def createUiGameTitleLabel(text, position_x, position_y):
-    label = createUiSettingsLabel(text, position_x, position_y)
+    label = createUiLabel(text, position_x, position_y)
     label.text_horiz_alignment = "center"
     label.text_colour = "green"
     label.set_text_scale(15)
     label.rebuild()
     return label
-def showHotKeySettings():
-    global H_centerOnRocket
+def InitializeSettingsUI():
     createUiSettingsTitleLabel()
     createUiCloseButton()
+    createUiButton("Reset Controls", WIDTH*0.8, HEIGHT*0.1)
     createUiGameTitleLabel("Spaceflight Simulator", WIDTH*0.45, HEIGHT*0.05)
 
     createUiTextBoxAndTextEntry(H_displayHotKeys, WIDTH*0.1, HEIGHT*0.2)
@@ -83,13 +88,19 @@ def showHotKeySettings():
     createUiTextBoxAndTextEntry(H_zoomRocketPlanetSystem, WIDTH*0.1, HEIGHT*0.8)
     createUiTextBoxAndTextEntry(H_zoomAutoOnRocket, WIDTH*0.1, HEIGHT*0.85)
 
-    UI_REFRESH_RATE = clock.tick(60)/1000
+def showHotKeySettings():
+
+    if len(manager.get_sprite_group())<4:
+        InitializeSettingsUI()
+
     showGUI = True
 
     while showGUI:
         for event in pygame.event.get():
-            if event.type == pg.UI_BUTTON_PRESSED and event.ui_object_id == "close_button":
+            if event.type == pg.UI_BUTTON_PRESSED and event.ui_object_id == "CloseSettings_label":
                 showGUI = False
+            if event.type == pg.UI_BUTTON_PRESSED and event.ui_object_id == "ResetControls_label":
+                resetOverwriteCurrent()
             if checkKeyDown(event, H_closeWindow[0]):
                 showGUI = False
             changeAllHotKeysFromInput(event, listHotKeys)
@@ -97,5 +108,5 @@ def showHotKeySettings():
         manager.update(UI_REFRESH_RATE)
         manager.draw_ui(WINDOW)
         pygame.display.update()
-showHotKeySettings()
+
 

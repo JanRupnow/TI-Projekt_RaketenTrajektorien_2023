@@ -27,8 +27,6 @@ def main():
     mouse_y = 0
     draw_line = True
 
-    # Metric from: https://nssdc.gsfc.nasa.gov/planetary/factsheet/
-
     
     planets = getInitialPlanets()
     

@@ -6,6 +6,7 @@ from objects.rocket import *
 from variables.hotkeys import *
 import datetime
 from methods.support_methods import *
+from views.hotkey_view import *
 from DtoProcessEvent import DTOProcessEvent
 
 
@@ -122,6 +123,6 @@ def processKeyEvent(event, dto: DTOProcessEvent, rocket: Rocket, planets):
         dto.timestep = shiftTimeStep(True, rocket, planets, dto.timestep)
     elif checkKeyDown(event, H_shiftTimeStepDown[0]): 
         dto.timestep = shiftTimeStep(False, rocket, planets, dto.timestep)
-    #elif checkKeyDown(event, H_openHotKeySettings):
-      #  showHotKeySettings()
+    elif checkKeyDown(event, H_openSettings[0]):
+        showHotKeySettings()
     return dto
