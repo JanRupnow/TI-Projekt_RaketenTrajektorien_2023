@@ -1,0 +1,90 @@
+{
+    "RocketControls": {
+        "H_rocketBoostForward": {
+            "key": 54,
+            "text": "Increase Boost"
+        },
+        "H_rocketBoostLeft": {
+            "key": 97,
+            "text": "Boost Left"
+        },
+        "H_rocketBoostRight": {
+            "key": 100,
+            "text": "Boost Right"
+        },
+        "H_lowerRocketBoost": {
+            "key": 115,
+            "text": "Lower Boost"
+        }
+    },
+    "RocketZooms": {
+        "H_zoomRocketStart": {
+            "key": 49,
+            "text": "Zoom (Rocket)"
+        },
+        "H_zoomRocketPlanet": {
+            "key": 50,
+            "text": "Zoom (Planet)"
+        },
+        "H_zoomRocketPlanetSystem": {
+            "key": 51,
+            "text": "Zoom (Solarsystem)"
+        },
+        "H_zoomAutoOnRocket": {
+            "key": 102,
+            "text": "Auto Zoom"
+        }
+    },
+    "Centering": {
+        "H_centerOnSun": {
+            "key": 99,
+            "text": "Center Sun"
+        },
+        "H_centerOnRocket": {
+            "key": 98,
+            "text": "Center Rocket"
+        }
+    },
+    "TimeManipulation": {
+        "H_shiftTimeStepUp": {
+            "key": 111,
+            "text": "Increase Timestep"
+        },
+        "H_shiftTimeStepDown": {
+            "key": 105,
+            "text": "Decrease Timestep"
+        }
+    },
+    "Generals": {
+        "H_drawLine": {
+            "key": 117,
+            "text": "Draw Orbitlines"
+        },
+        "H_showDistance": {
+            "key": 112,
+            "text": "Display Distance"
+        },
+        "H_pauseSimulation": {
+            "key": 32,
+            "text": "Pause Simulation"
+        }
+    },
+    "Navigation": {
+        "H_displayHotKeys": {
+            "key": 57,
+            "text": "Hotkey settings"
+        },
+        "H_leaveSimulation": {
+            "key": 120,
+            "text": "Exit Pygame"
+        },
+        "H_openSettings": {
+            "key": 1073741882,
+            "text": "Open Settings"
+        },
+        "H_closeWindow": {
+            "key": 27,
+            "text": "Close Window"
+        }
+    }
+}

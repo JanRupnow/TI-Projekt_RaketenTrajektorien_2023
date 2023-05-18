@@ -1,6 +1,8 @@
 from objects.planet import Planet
 from variables.konstanten import *
 
+# Metric from: https://nssdc.gsfc.nasa.gov/planetary/factsheet/
+
 def getInitialPlanets():
     sun = Planet(0, 0, 695 * 10 ** 6, COLOR_SUN, 1.98892 * 10 ** 30,"Sonne")
     sun.sun = True

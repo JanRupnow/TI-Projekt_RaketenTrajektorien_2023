@@ -1,6 +1,6 @@
 import pygame
 from objects.planet import *
-from variables.konstanten import *
+import variables.konstanten as keys
 from objects.rocket import *
 from methods.game_methods import *
 import datetime
@@ -8,7 +8,6 @@ from DtoProcessEvent import DTOProcessEvent
 from methods.planets import *
 from views.main_view import *
 
-WINDOW = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
 
 FONT_1 = pygame.font.SysFont("Trebuchet MS", 21)
 FONT_2 = pygame.font.SysFont("Trebuchet MS", 16)
@@ -20,18 +19,13 @@ now = datetime.datetime.now()
 
 def main():
     time_passed = datetime.timedelta(seconds=0)
-    global scale, timestep, now, img0, move_x, move_y
+    global scale, timestep, now, img0, move_x, move_y, clock
     run = True
     pause = False
     show_distance = False
-    clock = pygame.time.Clock()
-    move_x = 0
-    move_y = 0
     mouse_x = 0
     mouse_y = 0
     draw_line = True
-
-    # Metric from: https://nssdc.gsfc.nasa.gov/planetary/factsheet/
 
     
     planets = getInitialPlanets()
