@@ -51,4 +51,3 @@ def loadRocket(planets):
                       ensure_ascii=False)
             
         return loadRocketFromPath("./variables/rocket_config/current_rocket_config.json", planets)
-    

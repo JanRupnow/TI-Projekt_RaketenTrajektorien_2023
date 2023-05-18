@@ -11,6 +11,33 @@ import json
 manager = pg.UIManager((WIDTH,HEIGHT))
 UI_REFRESH_RATE = clock.tick(60)/1000
 
+
+def updateRocketConfigs(event):
+    jsonfile = open("./variables/rocket_config/current_rocket_config.json", "r+")
+    newJson = keys.updateKeyInJsonRocket(json.load(jsonfile), event.ui_object_id, event.text)
+
+    jsonfile.seek(0)
+    jsonfile.truncate()
+    json.dump(newJson, jsonfile, indent=4, ensure_ascii=False)
+    jsonfile.close()
+
+def getTextsAndValuesForConfigUI():
+    jsonfile = open("./variables/rocket_config/current_rocket_config.json", "r")
+    config = json.load(jsonfile)
+
+    configPairs = []
+
+    for category in config.keys():
+        try:
+            for key in config[category].keys():
+                configPairs.append((config[category][key]["value"], config[category][key]["text"]))
+        except:
+            pass
+
+    jsonfile.close()
+    return configPairs
+
+
 def initializeStartUI():
     createUiGameTitleLabel("Spaceflight Simulator", WIDTH*0.45, HEIGHT*0.05, manager)
     createUiButton("Start the Game", WIDTH*0.465, HEIGHT*0.8, manager)
@@ -18,8 +45,10 @@ def initializeStartUI():
 
 def initializeRocketConfigurationUI():
     createUiLabel("Rocket Configuration", WIDTH*0.7, HEIGHT*0.2, manager)
-    createUiTextBoxAndTextEntry("Rocket mass", 10000, WIDTH*0.7, HEIGHT*0.25, manager)
-    
+
+    configPairs = getTextsAndValuesForConfigUI()
+    for i in range(len(configPairs)):
+        createUiTextBoxAndTextEntry(configPairs[i][1], configPairs[i][0], WIDTH*0.7, HEIGHT*0.25 + HEIGHT*0.05*i, manager)
 
 # removes all ui elements => no used object_ids
 def clearStartUI():
@@ -43,6 +72,11 @@ def showStartUI():
             if checkKeyDown(event, keys.H_closeWindow[0]):
                 pygame.quit()
                 sys.exit()
+            if event.type == pg.UI_TEXT_ENTRY_FINISHED:
+                updateRocketConfigs(event)
+                clearStartUI()
+                initializeStartUI()
+                initializeRocketConfigurationUI()
             manager.process_events(event)
         manager.update(UI_REFRESH_RATE)
         manager.draw_ui(WINDOW)

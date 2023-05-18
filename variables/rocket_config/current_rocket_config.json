@@ -1,11 +1,11 @@
 {
     "Start": {
         "AngleOnPlanet": {
-            "value": 30,
+            "value": 3,
             "text": "angle on planet"
         },
         "Startplanet": {
-            "value": "Erde",
+            "value": "Mond",
             "text": "start planet"
         },
         "Angle": {

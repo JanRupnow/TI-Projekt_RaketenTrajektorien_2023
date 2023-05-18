@@ -1,8 +1,28 @@
+from methods.support_methods import *
+
 def updateKeyInJson(json, hotkey):
     for category in json.keys():
         for key in json[category].keys():
             if hotkey[1] == json[category][key]["text"]:
                 json[category][key]["key"] = hotkey[0]
+    return json
+
+def updateKeyInJsonRocket(json, identifier, value):
+    for category in json.keys():
+        try:
+            for key in json[category].keys():
+                # didn't need to catch because this method should only update values
+                # which are in the form of the if clause
+                try:
+                    if identifier == removeSpaces(json[category][key]["text"]+"_input"):
+                        if value.isdigit():
+                            json[category][key]["value"] = int(value)
+                        else:
+                            json[category][key]["value"] = value
+                except:
+                    pass
+        except:
+            pass
     return json
 
 # Rocket Controls

@@ -31,7 +31,7 @@ def createUiTextBoxAndTextEntry(text, value, position_x, position_y, manager):
     
     TEXT_INPUT = pg.elements.UITextEntryLine(relative_rect= pygame.Rect((position_x+WIDTH*0.1,position_y), (WIDTH*0.03,HEIGHT*0.05)), 
                                              manager = manager, 
-                                             object_id = removeSpaces(text))
+                                             object_id = removeSpaces(text+"_input"))
     
     TEXT_INPUT.set_text(str(value))
 
