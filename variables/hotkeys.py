@@ -1,6 +1,6 @@
 import pygame
 import json
-from methods.jsonHotkeys import *
+from methods.json_methods import *
 
 
 try: 

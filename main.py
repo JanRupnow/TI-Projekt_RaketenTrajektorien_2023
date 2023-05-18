@@ -5,7 +5,7 @@ from objects.rocket import *
 from methods.game_methods import *
 import datetime
 from DtoProcessEvent import DTOProcessEvent
-from methods.planets import *
+from methods.initialise_planets import *
 from views.main_view import *
 
 

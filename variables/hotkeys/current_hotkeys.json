@@ -1,7 +1,7 @@
 {
     "RocketControls": {
         "H_rocketBoostForward": {
-            "key": 54,
+            "key": 119,
             "text": "Increase Boost"
         },
         "H_rocketBoostLeft": {
@@ -90,7 +90,7 @@
 }{
     "RocketControls": {
         "H_rocketBoostForward": {
-            "key": 119,
+            "key": 87,
             "text": "Increase Boost"
         },
         "H_rocketBoostLeft": {
