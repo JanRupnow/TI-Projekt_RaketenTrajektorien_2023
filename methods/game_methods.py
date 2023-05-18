@@ -3,7 +3,9 @@ import numpy as np
 from objects.planet import *
 from variables.konstanten import *
 from objects.rocket import *
+from variables.hotkeys import *
 import datetime
+from methods.support_methods import *
 from DtoProcessEvent import DTOProcessEvent
 
 
@@ -59,50 +61,50 @@ def processKeyEvent(event, dto: DTOProcessEvent, rocket: Rocket, planets):
                                     (event.key == pygame.K_x or event.key == pygame.K_ESCAPE)):
         dto.run = False
     # Raketenboost erhöhen
-    elif event.type == pygame.KEYDOWN and event.key == pygame.K_w and rocket.thrust<10 and (rocket.rocketstarted or  not dto.pause):
+    elif checkKeyDown(event, H_rocketBoostForward) and rocket.thrust<10 and (rocket.rocketstarted or  not dto.pause):
         rocket.thrust += 1
         rocket.powerchanged = True
         rocket.rocketstarted = True
     # Raketenboost Links   
-    elif event.type == pygame.KEYDOWN and event.key == pygame.K_a and rocket.angle>-45:
+    elif checkKeyDown(event, H_rocketBoostLeft) and rocket.angle>-45:
         rocket.angle -= 1
         rocket.powerchanged = True
     # Raketenboost verrigern
-    elif event.type == pygame.KEYDOWN and event.key == pygame.K_s and rocket.thrust>0:
+    elif checkKeyDown(event, H_lowerRocketBoost) and rocket.thrust>0:
         rocket.thrust -= 1
         rocket.powerchanged = True
     # Raketenboost Rechts
-    elif event.type == pygame.KEYDOWN and event.key == pygame.K_d and rocket.angle<45:
+    elif checkKeyDown(event, H_rocketBoostRight) and rocket.angle<45:
         rocket.angle += 1
         rocket.powerchanged = True
 
-    elif event.type == pygame.KEYDOWN and event.key == pygame.K_1:
+    elif checkKeyDown(event, H_zoomRocketStart):
         dto.scale = scaleRelative(200, STARTSCALE)
         rocket.update_scale(200)
         dto.move_x, dto.move_y = automaticZoomOnRocketOnce(rocket, dto.scale, dto.move_x, dto.move_y)
     #Zoom Startorbit
-    elif event.type == pygame.KEYDOWN and event.key == pygame.K_2:
+    elif checkKeyDown(event, H_zoomRocketPlanet):
         dto.scale = scaleRelative(5, STARTSCALE)
         rocket.update_scale(5)
         dto.move_x, dto.move_y = automaticZoomOnRocketOnce(rocket, dto.scale, dto.move_x, dto.move_y)
     #Zoom Universum
-    elif event.type == pygame.KEYDOWN and event.key == pygame.K_3:
+    elif event.type == pygame.KEYDOWN and event.key == H_zoomRocketPlanetSystem:
         dto.scale = scaleRelative(1, STARTSCALE)
         rocket.update_scale(1)
         dto.move_x, dto.move_y = automaticZoomOnRocketOnce(rocket, dto.scale, dto.move_x, dto.move_y)
 
-    elif event.type == pygame.KEYDOWN and event.key == pygame.K_f:
+    elif checkKeyDown(event, H_zoomAutoOnRocket):
         rocket.zoomOnRocket = not rocket.zoomOnRocket
-    elif event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
+    elif checkKeyDown(event, H_pauseSimulation):
         dto.pause = not dto.pause
-    elif event.type == pygame.KEYDOWN and event.key == pygame.K_p:
+    elif checkKeyDown(event, H_showDistance):
         dto.show_distance = not dto.show_distance
-    elif event.type == pygame.KEYDOWN and event.key == pygame.K_c:
+    elif checkKeyDown(event, H_centerOnSun):
         sun = next(filter(lambda x: x.name == "Sonne", planets),None)
         dto.move_x, dto.move_y = centerScreenOnPlanet(sun, dto.scale, dto.move_x, dto.move_y)
-    elif event.type == pygame.KEYDOWN and event.key == pygame.K_b:
+    elif checkKeyDown(event, H_centerOnRocket):
         dto.move_x, dto.move_y = automaticZoomOnRocketOnce(rocket, dto.scale, dto.move_x, dto.move_y)
-    elif event.type == pygame.KEYDOWN and event.key == pygame.K_u:
+    elif checkKeyDown(event, H_drawLine):
         dto.draw_line = not dto.draw_line
     elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 5:
         dto.mouse_y, dto.mouse_x = pygame.mouse.get_pos()
@@ -116,9 +118,9 @@ def processKeyEvent(event, dto: DTOProcessEvent, rocket: Rocket, planets):
         dto.scale *= 1.25
         rocket.update_scale(1.25)
 
-    elif event.type == pygame.KEYDOWN and event.key == pygame.K_o:
+    elif checkKeyDown(event, H_shiftTimeStepDown):
         dto.timestep = shiftTimeStep(True, rocket, planets, dto.timestep)
-    elif event.type == pygame.KEYDOWN and event.key == pygame.K_i: 
+    elif checkKeyDown(event, H_shiftTimeStepUp): 
         dto.timestep = shiftTimeStep(False, rocket, planets, dto.timestep)
 
     return dto

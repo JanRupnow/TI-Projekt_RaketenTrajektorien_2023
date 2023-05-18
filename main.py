@@ -25,8 +25,8 @@ def main():
     pause = False
     show_distance = False
     clock = pygame.time.Clock()
-    move_x = 0
-    move_y = 0
+    #move_x = 0
+    #move_y = 0
     mouse_x = 0
     mouse_y = 0
     draw_line = True
