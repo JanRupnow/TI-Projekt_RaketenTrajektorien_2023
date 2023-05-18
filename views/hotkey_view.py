@@ -4,13 +4,12 @@ import sys
 import variables.hotkeys as keys
 from variables.konstanten import *
 from methods.support_methods import *
-from methods.jsonHotkeys import *
+from methods.json_methods import *
 import json
 
 manager = pg.UIManager((WIDTH,HEIGHT))
 UI_REFRESH_RATE = clock.tick(60)/1000
 
-allTextInputs = {}
 
 def changeHotKeyFromInput(event,hotkey):
     if event.type == pg.UI_TEXT_ENTRY_FINISHED and event.ui_object_id == removeSpaces(hotkey[1]):
