@@ -16,12 +16,10 @@ def changeHotKeyFromInput(event,hotkey):
         jsonfile = open("./variables/hotkeys/current_hotkeys.json", "r+")
         hotkey[0] = ord(event.text)
         newJson = keys.updateKeyInJson(json.load(jsonfile),hotkey)
-        #parsed = json.loads(newJson)
-        #print(json.dumps(parsed, indent=4))
 
+        jsonfile.seek(0)
         jsonfile.truncate()
         json.dump(newJson, jsonfile, indent=4, ensure_ascii=False)
-        #print(test)
     return hotkey[0]
 
 def changeAllHotKeysFromInput(event,hotkeys):
