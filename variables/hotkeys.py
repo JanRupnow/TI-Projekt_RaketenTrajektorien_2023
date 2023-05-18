@@ -1,22 +1,21 @@
 import pygame
 
-H_displayHotKeys = pygame.K_9
-H_rocketBoostForward = pygame.K_w
-H_rocketBoostLeft = pygame.K_a
-H_rocketBoostRight = pygame.K_d
-H_lowerRocketBoost = pygame.K_s
-H_zoomRocketStart = pygame.K_1
-H_zoomRocketPlanet = pygame.K_2
-H_zoomRocketPlanetSystem = pygame.K_3
-H_zoomAutoOnRocket = pygame.K_f
-H_centerOnSun = pygame.K_c
-H_centerOnRocket = pygame.K_b
-H_drawLine = pygame.K_u
-H_shiftTimeStepUp = pygame.K_o
-H_shiftTimeStepDown = pygame.K_i
-H_showDistance = pygame.K_p
-H_pauseSimulation = pygame.K_SPACE
-H_leaveSimulation = pygame.K_ESCAPE
-H_openHotKeySettings = pygame.K_F1
-H_closeWindow = pygame.K_ESCAPE
-
+H_displayHotKeys = [pygame.K_9, "Hotkey settings","0"]
+H_rocketBoostForward = [pygame.K_w, "Increase Boost","1"]
+H_rocketBoostLeft = [pygame.K_a, "Boost Left","2"]
+H_rocketBoostRight = [pygame.K_d, "Boost Right","3"]
+H_lowerRocketBoost = [pygame.K_s, "Lower Boost","4"]
+H_zoomRocketStart = [pygame.K_1, "Zoom (Rocket)","5"]
+H_zoomRocketPlanet = [pygame.K_2, "Zoom (Planet)","6"]
+H_zoomRocketPlanetSystem = [pygame.K_3, "Zoom (Solarsystem)"]
+H_zoomAutoOnRocket = [pygame.K_f, "Auto Zoom"]
+H_centerOnSun = [pygame.K_c, "Center Sun"]
+H_centerOnRocket = [pygame.K_b, "Center Rocket"]
+H_drawLine = [pygame.K_u, "Draw Orbitlines"]
+H_shiftTimeStepUp = [pygame.K_o, "Increase Timestep"]
+H_shiftTimeStepDown = [pygame.K_i, "Decrease Timestep"]
+H_showDistance = [pygame.K_p, "Display Distance"]
+H_pauseSimulation = [pygame.K_SPACE, "Pause Simulation"]
+H_leaveSimulation = [pygame.K_x, "Exit Pygame"]
+H_openHotKeySettings = [pygame.K_F1, "Open Settings"]
+H_closeWindow =  [pygame.K_ESCAPE, "Close Window"]

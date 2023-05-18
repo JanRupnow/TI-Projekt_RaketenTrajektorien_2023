@@ -61,50 +61,50 @@ def processKeyEvent(event, dto: DTOProcessEvent, rocket: Rocket, planets):
                                     (event.key == pygame.K_x or event.key == pygame.K_ESCAPE)):
         dto.run = False
     # Raketenboost erhöhen
-    elif checkKeyDown(event, H_rocketBoostForward) and rocket.thrust<10 and (rocket.rocketstarted or  not dto.pause):
+    elif checkKeyDown(event, H_rocketBoostForward[0]) and rocket.thrust<10 and (rocket.rocketstarted or  not dto.pause):
         rocket.thrust += 1
         rocket.powerchanged = True
         rocket.rocketstarted = True
     # Raketenboost Links   
-    elif checkKeyDown(event, H_rocketBoostLeft) and rocket.angle>-45:
+    elif checkKeyDown(event, H_rocketBoostLeft[0]) and rocket.angle>-45:
         rocket.angle -= 1
         rocket.powerchanged = True
     # Raketenboost verrigern
-    elif checkKeyDown(event, H_lowerRocketBoost) and rocket.thrust>0:
+    elif checkKeyDown(event, H_lowerRocketBoost[0]) and rocket.thrust>0:
         rocket.thrust -= 1
         rocket.powerchanged = True
     # Raketenboost Rechts
-    elif checkKeyDown(event, H_rocketBoostRight) and rocket.angle<45:
+    elif checkKeyDown(event, H_rocketBoostRight[0]) and rocket.angle<45:
         rocket.angle += 1
         rocket.powerchanged = True
 
-    elif checkKeyDown(event, H_zoomRocketStart):
+    elif checkKeyDown(event, H_zoomRocketStart[0]):
         dto.scale = scaleRelative(200, STARTSCALE)
         rocket.update_scale(200)
         dto.move_x, dto.move_y = automaticZoomOnRocketOnce(rocket, dto.scale, dto.move_x, dto.move_y)
     #Zoom Startorbit
-    elif checkKeyDown(event, H_zoomRocketPlanet):
+    elif checkKeyDown(event, H_zoomRocketPlanet[0]):
         dto.scale = scaleRelative(5, STARTSCALE)
         rocket.update_scale(5)
         dto.move_x, dto.move_y = automaticZoomOnRocketOnce(rocket, dto.scale, dto.move_x, dto.move_y)
     #Zoom Universum
-    elif event.type == pygame.KEYDOWN and event.key == H_zoomRocketPlanetSystem:
+    elif checkKeyDown(event, H_zoomRocketPlanetSystem[0]):
         dto.scale = scaleRelative(1, STARTSCALE)
         rocket.update_scale(1)
         dto.move_x, dto.move_y = automaticZoomOnRocketOnce(rocket, dto.scale, dto.move_x, dto.move_y)
 
-    elif checkKeyDown(event, H_zoomAutoOnRocket):
+    elif checkKeyDown(event, H_zoomAutoOnRocket[0]):
         rocket.zoomOnRocket = not rocket.zoomOnRocket
     elif checkKeyDown(event, H_pauseSimulation):
         dto.pause = not dto.pause
-    elif checkKeyDown(event, H_showDistance):
+    elif checkKeyDown(event, H_showDistance[0]):
         dto.show_distance = not dto.show_distance
-    elif checkKeyDown(event, H_centerOnSun):
+    elif checkKeyDown(event, H_centerOnSun[0]):
         sun = next(filter(lambda x: x.name == "Sonne", planets),None)
         dto.move_x, dto.move_y = centerScreenOnPlanet(sun, dto.scale, dto.move_x, dto.move_y)
-    elif checkKeyDown(event, H_centerOnRocket):
+    elif checkKeyDown(event, H_centerOnRocket[0]):
         dto.move_x, dto.move_y = automaticZoomOnRocketOnce(rocket, dto.scale, dto.move_x, dto.move_y)
-    elif checkKeyDown(event, H_drawLine):
+    elif checkKeyDown(event, H_drawLine[0]):
         dto.draw_line = not dto.draw_line
     elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 5:
         dto.mouse_y, dto.mouse_x = pygame.mouse.get_pos()
@@ -118,9 +118,9 @@ def processKeyEvent(event, dto: DTOProcessEvent, rocket: Rocket, planets):
         dto.scale *= 1.25
         rocket.update_scale(1.25)
 
-    elif checkKeyDown(event, H_shiftTimeStepDown):
+    elif checkKeyDown(event, H_shiftTimeStepUp[0]):
         dto.timestep = shiftTimeStep(True, rocket, planets, dto.timestep)
-    elif checkKeyDown(event, H_shiftTimeStepUp): 
+    elif checkKeyDown(event, H_shiftTimeStepDown[0]): 
         dto.timestep = shiftTimeStep(False, rocket, planets, dto.timestep)
     #elif checkKeyDown(event, H_openHotKeySettings):
       #  showHotKeySettings()
