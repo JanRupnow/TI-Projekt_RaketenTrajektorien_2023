@@ -125,7 +125,9 @@ except:
 
 jsonFile.close()
 
+
 def resetOverwriteCurrent():
+    global listHotKeys, H_rocketBoostForward, H_rocketBoostLeft, H_rocketBoostRight, H_lowerRocketBoost, H_zoomRocketStart, H_zoomRocketPlanet, H_zoomRocketPlanetSystem, H_zoomAutoOnRocket, H_centerOnSun, H_centerOnRocket, H_shiftTimeStepUp, H_centerOnRocket, H_shiftTimeStepUp, H_shiftTimeStepDown, H_drawLine, H_showDistance, H_pauseSimulation, H_displayHotKeys, H_leaveSimulation, H_openSettings, H_closeWindow
     jsonFile = open("./variables/hotkeys/standard_hotkeys.json")
     hotkeysJson = json.load(jsonFile)
 

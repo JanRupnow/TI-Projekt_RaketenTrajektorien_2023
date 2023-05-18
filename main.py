@@ -1,6 +1,6 @@
 import pygame
 from objects.planet import *
-from variables.konstanten import *
+import variables.konstanten as keys
 from objects.rocket import *
 from methods.game_methods import *
 import datetime

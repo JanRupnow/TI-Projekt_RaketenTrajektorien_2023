@@ -1,3 +1,9 @@
+def updateKeyInJson(json, hotkey):
+    for category in json.keys():
+        if hotkey[1] in json[category]:
+            json[category][hotkey[1]]["key"] = hotkey[0]
+    return json
+
 # Rocket Controls
 def getH_rocketBoostForward(hotkeysJson):
     return [
