@@ -13,7 +13,7 @@ UI_REFRESH_RATE = clock.tick(60)/1000
 
 
 def changeHotKeyFromInput(event,hotkey):
-    if event.type == pg.UI_TEXT_ENTRY_FINISHED and event.ui_object_id == removeSpaces(hotkey[1]):
+    if event.type == pg.UI_TEXT_ENTRY_FINISHED and event.ui_object_id == removeSpaces(hotkey[1]+"_input"):
         jsonfile = open("./variables/hotkeys_config/current_hotkeys.json", "r+")
         hotkey[0] = ord(event.text)
         newJson = keys.updateKeyInJson(json.load(jsonfile),hotkey)
@@ -82,7 +82,8 @@ def showSettingsUI():
                 initializeSettingsUI()
             if checkKeyDown(event, keys.H_closeWindow[0]):
                 showGUI = False
-            changeAllHotKeysFromInput(event, keys.listHotKeys)
+            if event.type == pg.UI_TEXT_ENTRY_FINISHED and event.ui_object_id.endswith("_input"):
+                changeAllHotKeysFromInput(event, keys.listHotKeys)
             manager.process_events(event)
         manager.update(UI_REFRESH_RATE)
         manager.draw_ui(WINDOW)

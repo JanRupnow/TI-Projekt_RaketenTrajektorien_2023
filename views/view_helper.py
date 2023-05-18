@@ -17,7 +17,7 @@ def createUiTextBoxAndTextEntryHotkey(hotkey,position_x, position_y, manager):
     
     TEXT_INPUT = pg.elements.UITextEntryLine(relative_rect= pygame.Rect((position_x+WIDTH*0.1,position_y), (WIDTH*0.03,HEIGHT*0.05)), 
                                              manager = manager, 
-                                             object_id = removeSpaces(hotkey[1]))
+                                             object_id = removeSpaces(hotkey[1]+"_input"))
     TEXT_INPUT.length_limit = 1
     TEXT_INPUT.set_text(getStringOfAscii(hotkey[0]))
     
