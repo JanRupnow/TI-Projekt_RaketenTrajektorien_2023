@@ -10,7 +10,6 @@ UI_REFRESH_RATE = clock.tick(60)/1000
 
 def changeHotKeyFromInput(event,hotkey):
     if event.type == pg.UI_TEXT_ENTRY_FINISHED and event.ui_object_id == removeSpaces(hotkey[1]):
-        print(0)
         hotkey[0] = ord(event.text)
     return hotkey[0]
 
