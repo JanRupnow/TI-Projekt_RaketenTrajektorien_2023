@@ -125,5 +125,4 @@ def processKeyEvent(event, dto: DTOProcessEvent, rocket: Rocket, planets):
         dto.timestep = shiftTimeStep(False, rocket, planets, dto.timestep)
     elif checkKeyDown(event, keys.H_openSettings[0]):
         showSettingsUI()
-        clearSettingsUI()
     return dto

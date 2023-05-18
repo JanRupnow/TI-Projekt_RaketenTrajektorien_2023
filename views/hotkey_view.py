@@ -87,3 +87,5 @@ def showSettingsUI():
         manager.update(UI_REFRESH_RATE)
         manager.draw_ui(WINDOW)
         pygame.display.update()
+
+    clearSettingsUI()
