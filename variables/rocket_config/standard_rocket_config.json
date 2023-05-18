@@ -1,0 +1,19 @@
+{
+    "start": {
+        "angle on planet": 30,
+        "start planet": "Erde",
+        "start angle": 45,
+        "start thrust": 2
+    },
+    "mass": {
+        "rocket structure mass": 10000,
+        "propellant mass": 2000
+    },
+    "color": {
+        "red": 255, 
+        "green": 255,
+        "blue": 255
+    },
+    "image_path": "./image_sources/Rocket.png",
+    "radius": 2
+}

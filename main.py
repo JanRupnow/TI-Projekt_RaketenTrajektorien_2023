@@ -8,6 +8,7 @@ from DtoProcessEvent import DTOProcessEvent
 from methods.initialise_planets import *
 from views.main_view import *
 from views.start_view import *
+from methods.rocket_config import *
 
 FONT_1 = pygame.font.SysFont("Trebuchet MS", 21)
 FONT_2 = pygame.font.SysFont("Trebuchet MS", 16)
@@ -34,7 +35,8 @@ def main():
     sun = next(filter(lambda x: x.name == "Sonne", planets),None)
 
 
-    rocket = Rocket(45,0,0,10000,earth,2,(255,255,255), sun)
+    rocket = loadRocket(planets)
+    #rocket = Rocket(45,0,0,10000,earth,2,(255,255,255), sun)
     while run:
         clock.tick(60)
         WINDOW.fill(COLOR_UNIVERSE)

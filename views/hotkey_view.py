@@ -14,7 +14,7 @@ UI_REFRESH_RATE = clock.tick(60)/1000
 
 def changeHotKeyFromInput(event,hotkey):
     if event.type == pg.UI_TEXT_ENTRY_FINISHED and event.ui_object_id == removeSpaces(hotkey[1]):
-        jsonfile = open("./variables/hotkeys/current_hotkeys.json", "r+")
+        jsonfile = open("./variables/hotkeys_config/current_hotkeys.json", "r+")
         hotkey[0] = ord(event.text)
         newJson = keys.updateKeyInJson(json.load(jsonfile),hotkey)
 
@@ -50,20 +50,20 @@ def initializeSettingsUI():
     createUiButton("Reset Controls", WIDTH*0.8, HEIGHT*0.1, manager)
     createUiGameTitleLabel("Spaceflight Simulator", WIDTH*0.45, HEIGHT*0.05, manager)
 
-    createUiTextBoxAndTextEntry(keys.H_displayHotKeys, WIDTH*0.1, HEIGHT*0.2, manager)
-    createUiTextBoxAndTextEntry(keys.H_leaveSimulation, WIDTH*0.1, HEIGHT*0.25, manager)
-    createUiTextBoxAndTextEntry(keys.H_openSettings, WIDTH*0.1, HEIGHT*0.3, manager)
-    createUiTextBoxAndTextEntry(keys.H_closeWindow, WIDTH*0.1, HEIGHT*0.35, manager)
+    createUiTextBoxAndTextEntryHotkey(keys.H_displayHotKeys, WIDTH*0.1, HEIGHT*0.2, manager)
+    createUiTextBoxAndTextEntryHotkey(keys.H_leaveSimulation, WIDTH*0.1, HEIGHT*0.25, manager)
+    createUiTextBoxAndTextEntryHotkey(keys.H_openSettings, WIDTH*0.1, HEIGHT*0.3, manager)
+    createUiTextBoxAndTextEntryHotkey(keys.H_closeWindow, WIDTH*0.1, HEIGHT*0.35, manager)
     createUiSettingsTopicLabel("Rocket Controls", WIDTH*0.1, HEIGHT*0.4, manager)
-    createUiTextBoxAndTextEntry(keys.H_rocketBoostForward, WIDTH*0.1, HEIGHT*0.45, manager)
-    createUiTextBoxAndTextEntry(keys.H_rocketBoostLeft, WIDTH*0.1, HEIGHT*0.5, manager)
-    createUiTextBoxAndTextEntry(keys.H_rocketBoostRight, WIDTH*0.1, HEIGHT*0.55, manager)
-    createUiTextBoxAndTextEntry(keys.H_lowerRocketBoost, WIDTH*0.1, HEIGHT*0.6, manager)
+    createUiTextBoxAndTextEntryHotkey(keys.H_rocketBoostForward, WIDTH*0.1, HEIGHT*0.45, manager)
+    createUiTextBoxAndTextEntryHotkey(keys.H_rocketBoostLeft, WIDTH*0.1, HEIGHT*0.5, manager)
+    createUiTextBoxAndTextEntryHotkey(keys.H_rocketBoostRight, WIDTH*0.1, HEIGHT*0.55, manager)
+    createUiTextBoxAndTextEntryHotkey(keys.H_lowerRocketBoost, WIDTH*0.1, HEIGHT*0.6, manager)
     createUiSettingsTopicLabel("Zoom Controls", WIDTH*0.1, HEIGHT*0.65, manager)
-    createUiTextBoxAndTextEntry(keys.H_zoomRocketStart, WIDTH*0.1, HEIGHT*0.7, manager)
-    createUiTextBoxAndTextEntry(keys.H_zoomRocketPlanet, WIDTH*0.1, HEIGHT*0.75, manager)
-    createUiTextBoxAndTextEntry(keys.H_zoomRocketPlanetSystem, WIDTH*0.1, HEIGHT*0.8, manager)
-    createUiTextBoxAndTextEntry(keys.H_zoomAutoOnRocket, WIDTH*0.1, HEIGHT*0.85, manager)
+    createUiTextBoxAndTextEntryHotkey(keys.H_zoomRocketStart, WIDTH*0.1, HEIGHT*0.7, manager)
+    createUiTextBoxAndTextEntryHotkey(keys.H_zoomRocketPlanet, WIDTH*0.1, HEIGHT*0.75, manager)
+    createUiTextBoxAndTextEntryHotkey(keys.H_zoomRocketPlanetSystem, WIDTH*0.1, HEIGHT*0.8, manager)
+    createUiTextBoxAndTextEntryHotkey(keys.H_zoomAutoOnRocket, WIDTH*0.1, HEIGHT*0.85, manager)
 
 def showSettingsUI():
 
@@ -74,9 +74,9 @@ def showSettingsUI():
 
     while showGUI:
         for event in pygame.event.get():
-            if event.type == pg.UI_BUTTON_PRESSED and event.ui_object_id == "CloseSettings_label":
+            if event.type == pg.UI_BUTTON_PRESSED and event.ui_object_id == "CloseSettings_button":
                 showGUI = False
-            if event.type == pg.UI_BUTTON_PRESSED and event.ui_object_id == "ResetControls_label":
+            if event.type == pg.UI_BUTTON_PRESSED and event.ui_object_id == "ResetControls_button":
                 keys.resetOverwriteCurrent()
                 manager.clear_and_reset()     
                 initializeSettingsUI()

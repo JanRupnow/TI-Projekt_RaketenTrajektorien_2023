@@ -5,14 +5,10 @@ import math
 import sys
 import os
 
-module = sys.modules['__main__']
-path, name = os.path.split(module.__file__)
-path = os.path.join(path, './image_sources/Rocket.png')
-img0 = pygame.image.load(path)
-img0 = pygame.transform.scale_by(img0, 0.5)
+
 
 class Rocket:
-    def __init__(self, startwinkel, abwurfwinkel,treibstoffmasse, koerpermasse, startplanet, radius, color, sun):
+    def __init__(self, startwinkel, abwurfwinkel,treibstoffmasse, koerpermasse, startplanet, radius, color, sun, img0):
         self.aktuellerschritt = AktuellerSchritt
         self.aktuellerrechenschritt = AktuellerRechenschritt
         self.timestep = timestep
@@ -42,6 +38,7 @@ class Rocket:
         self.r_z[0]= self.StartKoordiantenZ
         self.rocketstarted = False
         self.img = img0
+        self.img0 = img0
         self.notRotatedImg = pygame.transform.scale_by(img0, min(0.1*self.radius, 1))
         self.zoomOnRocket = False
         self.sun = sun
@@ -98,7 +95,7 @@ class Rocket:
     def update_scale(self,scale):
         self.radius *= scale
         if self.radius > MIN_ROCKET_RADIUS:
-            self.notRotatedImg = pygame.transform.scale_by(img0, max(min(0.1*self.radius, 1), 0.1))
+            self.notRotatedImg = pygame.transform.scale_by(self.img0, max(min(0.1*self.radius, 1), 0.1))
     def draw(self, window, move_x, move_y, planets, paused, scale, width, height):
         global img0
         if self.rocketstarted:
