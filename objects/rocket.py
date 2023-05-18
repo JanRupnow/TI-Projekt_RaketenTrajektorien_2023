@@ -8,12 +8,11 @@ import os
 
 
 class Rocket:
-    def __init__(self, startwinkel, abwurfwinkel,treibstoffmasse, koerpermasse, startplanet, radius, color, sun, img0):
+    def __init__(self, startwinkel,treibstoffmasse, koerpermasse, startplanet, radius, color, sun, img0):
         self.aktuellerschritt = AktuellerSchritt
         self.aktuellerrechenschritt = AktuellerRechenschritt
         self.timestep = timestep
         self.timestepChanged = False
-        self.AbwurfWinkel = abwurfwinkel # Winkel des Starts auf der Erde [°C]
         self.KoerperMasse = koerpermasse
         self.TreibstoffMasse = treibstoffmasse
         self.startwinkel = startwinkel

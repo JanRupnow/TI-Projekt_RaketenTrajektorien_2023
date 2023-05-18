@@ -1,0 +1,37 @@
+{
+    "Start": {
+        "AngleOnPlanet": {
+            "value": 30,
+            "text": "angle on planet"
+        },
+        "Startplanet": {
+            "value": "Erde",
+            "text": "start planet"
+        },
+        "Angle": {
+            "value": 0,
+            "text": "start angle"
+        },
+        "Thrust": {
+            "value": 10,
+            "text": "start thrust"
+        }
+    },
+    "Mass": {
+        "StructMass": {
+            "value": 10000,
+            "text": "mass of the rocket structure"
+        },
+        "PropellantMass": {
+            "value": 2000,
+            "text": "mass of the propellant"
+        }
+    },
+    "Color": {
+        "red": 255,
+        "green": 255,
+        "blue": 255
+    },
+    "ImagePath": "./image_sources/Rocket.png",
+    "Radius": 2
+}

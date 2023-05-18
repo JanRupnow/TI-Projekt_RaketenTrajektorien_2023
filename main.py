@@ -4,7 +4,7 @@ import variables.konstanten as keys
 from objects.rocket import *
 from methods.game_methods import *
 import datetime
-from DtoProcessEvent import DTOProcessEvent
+from objects.DtoProcessEvent import DTOProcessEvent
 from methods.initialise_planets import *
 from views.main_view import *
 from views.start_view import *
@@ -36,7 +36,7 @@ def main():
 
 
     rocket = loadRocket(planets)
-    #rocket = Rocket(45,0,0,10000,earth,2,(255,255,255), sun)
+    #rocket = Rocket(45,0,10000,earth,2,(255,255,255), sun)
     while run:
         clock.tick(60)
         WINDOW.fill(COLOR_UNIVERSE)

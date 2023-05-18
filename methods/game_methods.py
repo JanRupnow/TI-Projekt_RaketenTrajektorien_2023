@@ -7,7 +7,7 @@ import variables.hotkeys as keys
 import datetime
 from methods.support_methods import *
 from views.hotkey_view import *
-from DtoProcessEvent import DTOProcessEvent
+from objects.DtoProcessEvent import DTOProcessEvent
 
 
 def addClockTime(pause, time_passed, timestep):
@@ -125,4 +125,5 @@ def processKeyEvent(event, dto: DTOProcessEvent, rocket: Rocket, planets):
         dto.timestep = shiftTimeStep(False, rocket, planets, dto.timestep)
     elif checkKeyDown(event, keys.H_openSettings[0]):
         showSettingsUI()
+
     return dto
