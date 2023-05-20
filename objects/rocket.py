@@ -16,9 +16,6 @@ class Rocket:
         self.KoerperMasse = koerpermasse
         self.TreibstoffMasse = treibstoffmasse
         self.startwinkel = startwinkel
-        ## Berechnung der Startposition der Rakete abhängig vom Startplaneten ohne Skalierung
-        self.StartKoordinatenX = startplanet.r_x[self.aktuellerschritt] + startplanet.radius * np.sin(self.startwinkel * np.pi / 180)
-        self.StartKoordiantenZ = startplanet.r_z[self.aktuellerschritt] + startplanet.radius * np.cos(self.startwinkel * np.pi / 180)
         self.r_x= np.zeros(LEN_OF_PREDICTIONS_ARRAY)   # x-Position [m]
         self.r_z= np.zeros(LEN_OF_PREDICTIONS_ARRAY)   # z-Position [m]
         self.v_x=np.zeros(LEN_OF_PREDICTIONS_ARRAY)    # x-Geschwindigkeit [m/s]
@@ -33,8 +30,9 @@ class Rocket:
         self.predictions = []
         self.v_x[0] = self.startplanet.v_x[0]
         self.v_z[0] = self.startplanet.v_z[0]
-        self.r_x[0]= self.StartKoordinatenX   
-        self.r_z[0]= self.StartKoordiantenZ
+        ## Berechnung der Startposition der Rakete abhängig vom Startplaneten ohne Skalierung
+        self.r_x[0]= startplanet.r_x[self.aktuellerschritt] + startplanet.radius * np.cos(self.startwinkel * np.pi / 180)  
+        self.r_z[0]= startplanet.r_z[self.aktuellerschritt] + startplanet.radius * np.sin(self.startwinkel * np.pi / 180)
         self.rocketstarted = False
         self.img = img0
         self.img0 = img0
@@ -93,7 +91,7 @@ class Rocket:
 
     def update_scale(self,scale):
         self.radius *= scale
-        if self.radius > MIN_ROCKET_RADIUS:
+        if self.radius > MIN_ROCKET_RADIUS and self.radius < 0.1:
             self.notRotatedImg = pygame.transform.scale_by(self.img0, max(min(0.1*self.radius, 1), 0.1))
     def draw(self, window, move_x, move_y, planets, paused, scale, width, height):
         global img0
@@ -101,11 +99,14 @@ class Rocket:
             if not paused:
                 if self.powerchanged or self.aktuellerschritt==0 or self.timestepChanged:
                     firstTime = self.aktuellerrechenschritt == 0
+                    if firstTime:
+                        for planet in planets:
+                            planet.resetPlanetsArrayToSyncWithRocket()
                     self.aktuellerrechenschritt = self.aktuellerschritt
                     self.calculateNewCalculationOfPredictions(firstTime, planets, paused)
                     if not (firstTime or self.timestepChanged):
                         for planet in planets:
-                            planet.predictNext(self.aktuellerrechenschritt-1, planets, paused)
+                            planet.predictStep(self.aktuellerrechenschritt-1, planets, paused)
 
                     self.powerchanged = False
                     self.timestepChanged = False
@@ -115,14 +116,8 @@ class Rocket:
             # move_x and move_y verschieben je nach bewegung des Bildschirm
             if self.aktuellerrechenschritt > 2:
                 pygame.draw.lines(window, self.color, False, np.array((self.r_x[self.aktuellerschritt:self.aktuellerrechenschritt]*scale+move_x+width/2, self.r_z[self.aktuellerschritt:self.aktuellerrechenschritt]*scale+move_y+ height/2)).T, 1)
-                #pygame.draw.circle(window,self.color,(self.r_x[self.aktuellerschritt]*scale+move_x+width/2 , self.r_z[self.aktuellerschritt]*scale+move_y+height/2),self.radius)
                 
-                if self.radius >= MIN_ROCKET_RADIUS:
-                    self.img = pygame.transform.rotate(self.notRotatedImg, math.atan2(self.v_z[self.aktuellerschritt], self.v_x[self.aktuellerschritt]) * (-180) /np.pi - 90)
-                    #img = pygame.transform.rotozoom(img0, math.atan2(self.v_z[self.aktuellerschritt], self.v_x[self.aktuellerschritt]), max(0.05, self.radius))
-                    window.blit(self.img, (self.r_x[self.aktuellerschritt]*scale+move_x+width/2 -self.img.get_width()/2 , self.r_z[self.aktuellerschritt]*scale+move_y+height/2 - self.img.get_height()/2))
-                else:
-                    pygame.draw.circle(window, self.color, (self.r_x[self.aktuellerschritt]*scale+move_x+width/2, self.r_z[self.aktuellerschritt]*scale+move_y+height/2), MIN_ROCKET_RADIUS)
+                self.drawRocket(window, width, height, move_x, move_y, scale)
             if not paused:
                 self.aktuellerschritt += 1
                 for planet in planets:
@@ -133,9 +128,43 @@ class Rocket:
                     for planet in planets:
                         planet.resetArray()
         else:
-            startplanet = next(filter(lambda x: x.name == self.startplanet.name, planets),None)
-            self.drawAndValueBeforeStarting(startplanet, window, scale, width, height, move_x, move_y)
+            self.drawAndValueBeforeStarting(self.startplanet, window, scale, width, height, move_x, move_y)
             
+            if not paused:
+                if planets[0].aktuellerschritt == 0 or self.timestepChanged:
+                    for planet in planets:
+                        planet.aktuellerrechenschritt = planet.aktuellerschritt
+                    for i in range(NUM_OF_PREDICTIONS):
+                        for planet in planets:
+                            planet.predictNext(planets, paused)
+
+                    if self.timestepChanged:
+                        self.timestepChanged = False
+
+                else:
+                    for planet in planets:
+                        planet.predictNext(planets, paused)
+
+                for planet in planets:
+                    planet.aktuellerschritt += 1
+
+                if planets[0].aktuellerschritt >= NUM_OF_PREDICTIONS:
+                    for planet in planets:
+                        planet.resetArray()
+
+            
+                
+
+
+
+    def drawRocket(self, window, width, height, move_x, move_y, scale):
+        if self.radius >= MIN_ROCKET_RADIUS:
+            self.img = pygame.transform.rotate(self.notRotatedImg, math.atan2(self.v_z[self.aktuellerschritt], self.v_x[self.aktuellerschritt]) * (-180) /np.pi - 90)
+            #img = pygame.transform.rotozoom(img0, math.atan2(self.v_z[self.aktuellerschritt], self.v_x[self.aktuellerschritt]), max(0.05, self.radius))
+            window.blit(self.img, (self.r_x[self.aktuellerschritt]*scale+move_x+width/2 -self.img.get_width()/2 , self.r_z[self.aktuellerschritt]*scale+move_y+height/2 - self.img.get_height()/2))
+        else:
+            pygame.draw.circle(window, self.color, (self.r_x[self.aktuellerschritt]*scale+move_x+width/2, self.r_z[self.aktuellerschritt]*scale+move_y+height/2), MIN_ROCKET_RADIUS)
+
     def getRelativeVelocity(self, i):
         if self.rocketstarted:
             return np.sqrt( (self.v_x[i] - self.startplanet.v_x[i])**2 
@@ -165,22 +194,23 @@ class Rocket:
         self.aktuellerrechenschritt = NUM_OF_PREDICTIONS
 
     def drawAndValueBeforeStarting(self, startplanet,window, scale, width, height, move_x, move_y):
-            pygame.draw.circle(window,self.color,(startplanet.r_x[self.aktuellerschritt] + startplanet.radius * np.sin(self.startwinkel * np.pi / 180) *scale+move_x+width/2 , startplanet.r_z[self.aktuellerschritt] + startplanet.radius * np.cos(self.startwinkel * np.pi / 180)*scale+move_y+height/2),self.radius)
-            self.StartKoordinatenX = startplanet.r_x[self.aktuellerschritt] + startplanet.radius * np.sin(self.startwinkel * np.pi / 180)
-            self.StartKoordiantenZ = startplanet.r_z[self.aktuellerschritt] + startplanet.radius * np.cos(self.startwinkel * np.pi / 180)
-            self.r_x[0] = self.StartKoordinatenX   
-            self.r_z[0] = self.StartKoordiantenZ
-            self.v_x[0] = startplanet.v_x[startplanet.aktuellerschritt]
-            self.v_z[0] = startplanet.v_z[startplanet.aktuellerschritt]
+        self.r_x[0] = startplanet.r_x[startplanet.aktuellerschritt] + startplanet.radius * np.cos(self.startwinkel * np.pi / 180)  
+        self.r_z[0] = startplanet.r_z[startplanet.aktuellerschritt] + startplanet.radius * np.sin(self.startwinkel * np.pi / 180)
+        self.v_x[0] = startplanet.v_x[startplanet.aktuellerschritt]
+        self.v_z[0] = startplanet.v_z[startplanet.aktuellerschritt]
+
+        self.drawRocket(window, width, height, move_x, move_y, scale)
+
+
     def calculateNewCalculationOfPredictions(self, firstTime, planets, paused):
         for i in range(NUM_OF_PREDICTIONS):
             if firstTime or self.timestepChanged:
                 for planet in planets:
-                    planet.predictNext(self.aktuellerrechenschritt, planets, paused)
+                    planet.predictStep(self.aktuellerrechenschritt, planets, paused)
             self.berechneNaechstenSchritt(self.aktuellerrechenschritt, planets)
             self.aktuellerrechenschritt += 1
     def calculateOnePrediction(self, planets, paused):
         for planet in planets:
-            planet.predictNext(self.aktuellerrechenschritt, planets, paused)
+            planet.predictStep(self.aktuellerrechenschritt, planets, paused)
         self.berechneNaechstenSchritt(self.aktuellerrechenschritt, planets)
         self.aktuellerrechenschritt += 1

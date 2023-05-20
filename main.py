@@ -9,6 +9,7 @@ from methods.initialise_planets import *
 from views.main_view import *
 from views.start_view import *
 from methods.rocket_config import *
+import time
 
 FONT_1 = pygame.font.SysFont("Trebuchet MS", 21)
 FONT_2 = pygame.font.SysFont("Trebuchet MS", 16)
@@ -30,10 +31,6 @@ def main():
 
     
     planets = getInitialPlanets()
-    
-    earth = next(filter(lambda x: x.name == "Erde", planets),None)
-    sun = next(filter(lambda x: x.name == "Sonne", planets),None)
-
 
     rocket = loadRocket(planets)
     #rocket = Rocket(45,0,10000,earth,2,(255,255,255), sun)
@@ -79,22 +76,24 @@ def main():
         move_x, move_y = automaticZoomOnRocket(rocket, scale, move_x, move_y)
         # Rocket
         rocket.draw(WINDOW,move_x,move_y, planets, pause, scale, WIDTH, HEIGHT)
-        if rocket.rocketstarted:
-            for planet in planets:
-                #if not pause:
-                #    planet.update_position(planets, rocket)
-                # Ohne Radius verschwinden die Balken bugs im Screen
+        #if rocket.rocketstarted:
+        startPlanetdraw = time.time()
+        for planet in planets:
+            #if not pause:
+            #    planet.update_position(planets, rocket)
+            # Ohne Radius verschwinden die Balken bugs im Screen
 
-                if isInScreen(scale, planet, move_x, move_y, HEIGHT, WIDTH):
-                    if show_distance :
-                        planet.draw(WINDOW, 1, move_x, move_y, draw_line,scale, WIDTH, HEIGHT, pause, rocket)
-                    else:
-                        planet.draw(WINDOW, 0, move_x, move_y, draw_line,scale, WIDTH, HEIGHT, pause, rocket)
-                else: 
-                    planet.drawlineonly(WINDOW, move_x, move_y, draw_line, scale, WIDTH, HEIGHT, pause, rocket, show_distance)
+            if planetIsInScreen(scale, planet, move_x, move_y, HEIGHT, WIDTH):
+                if show_distance :
+                    planet.draw(WINDOW, 1, move_x, move_y, draw_line,scale, WIDTH, HEIGHT, pause, rocket)
+                else:
+                    planet.draw(WINDOW, 0, move_x, move_y, draw_line,scale, WIDTH, HEIGHT, pause, rocket)
+            else: 
+                planet.drawlineonly(WINDOW, move_x, move_y, draw_line, scale, WIDTH, HEIGHT, pause, rocket, show_distance)
 
         time_passed = renderTextView(WINDOW, rocket, now, FONT_1, pause, clock, time_passed, timestep)
-        
+        endPlanetdraw = time.time()
+        print(f"Planetdraw time: {startPlanetdraw-endPlanetdraw}")
         pygame.display.update()
     pygame.quit()
 

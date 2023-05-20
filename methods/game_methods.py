@@ -8,7 +8,7 @@ import datetime
 from methods.support_methods import *
 from views.hotkey_view import *
 from objects.DtoProcessEvent import DTOProcessEvent
-
+import time 
 
 def addClockTime(pause, time_passed, timestep):
     if not pause:
@@ -50,14 +50,15 @@ def shiftTimeStep(shiftUp, rocket, planets, timestep):
     return timestep
 
 
-def isInScreen(scale, planet, move_x, move_y, height, width):
+def planetIsInScreen(scale, planet, move_x, move_y, height, width):
     inScreen = planet.r_z[planet.aktuellerschritt]*scale+planet.radius*scale > -move_y-height/2
-    inScreen = inScreen or planet.r_z[planet.aktuellerschritt]*scale-planet.radius*scale < -move_y+height/2
-    inScreen = inScreen or planet.r_z[planet.aktuellerschritt]*scale+planet.radius*scale > -move_x-width/2
-    return inScreen or planet.r_x[planet.aktuellerschritt]*scale-planet.radius*scale < -move_x+width/2
+    inScreen = inScreen and planet.r_z[planet.aktuellerschritt]*scale-planet.radius*scale < -move_y+height/2
+    inScreen = inScreen and planet.r_x[planet.aktuellerschritt]*scale+planet.radius*scale > -move_x-width/2
+    return inScreen and planet.r_x[planet.aktuellerschritt]*scale-planet.radius*scale < -move_x+width/2
+
+
 
 def processKeyEvent(event, dto: DTOProcessEvent, rocket: Rocket, planets):
-
     if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and
                                     (event.key == pygame.K_x or event.key == pygame.K_ESCAPE)):
         dto.run = False
@@ -96,7 +97,7 @@ def processKeyEvent(event, dto: DTOProcessEvent, rocket: Rocket, planets):
 
     elif checkKeyDown(event, keys.H_zoomAutoOnRocket[0]):
         rocket.zoomOnRocket = not rocket.zoomOnRocket
-    elif checkKeyDown(event, keys.H_pauseSimulation):
+    elif checkKeyDown(event, keys.H_pauseSimulation[0]):
         dto.pause = not dto.pause
     elif checkKeyDown(event, keys.H_showDistance[0]):
         dto.show_distance = not dto.show_distance
@@ -125,5 +126,4 @@ def processKeyEvent(event, dto: DTOProcessEvent, rocket: Rocket, planets):
         dto.timestep = shiftTimeStep(False, rocket, planets, dto.timestep)
     elif checkKeyDown(event, keys.H_openSettings[0]):
         showSettingsUI()
-
     return dto

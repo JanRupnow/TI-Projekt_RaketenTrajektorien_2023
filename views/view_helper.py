@@ -53,8 +53,8 @@ def createUiGameTitleLabel(text, position_x, position_y, manager):
     label.rebuild()
     return label
 
-def createUiButton(text, position_x,position_y, manager):
-    return pg.elements.UIButton(relative_rect=pygame.Rect((position_x,position_y), (WIDTH*0.07,HEIGHT*0.07)),
+def createUiButton(text, position_x,position_y, manager, length_x = WIDTH*0.07, length_y= HEIGHT*0.07):
+    return pg.elements.UIButton(relative_rect=pygame.Rect((position_x,position_y), (length_x,length_y)),
                                 text=text,
                                 manager=manager,
                                 object_id=removeSpaces(text+"_button"))

@@ -5,7 +5,7 @@
             "text": "angle on planet"
         },
         "Startplanet": {
-            "value": "Mond",
+            "value": "Erde",
             "text": "start planet"
         },
         "Angle": {
@@ -13,7 +13,7 @@
             "text": "start angle"
         },
         "Thrust": {
-            "value": 10,
+            "value": 0,
             "text": "start thrust"
         }
     },

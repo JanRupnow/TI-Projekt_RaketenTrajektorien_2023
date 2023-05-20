@@ -41,7 +41,7 @@ def getTextsAndValuesForConfigUI():
 def initializeStartUI():
     createUiGameTitleLabel("Spaceflight Simulator", WIDTH*0.45, HEIGHT*0.05, manager)
     createUiButton("Start the Game", WIDTH*0.465, HEIGHT*0.8, manager)
-    createUiButton("Configure the Rocket", WIDTH*0.465, HEIGHT*0.7, manager)
+    createUiButton("Configure the Rocket", WIDTH*0.45, HEIGHT*0.7, manager, WIDTH*0.1)
 
 def initializeRocketConfigurationUI():
     createUiLabel("Rocket Configuration", WIDTH*0.7, HEIGHT*0.2, manager)

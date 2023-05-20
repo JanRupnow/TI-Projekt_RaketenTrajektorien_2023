@@ -42,4 +42,6 @@ LEN_OF_PREDICTIONS_ARRAY = NUM_OF_PREDICTIONS*2
 pygame.init()
 clock = pygame.time.Clock()
 WINDOW = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
+
 WIDTH, HEIGHT = pygame.display.Info().current_w, pygame.display.Info().current_h
+#WINDOW.set_clip(pygame.Rect(0, 0, WIDTH, HEIGHT))

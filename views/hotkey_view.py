@@ -13,7 +13,7 @@ UI_REFRESH_RATE = clock.tick(60)/1000
 
 
 def changeHotKeyFromInput(event,hotkey):
-    if event.type == pg.UI_TEXT_ENTRY_FINISHED and event.ui_object_id == removeSpaces(hotkey[1]+"_input"):
+    if event.type == pg.UI_TEXT_ENTRY_FINISHED and event.ui_object_id == removeSpaces(hotkey[1]+"_input") and event.text != "":
         jsonfile = open("./variables/hotkeys_config/current_hotkeys.json", "r+")
         hotkey[0] = ord(event.text)
         newJson = keys.updateKeyInJson(json.load(jsonfile),hotkey)
