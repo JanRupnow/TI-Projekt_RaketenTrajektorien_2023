@@ -78,14 +78,13 @@ def initializeRocketConfigurationUI():
     configPairs = getTextsAndValuesForConfigUI()
     createUiTextBoxAndTextEntry(configPairs[0][1], configPairs[0][0], WIDTH*0.7, HEIGHT*0.3, manager)
     createUiTextBox(configPairs[1][1],WIDTH*0.7, HEIGHT*0.35, manager)
-    dropdown = createDropDown(planetNameArray,
+    createDropDown(planetNameArray,
                               planetNameArray.index(getStartplanetName()),
                               WIDTH*0.8, HEIGHT*0.35, manager)
     createUiTextBoxAndTextEntry(configPairs[2][1], configPairs[2][0], WIDTH*0.7, HEIGHT*0.4, manager)
     createUiTextBoxAndTextEntry(configPairs[3][1], configPairs[3][0], WIDTH*0.7, HEIGHT*0.45, manager)
     createUiTextBoxAndTextEntry(configPairs[4][1], configPairs[4][0], WIDTH*0.7, HEIGHT*0.5, manager,size_x=WIDTH*0.03)
     createUiTextBoxAndTextEntry(configPairs[5][1], configPairs[5][0], WIDTH*0.7, HEIGHT*0.55, manager)
-    return dropdown
 
 # removes all ui elements => no used object_ids
 def clearStartUI():
@@ -109,7 +108,7 @@ def showStartUI():
             if event.type == pg.UI_BUTTON_PRESSED and event.ui_object_id == "StarttheGame_button":
                 showGUI = False
             if event.type == pg.UI_BUTTON_PRESSED and event.ui_object_id == "ConfiguretheRocket_button" and not showConfiguration:
-                dropdown = initializeRocketConfigurationUI()
+                initializeRocketConfigurationUI()
                 showConfiguration = True
             if event.type == pg.UI_BUTTON_PRESSED and event.ui_object_id == "ResetConfiguration_button":
                 resetCurrentRocketConfig()
