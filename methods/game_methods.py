@@ -80,13 +80,13 @@ def processKeyEvent(event, dto: DTOProcessEvent, rocket: Rocket, planets):
         rocket.powerchanged = True
 
     elif checkKeyDown(event, keys.H_zoomRocketStart[0]):
-        dto.scale = scaleRelative(200, STARTSCALE)
-        rocket.update_scale(200)
+        dto.scale = scaleRelative(100000, STARTSCALE)
+        rocket.update_scale(100000)
         dto.move_x, dto.move_y = automaticZoomOnRocketOnce(rocket, dto.scale, dto.move_x, dto.move_y)
     #Zoom Startorbit
     elif checkKeyDown(event, keys.H_zoomRocketPlanet[0]):
-        dto.scale = scaleRelative(5, STARTSCALE)
-        rocket.update_scale(5)
+        dto.scale = scaleRelative(10, STARTSCALE)
+        rocket.update_scale(10)
         dto.move_x, dto.move_y = automaticZoomOnRocketOnce(rocket, dto.scale, dto.move_x, dto.move_y)
     #Zoom Universum
     elif checkKeyDown(event, keys.H_zoomRocketPlanetSystem[0]):
