@@ -24,22 +24,31 @@ def createUiTextBoxAndTextEntryHotkey(hotkey,position_x, position_y, manager):
     
     return TEXT_BOX, TEXT_INPUT
 
-def createRocketImage(rocketImageNumber,manager, position_x = WIDTH*0.5, position_y = HEIGHT*0.5):
+def getRocketImgage(rocketImageNumber):
+    jsonfile = open("./variables/rocket_config/current_rocket_config.json")
+    config = json.load(jsonfile)
+    img = pygame.image.load(config["Image"]["path"][rocketImageNumber])
+    return pygame.transform.scale_by(img, 300/img.get_height())
+
+def createRocketImage(rocketImageNumber,manager, position_x = WIDTH*0.5, position_y = HEIGHT*0.5) -> pg.elements.UIImage:
+    for element in manager.root_container.elements:
+                    if "rocket_image" in element.get_object_ids():
+                        element.kill()
     jsonfile = open("./variables/rocket_config/current_rocket_config.json")
     config = json.load(jsonfile)
     img = pygame.image.load(config["Image"]["path"][rocketImageNumber])
     img = pygame.transform.scale_by(img, 300/img.get_height())
     image_rect = img.get_rect()
     image_rect.topleft = (position_x -  img.get_width()/2, position_y - img.get_height()/2)
-    pg.elements.UIImage(relative_rect=image_rect, image_surface=img, manager=manager, object_id = "rocket_image")
+    return pg.elements.UIImage(relative_rect=image_rect, image_surface=img, manager=manager, object_id = "rocket_image")
 
-def createUiTextBoxAndTextEntry(text, value, position_x, position_y, manager):
+def createUiTextBoxAndTextEntry(text, value, position_x, position_y, manager, size_x=0, size_y=0):
     TEXT_BOX = pg.elements.UITextBox(text,
-                                     relative_rect= pygame.Rect((position_x,position_y),(WIDTH*0.1,HEIGHT*0.05)),
+                                     relative_rect= pygame.Rect((position_x,position_y),(WIDTH*0.1+size_x,size_y+HEIGHT*0.05)),
                                      manager = manager, 
                                      object_id=removeSpaces(text[1]+"_text"))
     
-    TEXT_INPUT = pg.elements.UITextEntryLine(relative_rect= pygame.Rect((position_x+WIDTH*0.1,position_y), (WIDTH*0.03,HEIGHT*0.05)), 
+    TEXT_INPUT = pg.elements.UITextEntryLine(relative_rect= pygame.Rect((position_x+WIDTH*0.1+size_x,position_y), (WIDTH*0.03+size_x,HEIGHT*0.05+size_y)), 
                                              manager = manager, 
                                              object_id = removeSpaces(text+"_input"))
     
@@ -47,6 +56,18 @@ def createUiTextBoxAndTextEntry(text, value, position_x, position_y, manager):
 
     return TEXT_BOX, TEXT_INPUT
 
+def createDropDown(array,defaultnumber,position_x,position_y,manager):
+    DROP_DOWN = pg.elements.UIDropDownMenu(array,array[defaultnumber],relative_rect=pygame.Rect((position_x,position_y),(WIDTH*0.1,HEIGHT*0.05)),
+                                     manager = manager, 
+                                     object_id="startplanet_dropdown",
+                                     )
+    return DROP_DOWN
+def createUiTextBox(text, position_x, position_y, manager):
+    TEXT_BOX = pg.elements.UITextBox(text,
+                                     relative_rect= pygame.Rect((position_x,position_y),(WIDTH*0.1,HEIGHT*0.05)),
+                                     manager = manager, 
+                                     object_id=removeSpaces(text[1]+"_text"))
+    return TEXT_BOX
 
 def createUiSettingsTopicLabel(text, position_x, position_y, manager):
     label = createUiLabel(text, position_x, position_y, manager)

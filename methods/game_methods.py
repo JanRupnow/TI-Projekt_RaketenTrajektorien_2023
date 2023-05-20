@@ -102,7 +102,7 @@ def processKeyEvent(event, dto: DTOProcessEvent, rocket: Rocket, planets):
     elif checkKeyDown(event, keys.H_showDistance[0]):
         dto.show_distance = not dto.show_distance
     elif checkKeyDown(event, keys.H_centerOnSun[0]):
-        sun = next(filter(lambda x: x.name == "Sonne", planets),None)
+        sun = next(filter(lambda x: x.name == "Sun", planets),None)
         dto.move_x, dto.move_y = centerScreenOnPlanet(sun, dto.scale, dto.move_x, dto.move_y)
     elif checkKeyDown(event, keys.H_centerOnRocket[0]):
         dto.move_x, dto.move_y = automaticZoomOnRocketOnce(rocket, dto.scale, dto.move_x, dto.move_y)

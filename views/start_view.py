@@ -30,6 +30,23 @@ def updateRocketConfigs(event):
     json.dump(newJson, jsonfile, indent=4, ensure_ascii=False)
     jsonfile.close()
 
+def getSelectedRocket():
+    return json.load(open("./variables/rocket_config/current_rocket_config.json", "r+"))["Image"]["selectedNumber"]
+
+def getStartplanetName():
+    return json.load(open("./variables/rocket_config/current_rocket_config.json", "r+"))["Start"]["Startplanet"]["value"]
+
+def updateSelectedRocket(selectedRocket):
+    jsonfile = open("./variables/rocket_config/current_rocket_config.json", "r+")
+    
+    config = json.load(jsonfile)
+    config["Image"]["selectedNumber"] = selectedRocket
+
+    jsonfile.seek(0)
+    jsonfile.truncate()
+    json.dump(config, jsonfile, indent=4, ensure_ascii=False)
+    jsonfile.close()
+
 def getTextsAndValuesForConfigUI():
     jsonfile = open("./variables/rocket_config/current_rocket_config.json", "r")
     config = json.load(jsonfile)
@@ -55,15 +72,24 @@ def initializeStartUI(selectedNumber=0):
 
 def initializeRocketConfigurationUI():
     createUiLabel("Rocket Configuration", WIDTH*0.7, HEIGHT*0.2, manager)
-    createUiButton("Reset Controls", WIDTH*0.8, HEIGHT*0.8, manager)
+    createUiButton("Reset Configuration", WIDTH*0.8, HEIGHT*0.8, manager, length_x= WIDTH*0.1)
     createUiButton("Previous", WIDTH*0.38, HEIGHT*0.7, manager)
     createUiButton("Next", WIDTH*0.55, HEIGHT*0.7, manager)
     configPairs = getTextsAndValuesForConfigUI()
-    for i in range(len(configPairs)):
-        createUiTextBoxAndTextEntry(configPairs[i][1], configPairs[i][0], WIDTH*0.7, HEIGHT*0.25 + HEIGHT*0.05*i, manager)
+    createUiTextBoxAndTextEntry(configPairs[0][1], configPairs[0][0], WIDTH*0.7, HEIGHT*0.3, manager)
+    createUiTextBox(configPairs[1][1],WIDTH*0.7, HEIGHT*0.35, manager)
+    dropdown = createDropDown(planetNameArray,
+                              planetNameArray.index(getStartplanetName()),
+                              WIDTH*0.8, HEIGHT*0.35, manager)
+    createUiTextBoxAndTextEntry(configPairs[2][1], configPairs[2][0], WIDTH*0.7, HEIGHT*0.4, manager)
+    createUiTextBoxAndTextEntry(configPairs[3][1], configPairs[3][0], WIDTH*0.7, HEIGHT*0.45, manager)
+    createUiTextBoxAndTextEntry(configPairs[4][1], configPairs[4][0], WIDTH*0.7, HEIGHT*0.5, manager,size_x=WIDTH*0.03)
+    createUiTextBoxAndTextEntry(configPairs[5][1], configPairs[5][0], WIDTH*0.7, HEIGHT*0.55, manager)
+    return dropdown
 
 # removes all ui elements => no used object_ids
 def clearStartUI():
+    #print(manager.)
     manager.clear_and_reset() 
 
 def resetAndShowUI(selectedNumber):
@@ -71,23 +97,11 @@ def resetAndShowUI(selectedNumber):
     initializeStartUI(selectedNumber)
     initializeRocketConfigurationUI()
 
-def resetUI(selectedNumber,manager): 
-    for element in manager.root_container.elements:
-        if "rocket_image" in element.object_ids:
-            remove_element = element
-            element.kill()
-    manager.clear_and_reset()
-    manager.root_container.kill()
-    manager.root_container.remove_element(remove_element)
-    manager.root_container.remove_element_from_focus_set(remove_element)
-    manager.root_container.update(1)
-    initializeStartUI(selectedNumber)
-    initializeRocketConfigurationUI()
 
 def showStartUI():
     showGUI = True
     showConfiguration = False
-    selectedNumber = 3
+    selectedNumber = getSelectedRocket()
     if len(manager.get_sprite_group())<4:
         initializeStartUI(selectedNumber)
     while showGUI:
@@ -95,25 +109,35 @@ def showStartUI():
             if event.type == pg.UI_BUTTON_PRESSED and event.ui_object_id == "StarttheGame_button":
                 showGUI = False
             if event.type == pg.UI_BUTTON_PRESSED and event.ui_object_id == "ConfiguretheRocket_button" and not showConfiguration:
-                initializeRocketConfigurationUI()
+                dropdown = initializeRocketConfigurationUI()
                 showConfiguration = True
-            if event.type == pg.UI_BUTTON_PRESSED and event.ui_object_id == "ResetControls_button":
+            if event.type == pg.UI_BUTTON_PRESSED and event.ui_object_id == "ResetConfiguration_button":
                 resetCurrentRocketConfig()
                 resetAndShowUI(selectedNumber)
             if event.type == pg.UI_BUTTON_PRESSED and event.ui_object_id == "Previous_button" and selectedNumber > 0:
                 selectedNumber-= 1
-                resetUI(selectedNumber,manager)
+                createRocketImage(selectedNumber, manager)
+                updateSelectedRocket(selectedNumber)
+                resetAndShowUI(selectedNumber)
+
             if event.type == pg.UI_BUTTON_PRESSED and event.ui_object_id == "Next_button" and selectedNumber < 3:
                 selectedNumber+= 1
-                resetUI(selectedNumber, manager)
+                updateSelectedRocket(selectedNumber)
+                createRocketImage(selectedNumber, manager)
+                resetAndShowUI(selectedNumber)
+            if event.type == pg.UI_DROP_DOWN_MENU_CHANGED and event.ui_object_id =="startplanet_dropdown":
+                #dropdown.selected_option = "Moon"
+                updateRocketConfigs(event)
+                resetAndShowUI(selectedNumber)
             if checkKeyDown(event, keys.H_closeWindow[0]):
                 pygame.quit()
-                sys.exit()
-                
+                sys.exit()  
             if event.type == pg.UI_TEXT_ENTRY_FINISHED:
                 updateRocketConfigs(event)
                 resetAndShowUI(selectedNumber)
             manager.process_events(event)
+        
+        WINDOW.fill((0, 0, 0))
         manager.update(UI_REFRESH_RATE)
         manager.draw_ui(WINDOW)
         pygame.display.update()

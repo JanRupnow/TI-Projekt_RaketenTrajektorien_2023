@@ -25,7 +25,7 @@ def loadRocketFromPath(path, planets, rocketImage):
             config["Color"]["green"],
             config["Color"]["blue"]
         ),
-        next(filter(lambda x: x.name == "Sonne", planets),None),
+        next(filter(lambda x: x.name == "Sun", planets),None),
         img
     )
 

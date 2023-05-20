@@ -14,7 +14,7 @@ def updateKeyInJsonRocket(json, identifier, value):
                 # didn't need to catch because this method should only update values
                 # which are in the form of the if clause
                 try:
-                    if identifier == removeSpaces(json[category][key]["text"]+"_input"):
+                    if identifier == removeSpaces(json[category][key]["text"]+"_input") or identifier == removeSpaces(json[category][key]["text"]+"_dropdown"):
                         if value.isdigit():
                             json[category][key]["value"] = int(value)
                         else:

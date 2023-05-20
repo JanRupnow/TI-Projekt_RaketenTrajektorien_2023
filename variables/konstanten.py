@@ -22,7 +22,7 @@ Luftwiederstand = 0.0162        # Luftwiderstandsbeiwert                     #  
 FallBeschleunigung = 9.81       # [m/s^2]
 p_0 = 1.225 # Luftdichte auf Meereshöhe [kg/m^3]
 h_s = 8400  # Skalenhöhe [m]
-
+planetNameArray = ["Sun","Mercury","Venus","Earth","Moon","Mars","Jupiter","Saturn","Uranus","Neptune"]
 ### Zeit-Variablen
 Startzeit = 0                   # [s]                # [s]
 Rechenschritte = 100000
