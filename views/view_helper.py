@@ -1,6 +1,7 @@
 from variables.konstanten import *
 from methods.support_methods import *
 import pygame_gui as pg
+import json
 
 
 def createUiLabel(text, position_x, position_y, manager):
@@ -22,6 +23,15 @@ def createUiTextBoxAndTextEntryHotkey(hotkey,position_x, position_y, manager):
     TEXT_INPUT.set_text(getStringOfAscii(hotkey[0]))
     
     return TEXT_BOX, TEXT_INPUT
+
+def createRocketImage(rocketImageNumber,manager, position_x = WIDTH*0.5, position_y = HEIGHT*0.5):
+    jsonfile = open("./variables/rocket_config/current_rocket_config.json")
+    config = json.load(jsonfile)
+    img = pygame.image.load(config["Image"]["path"][rocketImageNumber])
+    img = pygame.transform.scale_by(img, 300/img.get_height())
+    image_rect = img.get_rect()
+    image_rect.topleft = (position_x -  img.get_width()/2, position_y - img.get_height()/2)
+    pg.elements.UIImage(relative_rect=image_rect, image_surface=img, manager=manager, object_id = "rocket_image")
 
 def createUiTextBoxAndTextEntry(text, value, position_x, position_y, manager):
     TEXT_BOX = pg.elements.UITextBox(text,

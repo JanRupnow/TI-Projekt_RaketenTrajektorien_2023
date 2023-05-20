@@ -3,7 +3,7 @@ from methods.json_methods import *
 from objects.rocket import *
 from methods.initialise_planets import *
 
-def loadRocketFromPath(path, planets):
+def loadRocketFromPath(path, planets, rocketImage):
     jsonfile = open(path)
     config = json.load(jsonfile)
     
@@ -11,7 +11,7 @@ def loadRocketFromPath(path, planets):
                                 config["Start"]["Startplanet"]["value"], 
                                 planets))
 
-    img = pygame.image.load(config["ImagePath"])
+    img = pygame.image.load(config["Image"]["path"][config["Image"]["selectedNumber"]])
     img = pygame.transform.scale_by(img, 125/img.get_width())
 
     rocket = Rocket(
@@ -41,7 +41,7 @@ def loadRocketFromPath(path, planets):
 
 def loadRocket(planets):
     try:
-        return loadRocketFromPath("./variables/rocket_config/current_rocket_config.json", planets)
+        return loadRocketFromPath("./variables/rocket_config/current_rocket_config.json", planets, 0)
     except:
         # write standard config to current config
         with open("./variables/rocket_config/current_rocket_config.json", "w") as outfile:
@@ -50,4 +50,4 @@ def loadRocket(planets):
                       indent=4, 
                       ensure_ascii=False)
             
-        return loadRocketFromPath("./variables/rocket_config/current_rocket_config.json", planets)
+        return loadRocketFromPath("./variables/rocket_config/current_rocket_config.json", planets, 0)
