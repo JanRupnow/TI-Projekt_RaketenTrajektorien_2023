@@ -1,10 +1,10 @@
 import pygame
 import json
-from methods.jsonHotkeys import *
+from methods.json_methods import *
 
 
 try: 
-    jsonFile = open("./variables/hotkeys/current_hotkeys.json")
+    jsonFile = open("./variables/hotkeys_config/current_hotkeys.json")
     hotkeysJson = json.load(jsonFile)
 
     listHotKeys = []
@@ -59,14 +59,22 @@ try:
     listHotKeys.append(H_openSettings)
     H_closeWindow =  getH_closeWindow(hotkeysJson)
     listHotKeys.append(H_closeWindow)
+    H_moveScreenUp = getH_moveScreenUp(hotkeysJson)
+    listHotKeys.append(H_moveScreenUp)
+    H_moveScreenDown = getH_moveScreenDown(hotkeysJson)
+    listHotKeys.append(H_moveScreenDown)
+    H_moveScreenRight = getH_moveScreenRight(hotkeysJson)
+    listHotKeys.append(H_moveScreenRight)
+    H_moveScreenLeft = getH_moveScreenLeft(hotkeysJson)
+    listHotKeys.append(H_moveScreenLeft)
 
 except:
     ### Error or Empty while Reading triggers copy from standard to current
-    jsonFile = open("./variables/hotkeys/standard_hotkeys.json")
+    jsonFile = open("./variables/hotkeys_config/standard_hotkeys.json")
 
     hotkeysJson = json.load(jsonFile)
 
-    with open("./variables/hotkeys/current_hotkeys.json", "w") as outfile:
+    with open("./variables/hotkeys_config/current_hotkeys.json", "w") as outfile:
         json.dump(hotkeysJson, outfile, indent=4, ensure_ascii=False)
 
     listHotKeys = []
@@ -121,6 +129,14 @@ except:
     listHotKeys.append(H_openSettings)
     H_closeWindow =  getH_closeWindow(hotkeysJson)
     listHotKeys.append(H_closeWindow)
+    H_moveScreenUp = getH_moveScreenUp(hotkeysJson)
+    listHotKeys.append(H_moveScreenUp)
+    H_moveScreenDown = getH_moveScreenDown(hotkeysJson)
+    listHotKeys.append(H_moveScreenDown)
+    H_moveScreenRight = getH_moveScreenRight(hotkeysJson)
+    listHotKeys.append(H_moveScreenRight)
+    H_moveScreenLeft = getH_moveScreenLeft(hotkeysJson)
+    listHotKeys.append(H_moveScreenLeft)
 
 
 jsonFile.close()
@@ -128,14 +144,14 @@ jsonFile.close()
 
 def resetOverwriteCurrent():
     global listHotKeys, H_rocketBoostForward, H_rocketBoostLeft, H_rocketBoostRight, H_lowerRocketBoost, H_zoomRocketStart, H_zoomRocketPlanet, H_zoomRocketPlanetSystem, H_zoomAutoOnRocket, H_centerOnSun, H_centerOnRocket, H_shiftTimeStepUp, H_centerOnRocket, H_shiftTimeStepUp, H_shiftTimeStepDown, H_drawLine, H_showDistance, H_pauseSimulation, H_displayHotKeys, H_leaveSimulation, H_openSettings, H_closeWindow
-    jsonFile = open("./variables/hotkeys/standard_hotkeys.json")
+    jsonFile = open("./variables/hotkeys_config/standard_hotkeys.json")
     hotkeysJson = json.load(jsonFile)
 
-    with open("./variables/hotkeys/current_hotkeys.json", "w") as outfile:
+    with open("./variables/hotkeys_config/current_hotkeys.json", "w") as outfile:
         json.dump(hotkeysJson, outfile, indent=4, ensure_ascii=False)
 
     listHotKeys = []
-    jsonFile = open("./variables/hotkeys/current_hotkeys.json")
+    jsonFile = open("./variables/hotkeys_config/current_hotkeys.json")
     hotkeysJson = json.load(jsonFile)
     ### Rocket Controls
 
@@ -187,6 +203,14 @@ def resetOverwriteCurrent():
     listHotKeys.append(H_openSettings)
     H_closeWindow =  getH_closeWindow(hotkeysJson)
     listHotKeys.append(H_closeWindow)
+    H_moveScreenUp = getH_moveScreenUp(hotkeysJson)
+    listHotKeys.append(H_moveScreenUp)
+    H_moveScreenDown = getH_moveScreenDown(hotkeysJson)
+    listHotKeys.append(H_moveScreenDown)
+    H_moveScreenRight = getH_moveScreenRight(hotkeysJson)
+    listHotKeys.append(H_moveScreenRight)
+    H_moveScreenLeft = getH_moveScreenLeft(hotkeysJson)
+    listHotKeys.append(H_moveScreenLeft)
 
 
     jsonFile.close()

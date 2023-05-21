@@ -7,8 +7,8 @@ import variables.hotkeys as keys
 import datetime
 from methods.support_methods import *
 from views.hotkey_view import *
-from DtoProcessEvent import DTOProcessEvent
-
+from objects.DtoProcessEvent import DTOProcessEvent
+import time 
 
 def addClockTime(pause, time_passed, timestep):
     if not pause:
@@ -50,43 +50,69 @@ def shiftTimeStep(shiftUp, rocket, planets, timestep):
     return timestep
 
 
-def isInScreen(scale, planet, move_x, move_y, height, width):
+def planetIsInScreen(scale, planet, move_x, move_y, height, width):
     inScreen = planet.r_z[planet.aktuellerschritt]*scale+planet.radius*scale > -move_y-height/2
-    inScreen = inScreen or planet.r_z[planet.aktuellerschritt]*scale-planet.radius*scale < -move_y+height/2
-    inScreen = inScreen or planet.r_z[planet.aktuellerschritt]*scale+planet.radius*scale > -move_x-width/2
-    return inScreen or planet.r_x[planet.aktuellerschritt]*scale-planet.radius*scale < -move_x+width/2
+    inScreen = inScreen and planet.r_z[planet.aktuellerschritt]*scale-planet.radius*scale < -move_y+height/2
+    inScreen = inScreen and planet.r_x[planet.aktuellerschritt]*scale+planet.radius*scale > -move_x-width/2
+    return inScreen and planet.r_x[planet.aktuellerschritt]*scale-planet.radius*scale < -move_x+width/2
+
+
 
 def processKeyEvent(event, dto: DTOProcessEvent, rocket: Rocket, planets):
 
-    if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and
-                                    (event.key == pygame.K_x or event.key == pygame.K_ESCAPE)):
-        dto.run = False
-    # Raketenboost erhöhen
-    elif checkKeyDown(event, keys.H_rocketBoostForward[0]) and rocket.thrust<10 and (rocket.rocketstarted or  not dto.pause):
+    keysP = pygame.key.get_pressed()
+    mouse_x, mouse_y = pygame.mouse.get_pos()
+    window_w, window_h = pygame.display.get_surface().get_size()
+    distance = 10
+    if keysP[keys.H_moveScreenLeft[0]] or mouse_x == 0:
+        dto.move_x += distance
+    elif keysP[keys.H_moveScreenRight[0]] or mouse_x == window_w - 1:
+        dto.move_x -= distance
+    elif keysP[keys.H_moveScreenUp[0]] or mouse_y == 0:
+        dto.move_y += distance
+    elif keysP[keys.H_moveScreenDown[0]] or mouse_y == window_h - 1:
+        dto.move_y -= distance
+    elif keysP[keys.H_rocketBoostForward[0]] and rocket.thrust<10 and (rocket.rocketstarted or  not dto.pause):
         rocket.thrust += 1
         rocket.powerchanged = True
         rocket.rocketstarted = True
-    # Raketenboost Links   
-    elif checkKeyDown(event, keys.H_rocketBoostLeft[0]) and rocket.angle>-45:
+    elif keysP[keys.H_rocketBoostLeft[0]] and rocket.angle>-45:
         rocket.angle -= 1
         rocket.powerchanged = True
-    # Raketenboost verrigern
-    elif checkKeyDown(event, keys.H_lowerRocketBoost[0]) and rocket.thrust>0:
-        rocket.thrust -= 1
-        rocket.powerchanged = True
-    # Raketenboost Rechts
-    elif checkKeyDown(event, keys.H_rocketBoostRight[0]) and rocket.angle<45:
+    elif keysP[keys.H_rocketBoostRight[0]]  and rocket.angle<45:
         rocket.angle += 1
         rocket.powerchanged = True
+    elif keysP[keys.H_lowerRocketBoost[0]] and rocket.thrust>0:
+        rocket.thrust -= 1
+        rocket.powerchanged = True
+    elif event.type == pygame.QUIT or checkKeyDown(event, keys.H_leaveSimulation[0]) or checkKeyDown(event, keys.H_closeWindow[0]):
+        dto.run = False
+    # Raketenboost erhöhen
+    #elif checkKeyDown(event, keys.H_rocketBoostForward[0]) and rocket.thrust<10 and (rocket.rocketstarted or  not dto.pause):
+    #    rocket.thrust += 1
+    #    rocket.powerchanged = True
+    #    rocket.rocketstarted = True
+    # Raketenboost Links   
+    #elif checkKeyDown(event, keys.H_rocketBoostLeft[0]) and rocket.angle>-45:
+    #    rocket.angle -= 1
+    #    rocket.powerchanged = True
+    # Raketenboost verrigern
+    #elif checkKeyDown(event, keys.H_lowerRocketBoost[0]) and rocket.thrust>0:
+    #    rocket.thrust -= 1
+    #    rocket.powerchanged = True
+    # Raketenboost Rechts
+    #elif checkKeyDown(event, keys.H_rocketBoostRight[0]) and rocket.angle<45:
+    #    rocket.angle += 1
+    #    rocket.powerchanged = True
 
     elif checkKeyDown(event, keys.H_zoomRocketStart[0]):
-        dto.scale = scaleRelative(200, STARTSCALE)
-        rocket.update_scale(200)
+        dto.scale = scaleRelative(100000, STARTSCALE)
+        rocket.update_scale(100000)
         dto.move_x, dto.move_y = automaticZoomOnRocketOnce(rocket, dto.scale, dto.move_x, dto.move_y)
     #Zoom Startorbit
     elif checkKeyDown(event, keys.H_zoomRocketPlanet[0]):
-        dto.scale = scaleRelative(5, STARTSCALE)
-        rocket.update_scale(5)
+        dto.scale = scaleRelative(10, STARTSCALE)
+        rocket.update_scale(10)
         dto.move_x, dto.move_y = automaticZoomOnRocketOnce(rocket, dto.scale, dto.move_x, dto.move_y)
     #Zoom Universum
     elif checkKeyDown(event, keys.H_zoomRocketPlanetSystem[0]):
@@ -96,19 +122,19 @@ def processKeyEvent(event, dto: DTOProcessEvent, rocket: Rocket, planets):
 
     elif checkKeyDown(event, keys.H_zoomAutoOnRocket[0]):
         rocket.zoomOnRocket = not rocket.zoomOnRocket
-    elif checkKeyDown(event, keys.H_pauseSimulation):
+    elif checkKeyDown(event, keys.H_pauseSimulation[0]):
         dto.pause = not dto.pause
     elif checkKeyDown(event, keys.H_showDistance[0]):
         dto.show_distance = not dto.show_distance
     elif checkKeyDown(event, keys.H_centerOnSun[0]):
-        sun = next(filter(lambda x: x.name == "Sonne", planets),None)
+        sun = next(filter(lambda x: x.name == "Sun", planets),None)
         dto.move_x, dto.move_y = centerScreenOnPlanet(sun, dto.scale, dto.move_x, dto.move_y)
     elif checkKeyDown(event, keys.H_centerOnRocket[0]):
         dto.move_x, dto.move_y = automaticZoomOnRocketOnce(rocket, dto.scale, dto.move_x, dto.move_y)
     elif checkKeyDown(event, keys.H_drawLine[0]):
         dto.draw_line = not dto.draw_line
     elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 5:
-        dto.mouse_y, dto.mouse_x = pygame.mouse.get_pos()
+        dto.mouse_x, dto.mouse_y = pygame.mouse.get_pos()
         dto.move_x, dto.move_y = mousePositionShiftScreen(dto.mouse_x, dto.mouse_y, dto.move_x, dto.move_y)
         dto.scale *= 0.75
         rocket.update_scale(0.75)
@@ -124,5 +150,5 @@ def processKeyEvent(event, dto: DTOProcessEvent, rocket: Rocket, planets):
     elif checkKeyDown(event, keys.H_shiftTimeStepDown[0]): 
         dto.timestep = shiftTimeStep(False, rocket, planets, dto.timestep)
     elif checkKeyDown(event, keys.H_openSettings[0]):
-        showHotKeySettings()
+        showSettingsUI()
     return dto

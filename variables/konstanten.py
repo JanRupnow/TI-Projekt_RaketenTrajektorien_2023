@@ -22,7 +22,7 @@ Luftwiederstand = 0.0162        # Luftwiderstandsbeiwert                     #  
 FallBeschleunigung = 9.81       # [m/s^2]
 p_0 = 1.225 # Luftdichte auf Meereshöhe [kg/m^3]
 h_s = 8400  # Skalenhöhe [m]
-
+planetNameArray = ["Sun","Mercury","Venus","Earth","Moon","Mars","Jupiter","Saturn","Uranus","Neptune"]
 ### Zeit-Variablen
 Startzeit = 0                   # [s]                # [s]
 Rechenschritte = 100000
@@ -42,4 +42,6 @@ LEN_OF_PREDICTIONS_ARRAY = NUM_OF_PREDICTIONS*2
 pygame.init()
 clock = pygame.time.Clock()
 WINDOW = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
+
 WIDTH, HEIGHT = pygame.display.Info().current_w, pygame.display.Info().current_h
+#WINDOW.set_clip(pygame.Rect(0, 0, WIDTH, HEIGHT))

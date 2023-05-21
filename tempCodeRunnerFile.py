@@ -1,2 +1,2 @@
-
-        move_x, move_y = automaticZoomOnRocket(rocket, scale, move_x, move_y)
+import pygame
+print(pygame.K_DOWN)
