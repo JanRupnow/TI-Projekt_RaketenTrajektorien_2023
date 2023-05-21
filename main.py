@@ -78,8 +78,6 @@ def main():
                 planet.drawlineonly(WINDOW, move_x, move_y, draw_line, scale, WIDTH, HEIGHT, pause, rocket, show_distance)
 
         time_passed = renderTextView(WINDOW, rocket, now, FONT_1, pause, clock, time_passed, timestep)
-        endPlanetdraw = time.time()
-        print(f"Planetdraw time: {startPlanetdraw-endPlanetdraw}")
         pygame.display.update()
     pygame.quit()
 

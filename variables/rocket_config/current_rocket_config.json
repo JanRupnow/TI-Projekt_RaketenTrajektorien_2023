@@ -5,15 +5,15 @@
             "text": "angle on planet"
         },
         "Startplanet": {
-            "value": "Neptune",
+            "value": "Earth",
             "text": "start planet"
         },
         "Angle": {
-            "value": 20,
+            "value": 0,
             "text": "start angle"
         },
         "Thrust": {
-            "value": 0,
+            "value": 2,
             "text": "start thrust"
         }
     },

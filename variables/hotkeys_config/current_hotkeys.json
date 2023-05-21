@@ -85,6 +85,22 @@
         "H_closeWindow": {
             "key": 27,
             "text": "Close Window"
+        },
+        "H_moveScreenUp": {
+            "key": 1073741906,
+            "text": "Move screen up"
+        },
+        "H_moveScreenDown": {
+            "key": 1073741905,
+            "text": "Move screen down"
+        },
+        "H_moveScreenRight": {
+            "key": 1073741903,
+            "text": "Move screen right"
+        },
+        "H_moveScreenLeft": {
+            "key": 1073741904,
+            "text": "Move screen left"
         }
     }
 }

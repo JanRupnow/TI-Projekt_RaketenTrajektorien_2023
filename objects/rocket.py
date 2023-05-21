@@ -59,6 +59,7 @@ class Rocket:
     # Methode für die z-Komponente
     def f1(self, x,i:int):
         ## TO DO Gravitation für alle Planeten einbauen
+        
         distanceToSun = np.sqrt( (self.r_x[i] - self.sun.r_x[i])**2 + (self.r_z[i] - self.sun.r_z[i])**2)
         r0 = np.sqrt( (self.r_x[i] - self.startplanet.r_x[i])**2 + (self.r_z[i] - self.startplanet.r_z[i])**2)
         z=( -(G*self.startplanet.mass/r0**2) - (Luftwiederstand*self.getRelativeVelocity(i)**2*np.sign(self.v_z[i]) * p_0 * np.exp(-abs((r0-self.startplanet.radius)) / h_s))/(2 * self.KoerperMasse) ) * ((self.r_z[i] - self.startplanet.r_z[i])/r0) #Extrakraft z einbauen

@@ -26,7 +26,7 @@ class Planet:
     def drawlineonly(self, window,move_x, move_y, draw_line,scale, width, height, pause, rocket, show):
         if draw_line:
             line = self.lineIsInScreen(np.array((self.r_x[self.aktuellerschritt:self.aktuellerrechenschritt]*scale, self.r_z[self.aktuellerschritt:self.aktuellerrechenschritt]*scale)).T, move_x, move_y, height, width)
-            if line.size > 1:
+            if line.size > 3:
                 pygame.draw.lines(window, self.color, False, line, 1)
             if show:
                 distance_to_rocket = self.distance_to_rocket = math.sqrt((self.r_x[self.aktuellerschritt]-rocket.r_x[rocket.aktuellerschritt])**2+(self.r_z[self.aktuellerschritt]-rocket.r_z[rocket.aktuellerschritt])**2)
@@ -44,13 +44,10 @@ class Planet:
 
     def draw(self, window, show, move_x, move_y, draw_line, scale, width, height, pause, rocket):
         self.drawlineonly(window, move_x, move_y, draw_line, scale, width, height, True, rocket, show)
-        startdrawline = time.time()
         
         #pygame.draw.circle(window, self.color, (0+move_x+width/2,0+move_y+ height/2), max(self.scaleR * scale, 2))
         pygame.draw.circle(window, self.color, (self.r_x[self.aktuellerschritt]*scale+move_x+width/2, self.r_z[self.aktuellerschritt]*scale+move_y+ height/2), max(self.scaleR * scale, 2))
-        enddrawline = time.time()
-        print(self.name)
-        print(f"drawcircle time: {enddrawline-startdrawline}")
+
         #if not pause:
          #   self.aktuellerschritt += 1 #fixen
 

@@ -131,3 +131,23 @@ def getH_closeWindow(hotkeysJson):
         hotkeysJson["Navigation"]["H_closeWindow"]["key"],
         hotkeysJson["Navigation"]["H_closeWindow"]["text"]
     ]
+def getH_moveScreenUp(hotkeysJson):
+    return [
+        hotkeysJson["Navigation"]["H_moveScreenUp"]["key"],
+        hotkeysJson["Navigation"]["H_moveScreenUp"]["text"]
+    ]
+def getH_moveScreenDown(hotkeysJson):
+    return [
+        hotkeysJson["Navigation"]["H_moveScreenDown"]["key"],
+        hotkeysJson["Navigation"]["H_moveScreenDown"]["text"]
+    ]
+def getH_moveScreenRight(hotkeysJson):
+    return [
+        hotkeysJson["Navigation"]["H_moveScreenRight"]["key"],
+        hotkeysJson["Navigation"]["H_moveScreenRight"]["text"]
+    ]
+def getH_moveScreenLeft(hotkeysJson):
+    return [
+        hotkeysJson["Navigation"]["H_moveScreenLeft"]["key"],
+        hotkeysJson["Navigation"]["H_moveScreenLeft"]["text"]
+    ]

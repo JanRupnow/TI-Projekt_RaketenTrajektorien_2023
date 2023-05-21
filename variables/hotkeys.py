@@ -59,6 +59,14 @@ try:
     listHotKeys.append(H_openSettings)
     H_closeWindow =  getH_closeWindow(hotkeysJson)
     listHotKeys.append(H_closeWindow)
+    H_moveScreenUp = getH_moveScreenUp(hotkeysJson)
+    listHotKeys.append(H_moveScreenUp)
+    H_moveScreenDown = getH_moveScreenDown(hotkeysJson)
+    listHotKeys.append(H_moveScreenDown)
+    H_moveScreenRight = getH_moveScreenRight(hotkeysJson)
+    listHotKeys.append(H_moveScreenRight)
+    H_moveScreenLeft = getH_moveScreenLeft(hotkeysJson)
+    listHotKeys.append(H_moveScreenLeft)
 
 except:
     ### Error or Empty while Reading triggers copy from standard to current
@@ -121,6 +129,14 @@ except:
     listHotKeys.append(H_openSettings)
     H_closeWindow =  getH_closeWindow(hotkeysJson)
     listHotKeys.append(H_closeWindow)
+    H_moveScreenUp = getH_moveScreenUp(hotkeysJson)
+    listHotKeys.append(H_moveScreenUp)
+    H_moveScreenDown = getH_moveScreenDown(hotkeysJson)
+    listHotKeys.append(H_moveScreenDown)
+    H_moveScreenRight = getH_moveScreenRight(hotkeysJson)
+    listHotKeys.append(H_moveScreenRight)
+    H_moveScreenLeft = getH_moveScreenLeft(hotkeysJson)
+    listHotKeys.append(H_moveScreenLeft)
 
 
 jsonFile.close()
@@ -187,6 +203,14 @@ def resetOverwriteCurrent():
     listHotKeys.append(H_openSettings)
     H_closeWindow =  getH_closeWindow(hotkeysJson)
     listHotKeys.append(H_closeWindow)
+    H_moveScreenUp = getH_moveScreenUp(hotkeysJson)
+    listHotKeys.append(H_moveScreenUp)
+    H_moveScreenDown = getH_moveScreenDown(hotkeysJson)
+    listHotKeys.append(H_moveScreenDown)
+    H_moveScreenRight = getH_moveScreenRight(hotkeysJson)
+    listHotKeys.append(H_moveScreenRight)
+    H_moveScreenLeft = getH_moveScreenLeft(hotkeysJson)
+    listHotKeys.append(H_moveScreenLeft)
 
 
     jsonFile.close()

@@ -47,9 +47,9 @@ def clearSettingsUI():
 def initializeSettingsUI():
     createUiSettingsTitleLabel()
     createUiCloseButton()
-    createUiButton("Reset Controls", WIDTH*0.8, HEIGHT*0.1, manager)
+    createUiButton("Reset Controls", WIDTH*0.9, HEIGHT*0.9, manager)
     createUiGameTitleLabel("Spaceflight Simulator", WIDTH*0.45, HEIGHT*0.05, manager)
-    createUiSettingsTopicLabel("Genral Controls (not mutable)", WIDTH*0.1, HEIGHT*0.15, manager, WIDTH*0.12)
+    createUiSettingsTopicLabel("General Controls (not mutable)", WIDTH*0.1, HEIGHT*0.15, manager, WIDTH*0.12)
     createUiTextBoxAndTextEntryHotkey(keys.H_displayHotKeys, WIDTH*0.1, HEIGHT*0.2, manager, False, "6")
     createUiTextBoxAndTextEntryHotkey(keys.H_leaveSimulation, WIDTH*0.1, HEIGHT*0.25, manager, False, "X")
     createUiTextBoxAndTextEntryHotkey(keys.H_openSettings, WIDTH*0.1, HEIGHT*0.3, manager, False, "F1")
@@ -64,6 +64,21 @@ def initializeSettingsUI():
     createUiTextBoxAndTextEntryHotkey(keys.H_zoomRocketPlanet, WIDTH*0.1, HEIGHT*0.75, manager)
     createUiTextBoxAndTextEntryHotkey(keys.H_zoomRocketPlanetSystem, WIDTH*0.1, HEIGHT*0.8, manager)
     createUiTextBoxAndTextEntryHotkey(keys.H_zoomAutoOnRocket, WIDTH*0.1, HEIGHT*0.85, manager)
+    createUiSettingsTopicLabel("Navigation Controls (not mutable)", WIDTH*0.7, HEIGHT*0.15, manager, WIDTH*0.15)
+    createUiTextBoxAndTextEntryHotkey(keys.H_moveScreenUp, WIDTH*0.7, HEIGHT*0.2, manager, False, "UP")
+    createUiTextBoxAndTextEntryHotkey(keys.H_moveScreenLeft, WIDTH*0.7, HEIGHT*0.25, manager, False, "LEFT")
+    createUiTextBoxAndTextEntryHotkey(keys.H_moveScreenRight, WIDTH*0.7, HEIGHT*0.3, manager, False, "RIGHT")
+    createUiTextBoxAndTextEntryHotkey(keys.H_moveScreenDown, WIDTH*0.7, HEIGHT*0.35, manager, False, "DOWN")
+    createUiSettingsTopicLabel("Display Controls", WIDTH*0.7, HEIGHT*0.4, manager)
+    createUiTextBoxAndTextEntryHotkey(keys.H_pauseSimulation, WIDTH*0.7, HEIGHT*0.45, manager, False, "SPACE")
+    createUiTextBoxAndTextEntryHotkey(keys.H_drawLine, WIDTH*0.7, HEIGHT*0.5, manager)
+    createUiTextBoxAndTextEntryHotkey(keys.H_showDistance, WIDTH*0.7, HEIGHT*0.55, manager)
+    createUiSettingsTopicLabel("Time Controls", WIDTH*0.7, HEIGHT*0.6, manager)
+    createUiTextBoxAndTextEntryHotkey(keys.H_shiftTimeStepUp, WIDTH*0.7, HEIGHT*0.65, manager)
+    createUiTextBoxAndTextEntryHotkey(keys.H_shiftTimeStepDown, WIDTH*0.7, HEIGHT*0.7, manager)
+    createUiSettingsTopicLabel("Center Controls", WIDTH*0.7, HEIGHT*0.75, manager)
+    createUiTextBoxAndTextEntryHotkey(keys.H_centerOnRocket, WIDTH*0.7, HEIGHT*0.8, manager)
+    createUiTextBoxAndTextEntryHotkey(keys.H_centerOnSun, WIDTH*0.7, HEIGHT*0.85, manager)
 
 def showSettingsUI():
 

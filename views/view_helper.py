@@ -3,7 +3,7 @@ from methods.support_methods import *
 import pygame_gui as pg
 import json
 
-
+pg.elements.UIButton
 def createUiLabel(text, position_x, position_y, manager, size_x = WIDTH*0.1):
     return pg.elements.UILabel(relative_rect=pygame.Rect((position_x,position_y), (size_x,HEIGHT*0.05)),
                                text=text,
@@ -89,3 +89,4 @@ def createUiButton(text, position_x,position_y, manager, length_x = WIDTH*0.07, 
                                 text=text,
                                 manager=manager,
                                 object_id=removeSpaces(text+"_button"))
+    
