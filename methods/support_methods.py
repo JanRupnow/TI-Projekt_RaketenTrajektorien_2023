@@ -11,3 +11,10 @@ def checkKeyDown(event, key):
 
 def removeSpaces(textHotKey):
     return textHotKey.replace(" ", "")
+
+def is_convertible_to_int(string):
+    try:
+        int(string)
+        return True
+    except ValueError:
+        return False

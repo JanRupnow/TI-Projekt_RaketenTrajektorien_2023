@@ -59,8 +59,7 @@ def planetIsInScreen(scale, planet, move_x, move_y, height, width):
 
 
 def processKeyEvent(event, dto: DTOProcessEvent, rocket: Rocket, planets):
-    if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and
-                                    (event.key == pygame.K_x or event.key == pygame.K_ESCAPE)):
+    if event.type == pygame.QUIT or checkKeyDown(event, keys.H_leaveSimulation[0]) or checkKeyDown(event, keys.H_closeWindow[0]):
         dto.run = False
     # Raketenboost erhöhen
     elif checkKeyDown(event, keys.H_rocketBoostForward[0]) and rocket.thrust<10 and (rocket.rocketstarted or  not dto.pause):

@@ -49,11 +49,11 @@ def initializeSettingsUI():
     createUiCloseButton()
     createUiButton("Reset Controls", WIDTH*0.8, HEIGHT*0.1, manager)
     createUiGameTitleLabel("Spaceflight Simulator", WIDTH*0.45, HEIGHT*0.05, manager)
-
-    createUiTextBoxAndTextEntryHotkey(keys.H_displayHotKeys, WIDTH*0.1, HEIGHT*0.2, manager)
-    createUiTextBoxAndTextEntryHotkey(keys.H_leaveSimulation, WIDTH*0.1, HEIGHT*0.25, manager)
-    createUiTextBoxAndTextEntryHotkey(keys.H_openSettings, WIDTH*0.1, HEIGHT*0.3, manager)
-    createUiTextBoxAndTextEntryHotkey(keys.H_closeWindow, WIDTH*0.1, HEIGHT*0.35, manager)
+    createUiSettingsTopicLabel("Genral Controls (not mutable)", WIDTH*0.1, HEIGHT*0.15, manager, WIDTH*0.12)
+    createUiTextBoxAndTextEntryHotkey(keys.H_displayHotKeys, WIDTH*0.1, HEIGHT*0.2, manager, False, "6")
+    createUiTextBoxAndTextEntryHotkey(keys.H_leaveSimulation, WIDTH*0.1, HEIGHT*0.25, manager, False, "X")
+    createUiTextBoxAndTextEntryHotkey(keys.H_openSettings, WIDTH*0.1, HEIGHT*0.3, manager, False, "F1")
+    createUiTextBoxAndTextEntryHotkey(keys.H_closeWindow, WIDTH*0.1, HEIGHT*0.35, manager, False, "ESC")
     createUiSettingsTopicLabel("Rocket Controls", WIDTH*0.1, HEIGHT*0.4, manager)
     createUiTextBoxAndTextEntryHotkey(keys.H_rocketBoostForward, WIDTH*0.1, HEIGHT*0.45, manager)
     createUiTextBoxAndTextEntryHotkey(keys.H_rocketBoostLeft, WIDTH*0.1, HEIGHT*0.5, manager)
@@ -82,8 +82,18 @@ def showSettingsUI():
                 initializeSettingsUI()
             if checkKeyDown(event, keys.H_closeWindow[0]):
                 showGUI = False
+            if event.type == pg.UI_TEXT_ENTRY_FINISHED and event.ui_object_id.endswith("_notMutable"):    
+                manager.clear_and_reset()
+                initializeSettingsUI()
             if event.type == pg.UI_TEXT_ENTRY_FINISHED and event.ui_object_id.endswith("_input"):
-                changeAllHotKeysFromInput(event, keys.listHotKeys)
+                if event.text != "":
+                    if ord(event.text) > 32 and ord(event.text) < 127:
+                        changeAllHotKeysFromInput(event, keys.listHotKeys)
+                manager.clear_and_reset()
+                initializeSettingsUI()
+            if checkKeyDown(event, keys.H_leaveSimulation[0]):
+                pygame.quit()
+                sys.exit()
             manager.process_events(event)
         manager.update(UI_REFRESH_RATE)
         manager.draw_ui(WINDOW)

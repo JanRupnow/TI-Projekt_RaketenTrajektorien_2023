@@ -85,7 +85,11 @@ def initializeRocketConfigurationUI():
     createUiTextBoxAndTextEntry(configPairs[3][1], configPairs[3][0], WIDTH*0.7, HEIGHT*0.45, manager)
     createUiTextBoxAndTextEntry(configPairs[4][1], configPairs[4][0], WIDTH*0.7, HEIGHT*0.5, manager,size_x=WIDTH*0.03)
     createUiTextBoxAndTextEntry(configPairs[5][1], configPairs[5][0], WIDTH*0.7, HEIGHT*0.55, manager)
-
+    print(f"1:{configPairs[0][1]}")
+    print(f"3:{configPairs[2][1]}")
+    print(f"4:{configPairs[3][1]}")
+    print(f"5:{configPairs[4][1]}")
+    print(f"6:{configPairs[5][1]}")
 # removes all ui elements => no used object_ids
 def clearStartUI():
     #print(manager.)
@@ -130,10 +134,40 @@ def showStartUI():
                 resetAndShowUI(selectedNumber)
             if checkKeyDown(event, keys.H_closeWindow[0]):
                 pygame.quit()
+                sys.exit()
+            if checkKeyDown(event, keys.H_leaveSimulation[0]):
+                pygame.quit()
                 sys.exit()  
-            if event.type == pg.UI_TEXT_ENTRY_FINISHED:
-                updateRocketConfigs(event)
+            if event.type == pg.UI_TEXT_ENTRY_FINISHED and event.ui_object_id == "angleonplanet_input":
+                if is_convertible_to_int(event.text):
+                    if int(event.text) < 360 and int(event.text) >= 0:
+                        updateRocketConfigs(event)
                 resetAndShowUI(selectedNumber)
+
+            if event.type == pg.UI_TEXT_ENTRY_FINISHED and event.ui_object_id == "startangle_input":
+                if is_convertible_to_int(event.text):
+                    if int(event.text) <= 45 and int(event.text) >= 0:
+                        updateRocketConfigs(event)
+                resetAndShowUI(selectedNumber)
+
+            if event.type == pg.UI_TEXT_ENTRY_FINISHED and event.ui_object_id == "startthrust_input":
+                if is_convertible_to_int(event.text):
+                    if int(event.text) <= 10 and int(event.text) >= 0:
+                        updateRocketConfigs(event)
+                resetAndShowUI(selectedNumber)
+
+            if event.type == pg.UI_TEXT_ENTRY_FINISHED and event.ui_object_id == "massoftherocketstructure_input":
+                if is_convertible_to_int(event.text):
+                    if int(event.text) >= 0:
+                        updateRocketConfigs(event)
+                resetAndShowUI(selectedNumber)
+
+            if event.type == pg.UI_TEXT_ENTRY_FINISHED and event.ui_object_id == "massofthepropellant_input":
+                if is_convertible_to_int(event.text):
+                    if int(event.text) >= 0:
+                        updateRocketConfigs(event)
+                resetAndShowUI(selectedNumber)
+            
             manager.process_events(event)
         
         WINDOW.fill((0, 0, 0))

@@ -4,13 +4,13 @@ import pygame_gui as pg
 import json
 
 
-def createUiLabel(text, position_x, position_y, manager):
-    return pg.elements.UILabel(relative_rect=pygame.Rect((position_x,position_y), (WIDTH*0.1,HEIGHT*0.05)),
+def createUiLabel(text, position_x, position_y, manager, size_x = WIDTH*0.1):
+    return pg.elements.UILabel(relative_rect=pygame.Rect((position_x,position_y), (size_x,HEIGHT*0.05)),
                                text=text,
                                manager=manager,
                                object_id=removeSpaces(text+"_label"))
 
-def createUiTextBoxAndTextEntryHotkey(hotkey,position_x, position_y, manager):
+def createUiTextBoxAndTextEntryHotkey(hotkey,position_x, position_y, manager, mutable= True, entryText = None):
     TEXT_BOX = pg.elements.UITextBox(hotkey[1],
                                      relative_rect= pygame.Rect((position_x,position_y),(WIDTH*0.1,HEIGHT*0.05)),
                                      manager = manager, 
@@ -18,9 +18,9 @@ def createUiTextBoxAndTextEntryHotkey(hotkey,position_x, position_y, manager):
     
     TEXT_INPUT = pg.elements.UITextEntryLine(relative_rect= pygame.Rect((position_x+WIDTH*0.1,position_y), (WIDTH*0.03,HEIGHT*0.05)), 
                                              manager = manager, 
-                                             object_id = removeSpaces(hotkey[1]+"_input"))
-    TEXT_INPUT.length_limit = 1
-    TEXT_INPUT.set_text(getStringOfAscii(hotkey[0]))
+                                             object_id = removeSpaces(hotkey[1] + "_text") if mutable else removeSpaces(hotkey[1] + "_notMutable"))
+    TEXT_INPUT.length_limit = 1 if entryText == None else len(entryText)
+    TEXT_INPUT.set_text(getStringOfAscii(hotkey[0])if entryText == None else entryText)
     
     return TEXT_BOX, TEXT_INPUT
 
@@ -46,7 +46,7 @@ def createUiTextBoxAndTextEntry(text, value, position_x, position_y, manager, si
     TEXT_BOX = pg.elements.UITextBox(text,
                                      relative_rect= pygame.Rect((position_x,position_y),(WIDTH*0.1+size_x,size_y+HEIGHT*0.05)),
                                      manager = manager, 
-                                     object_id=removeSpaces(text[1]+"_text"))
+                                     object_id=removeSpaces(text+"_text"))
     
     TEXT_INPUT = pg.elements.UITextEntryLine(relative_rect= pygame.Rect((position_x+WIDTH*0.1+size_x,position_y), (WIDTH*0.03+size_x,HEIGHT*0.05+size_y)), 
                                              manager = manager, 
@@ -69,8 +69,8 @@ def createUiTextBox(text, position_x, position_y, manager):
                                      object_id=removeSpaces(text[1]+"_text"))
     return TEXT_BOX
 
-def createUiSettingsTopicLabel(text, position_x, position_y, manager):
-    label = createUiLabel(text, position_x, position_y, manager)
+def createUiSettingsTopicLabel(text, position_x, position_y, manager, size_x = WIDTH*0.1):
+    label = createUiLabel(text, position_x, position_y, manager, size_x)
     label.text_horiz_alignment = "left"
     label.text_colour = "red"
     label.rebuild()
