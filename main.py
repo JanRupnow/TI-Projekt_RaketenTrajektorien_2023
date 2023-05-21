@@ -57,21 +57,7 @@ def main():
             draw_line = dtoProcessEvent.draw_line
             timestep = dtoProcessEvent.timestep
             pause = dtoProcessEvent.pause
-
-
-        keys = pygame.key.get_pressed()
-        mouse_x, mouse_y = pygame.mouse.get_pos()
-        window_w, window_h = pygame.display.get_surface().get_size()
-        distance = 10
-        if keys[pygame.K_LEFT] or mouse_x == 0:
-            move_x += distance
-        if keys[pygame.K_RIGHT] or mouse_x == window_w - 1:
-            move_x -= distance
-        if keys[pygame.K_UP] or mouse_y == 0:
-            move_y += distance
-        if keys[pygame.K_DOWN] or mouse_y == window_h - 1:
-            move_y -= distance
-    
+        
 
         move_x, move_y = automaticZoomOnRocket(rocket, scale, move_x, move_y)
         # Rocket

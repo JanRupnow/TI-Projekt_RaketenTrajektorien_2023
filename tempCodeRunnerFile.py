@@ -1,1 +1,1 @@
-IsInSc
+print

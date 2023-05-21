@@ -59,25 +59,52 @@ def planetIsInScreen(scale, planet, move_x, move_y, height, width):
 
 
 def processKeyEvent(event, dto: DTOProcessEvent, rocket: Rocket, planets):
-    if event.type == pygame.QUIT or checkKeyDown(event, keys.H_leaveSimulation[0]) or checkKeyDown(event, keys.H_closeWindow[0]):
-        dto.run = False
-    # Raketenboost erhöhen
-    elif checkKeyDown(event, keys.H_rocketBoostForward[0]) and rocket.thrust<10 and (rocket.rocketstarted or  not dto.pause):
+
+    keysP = pygame.key.get_pressed()
+    mouse_x, mouse_y = pygame.mouse.get_pos()
+    window_w, window_h = pygame.display.get_surface().get_size()
+    distance = 10
+    if keysP[pygame.K_LEFT] or mouse_x == 0:
+        move_x += distance
+    if keysP[pygame.K_RIGHT] or mouse_x == window_w - 1:
+        move_x -= distance
+    if keysP[pygame.K_UP] or mouse_y == 0:
+        move_y += distance
+    if keysP[pygame.K_DOWN] or mouse_y == window_h - 1:
+        move_y -= distance
+    if keysP[keys.H_rocketBoostForward[0]] and rocket.thrust<10 and (rocket.rocketstarted or  not dto.pause):
         rocket.thrust += 1
         rocket.powerchanged = True
         rocket.rocketstarted = True
-    # Raketenboost Links   
-    elif checkKeyDown(event, keys.H_rocketBoostLeft[0]) and rocket.angle>-45:
+    if keysP[keys.H_rocketBoostLeft[0]] and rocket.angle>-45:
         rocket.angle -= 1
         rocket.powerchanged = True
-    # Raketenboost verrigern
-    elif checkKeyDown(event, keys.H_lowerRocketBoost[0]) and rocket.thrust>0:
-        rocket.thrust -= 1
-        rocket.powerchanged = True
-    # Raketenboost Rechts
-    elif checkKeyDown(event, keys.H_rocketBoostRight[0]) and rocket.angle<45:
+    if keysP[keys.H_rocketBoostRight[0]]  and rocket.angle<45:
         rocket.angle += 1
         rocket.powerchanged = True
+    if keysP[keys.H_lowerRocketBoost[0]] and rocket.thrust>0:
+        rocket.thrust -= 1
+        rocket.powerchanged = True
+    print(pygame.K_UP)
+    if event.type == pygame.QUIT or checkKeyDown(event, keys.H_leaveSimulation[0]) or checkKeyDown(event, keys.H_closeWindow[0]):
+        dto.run = False
+    # Raketenboost erhöhen
+    #elif checkKeyDown(event, keys.H_rocketBoostForward[0]) and rocket.thrust<10 and (rocket.rocketstarted or  not dto.pause):
+    #    rocket.thrust += 1
+    #    rocket.powerchanged = True
+    #    rocket.rocketstarted = True
+    # Raketenboost Links   
+    #elif checkKeyDown(event, keys.H_rocketBoostLeft[0]) and rocket.angle>-45:
+    #    rocket.angle -= 1
+    #    rocket.powerchanged = True
+    # Raketenboost verrigern
+    #elif checkKeyDown(event, keys.H_lowerRocketBoost[0]) and rocket.thrust>0:
+    #    rocket.thrust -= 1
+    #    rocket.powerchanged = True
+    # Raketenboost Rechts
+    #elif checkKeyDown(event, keys.H_rocketBoostRight[0]) and rocket.angle<45:
+    #    rocket.angle += 1
+    #    rocket.powerchanged = True
 
     elif checkKeyDown(event, keys.H_zoomRocketStart[0]):
         dto.scale = scaleRelative(100000, STARTSCALE)

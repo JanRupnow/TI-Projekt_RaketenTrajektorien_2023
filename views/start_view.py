@@ -85,14 +85,8 @@ def initializeRocketConfigurationUI():
     createUiTextBoxAndTextEntry(configPairs[3][1], configPairs[3][0], WIDTH*0.7, HEIGHT*0.45, manager)
     createUiTextBoxAndTextEntry(configPairs[4][1], configPairs[4][0], WIDTH*0.7, HEIGHT*0.5, manager,size_x=WIDTH*0.03)
     createUiTextBoxAndTextEntry(configPairs[5][1], configPairs[5][0], WIDTH*0.7, HEIGHT*0.55, manager)
-    print(f"1:{configPairs[0][1]}")
-    print(f"3:{configPairs[2][1]}")
-    print(f"4:{configPairs[3][1]}")
-    print(f"5:{configPairs[4][1]}")
-    print(f"6:{configPairs[5][1]}")
 # removes all ui elements => no used object_ids
 def clearStartUI():
-    #print(manager.)
     manager.clear_and_reset() 
 
 def resetAndShowUI(selectedNumber):
