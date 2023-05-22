@@ -72,17 +72,17 @@ def processKeyEvent(event, dto: DTOProcessEvent, rocket: Rocket, planets):
         dto.move_y += distance
     elif keysP[keys.H_moveScreenDown[0]] or mouse_y == window_h - 1:
         dto.move_y -= distance
-    elif keysP[keys.H_rocketBoostForward[0]] and rocket.thrust<10 and (rocket.rocketstarted or  not dto.pause):
+    elif ( not event.type == pygame.KEYDOWN ) and keysP[keys.H_rocketBoostForward[0]] and rocket.thrust<10 and (rocket.rocketstarted or  not dto.pause):
         rocket.thrust += 1
         rocket.powerchanged = True
         rocket.rocketstarted = True
-    elif keysP[keys.H_rocketBoostLeft[0]] and rocket.angle>-45:
+    elif ( not event.type == pygame.KEYDOWN ) and keysP[keys.H_rocketBoostLeft[0]] and rocket.angle>-45:
         rocket.angle -= 1
         rocket.powerchanged = True
-    elif keysP[keys.H_rocketBoostRight[0]]  and rocket.angle<45:
+    elif ( not event.type == pygame.KEYDOWN ) and keysP[keys.H_rocketBoostRight[0]]  and rocket.angle<45:
         rocket.angle += 1
         rocket.powerchanged = True
-    elif keysP[keys.H_lowerRocketBoost[0]] and rocket.thrust>0:
+    elif ( not event.type == pygame.KEYDOWN ) and keysP[keys.H_lowerRocketBoost[0]] and rocket.thrust>0:
         rocket.thrust -= 1
         rocket.powerchanged = True
     elif event.type == pygame.QUIT or checkKeyDown(event, keys.H_leaveSimulation[0]) or checkKeyDown(event, keys.H_closeWindow[0]):
