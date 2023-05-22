@@ -39,6 +39,9 @@ class Rocket:
         self.notRotatedImg = pygame.transform.scale_by(img0, min(0.1*self.radius, 1))
         self.zoomOnRocket = False
         self.sun = sun
+
+        self.nextPlanet = self.startplanet
+        self.nearestPlanet = self.nextPlanet
         #self.imgage = img0
     # Methode für die x-Komponente
     def f2(self, x, i:int):
@@ -46,9 +49,13 @@ class Rocket:
         #for planet in planets:
          #   if planet.distance_to_rocket < 100*plaen
         ## TO DO Gravitation für alle Planeten einbauen
+        x = 0
+
+        if self.nextPlanet != None:
+            r0 = np.sqrt( (self.r_x[i] - self.nextPlanet.r_x[i])**2 + (self.r_z[i] - self.nextPlanet.r_z[i])**2)
+            x = ( -(G*self.nextPlanet.mass/r0**2) - (Luftwiederstand*self.getRelativeVelocity(i)**2*np.sign(self.v_z[i]) * p_0 * np.exp(-abs((r0-self.nextPlanet.radius)) / h_s))/(2 * self.KoerperMasse) ) * ((self.r_x[i] - self.nextPlanet.r_x[i])/r0) #Extrakraft x einbauen
+
         distanceToSun = np.sqrt( (self.r_x[i] - self.sun.r_x[i])**2 + (self.r_z[i] - self.sun.r_z[i])**2)
-        r0 = np.sqrt( (self.r_x[i] - self.startplanet.r_x[i])**2 + (self.r_z[i] - self.startplanet.r_z[i])**2)
-        x=( -(G*self.startplanet.mass/r0**2) - (Luftwiederstand*self.getRelativeVelocity(i)**2*np.sign(self.v_z[i]) * p_0 * np.exp(-abs((r0-self.startplanet.radius)) / h_s))/(2 * self.KoerperMasse) ) * ((self.r_x[i] - self.startplanet.r_x[i])/r0) #Extrakraft x einbauen
         x -= (G*self.sun.mass/distanceToSun**2)* ((self.r_x[i] - self.sun.r_x[i])/distanceToSun)
         #y=-(G*m_E/(r_x**2 + r_z**2)**1.5) * r_x - c*x**2*np.sign(x)
         #if self.aktuellerschritt == self.aktuellerrechenschritt:
@@ -59,12 +66,15 @@ class Rocket:
     # Methode für die z-Komponente
     def f1(self, x,i:int):
         ## TO DO Gravitation für alle Planeten einbauen
+        z = 0
         
+        if self.nextPlanet != None:
+            r0 = np.sqrt( (self.r_x[i] - self.nextPlanet.r_x[i])**2 + (self.r_z[i] - self.nextPlanet.r_z[i])**2)
+            z = ( -(G*self.nextPlanet.mass/r0**2) - (Luftwiederstand*self.getRelativeVelocity(i)**2*np.sign(self.v_z[i]) * p_0 * np.exp(-abs((r0-self.nextPlanet.radius)) / h_s))/(2 * self.KoerperMasse) )
+
         distanceToSun = np.sqrt( (self.r_x[i] - self.sun.r_x[i])**2 + (self.r_z[i] - self.sun.r_z[i])**2)
-        r0 = np.sqrt( (self.r_x[i] - self.startplanet.r_x[i])**2 + (self.r_z[i] - self.startplanet.r_z[i])**2)
-        z=( -(G*self.startplanet.mass/r0**2) - (Luftwiederstand*self.getRelativeVelocity(i)**2*np.sign(self.v_z[i]) * p_0 * np.exp(-abs((r0-self.startplanet.radius)) / h_s))/(2 * self.KoerperMasse) ) * ((self.r_z[i] - self.startplanet.r_z[i])/r0) #Extrakraft z einbauen
         z -= (G*self.sun.mass/distanceToSun**2)* ((self.r_z[i] - self.sun.r_z[i])/distanceToSun)
-        # TODO muss die Geschwindigkeit relativ zum Planet sein? Eigentlich ja oder?
+        # TODO muss die Geschwindigkeit relativ zum Planet sein? Eigentlich ja oder? (Luftwiderstand) (wie kann man das besser machen? planetenabhängig?)
 
         if self.thrust != 0:
             z += math.sin(math.atan2(self.v_z[i], self.v_x[i]) + self.angle*np.pi/180)*self.thrust
@@ -89,6 +99,22 @@ class Rocket:
         k = (k1 + 2*k2 + 2*k3 + k4)/6
         self.v_x[i+1] = self.v_x[i] + k*self.timestep
         self.r_x[i+1] = self.r_x[i] + self.v_x[i]*self.timestep
+
+        self.updateNextPlanet(planets)
+
+    def updateNextPlanet(self, planets):
+        if self.nextPlanet != None and not self.isPlanetNearEnough(self.nextPlanet):
+            self.nextPlanet = None
+        elif self.nextPlanet == None:
+            for planet in planets:
+                if self.isPlanetNearEnough(planet):
+                    self.nextPlanet = planet
+                    self.nearestPlanet = planet
+                    
+        
+    def isPlanetNearEnough(self, planet):
+        return np.sqrt((self.r_x[self.aktuellerrechenschritt] - planet.r_x[self.aktuellerrechenschritt])**2 + 
+                       (self.r_z[self.aktuellerrechenschritt] - planet.r_z[self.aktuellerrechenschritt])**2) < planet.radius * 100
 
     def update_scale(self,scale):
         self.radius *= scale
@@ -155,7 +181,12 @@ class Rocket:
 
             
                 
-
+    def getCurrentDistanceToNextPlanet(self):
+        if self.nextPlanet == None:
+            return -1
+        else:
+            return np.sqrt((self.r_x[self.aktuellerrechenschritt] - self.nextPlanet.r_x[self.aktuellerrechenschritt])**2 + 
+                           (self.r_z[self.aktuellerrechenschritt] - self.nextPlanet.r_z[self.aktuellerrechenschritt])**2)
 
 
     def drawRocket(self, window, width, height, move_x, move_y, scale):
@@ -168,15 +199,15 @@ class Rocket:
 
     def getRelativeVelocity(self, i):
         if self.rocketstarted:
-            return np.sqrt( (self.v_x[i] - self.startplanet.v_x[i])**2 
-                            + (self.v_z[i] - self.startplanet.v_z[i])**2)
+            return np.sqrt( (self.v_x[i] - self.nearestPlanet.v_x[i])**2 
+                            + (self.v_z[i] - self.nearestPlanet.v_z[i])**2)
         else:
             return 0
         
     def getCurrentRelativeVelocity(self):
         if self.rocketstarted:
-            return np.sqrt( (self.v_x[self.aktuellerschritt] - self.startplanet.v_x[self.aktuellerschritt])**2 
-                            + (self.v_z[self.aktuellerschritt] - self.startplanet.v_z[self.aktuellerschritt])**2)
+            return np.sqrt( (self.v_x[self.aktuellerschritt] - self.nearestPlanet.v_x[self.aktuellerschritt])**2 
+                            + (self.v_z[self.aktuellerschritt] - self.nearestPlanet.v_z[self.aktuellerschritt])**2)
         else:
             return 0
 
