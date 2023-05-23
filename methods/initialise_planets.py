@@ -29,7 +29,7 @@ def getInitialPlanets():
     sun = Planet(0, 0, 695 * 10 ** 6, COLOR_SUN, 1.98892 * 10 ** 30,planetNameArray[0], 0)
     sun.sun = True
 
-    mercury = Planet(-0.387 * AU, 0, 2439 * 10 ** 3, COLOR_MERCURY, 3.30 * 10 ** 23,planetNameArray[1], 47.4 * 1000)
+    mercury = Planet(-0.387 * AU, 0, 2439 * 10 ** 3, COLOR_MERCURY, 3.30 * 10 ** 23,planetNameArray[1], 47.36 * 1000)
 
     venus = Planet(-0.723 * AU, 0, 6052 * 10 ** 3, COLOR_VENUS, 4.8685 * 10 ** 24,planetNameArray[2], 35.02 * 1000)
 
