@@ -81,7 +81,6 @@ def initializeSettingsUI():
     createUiTextBoxAndTextEntryHotkey(keys.H_centerOnSun, WIDTH*0.7, HEIGHT*0.85, manager)
 
 def showSettingsUI():
-
     if len(manager.get_sprite_group())<4:
         initializeSettingsUI()
 

@@ -5,13 +5,14 @@ import time
 
 class Planet:
 
-    def __init__(self, x, y, radius, color, mass,name):
+    def __init__(self, x, y, radius, color, mass,name, velocity):
         self.radius = radius
         self.color = color
         self.mass = mass
         self.name = name
         self.timestep = timestep
         self.scaleR = radius
+        self.meanVelocity = velocity
 
         self.r_x = np.zeros(LEN_OF_PREDICTIONS_ARRAY)
         self.r_z = np.zeros(LEN_OF_PREDICTIONS_ARRAY)

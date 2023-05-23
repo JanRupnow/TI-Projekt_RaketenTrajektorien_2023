@@ -21,7 +21,7 @@ now = datetime.datetime.now()
 
 def main():
     time_passed = datetime.timedelta(seconds=0)
-    global scale, timestep, now, img0, move_x, move_y, clock
+    global scale, timestep, now, move_x, move_y, clock
     run = True
     pause = False
     show_distance = False
@@ -63,7 +63,6 @@ def main():
         # Rocket
         rocket.draw(WINDOW,move_x,move_y, planets, pause, scale, WIDTH, HEIGHT)
         #if rocket.rocketstarted:
-        startPlanetdraw = time.time()
         for planet in planets:
             #if not pause:
             #    planet.update_position(planets, rocket)
