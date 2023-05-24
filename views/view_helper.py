@@ -3,7 +3,29 @@ from methods.support_methods import *
 import pygame_gui as pg
 import json
 
-pg.elements.UIButton
+def getMonth():
+    jsonfile = open("./variables/rocket_config/current_rocket_config.json")
+    config = json.load(jsonfile)
+    month = config["StartTime"]["Month"]["value"]
+    return month
+
+def getYear():
+    jsonfile = open("./variables/rocket_config/current_rocket_config.json")
+    config = json.load(jsonfile)
+    year = config["StartTime"]["Year"]["value"]
+    return year
+
+def overWriteStandardDay():
+    jsonfile = open("./variables/rocket_config/current_rocket_config.json")
+    config = json.load(jsonfile)
+    jsonfilestandard = open("./variables/rocket_config/standard_rocket_config.json")
+    configstandard = json.load(jsonfilestandard)
+    config["StartTime"]["Day"]["value"] = configstandard["StartTime"]["Day"]["value"]
+
+    jsonfile.seek(0)
+    jsonfile.truncate()
+    json.dump(config, jsonfile, indent=4, ensure_ascii=False)
+
 def createUiLabel(text, position_x, position_y, manager, size_x = WIDTH*0.1):
     return pg.elements.UILabel(relative_rect=pygame.Rect((position_x,position_y), (size_x,HEIGHT*0.05)),
                                text=text,

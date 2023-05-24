@@ -183,12 +183,16 @@ def showStartUI():
                     elif getMonth() in [4,6,9,11]:
                         if int(event.text) <= 30 and int(event.text) > 0:
                             updateRocketConfigs(event)
-                    elif getYear() % 4:
+                    elif getYear() % 4 == 0:
                         if int(event.text) <= 28 and int(event.text) > 0:
                             updateRocketConfigs(event)
+                        else: 
+                            overWriteStandardDay()
                     else:
                         if int(event.text) <= 29 and int(event.text) > 0:
                             updateRocketConfigs(event)
+                        else:
+                            overWriteStandardDay()
                 resetAndShowUI(selectedNumber)
             manager.process_events(event)
         
