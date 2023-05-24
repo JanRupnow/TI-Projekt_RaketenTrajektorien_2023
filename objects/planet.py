@@ -1,7 +1,7 @@
 import math
 import pygame
+import numpy as np
 from variables.konstanten import *
-import time
 
 class Planet:
 
@@ -11,6 +11,7 @@ class Planet:
         self.mass = mass
         self.name = name
         self.timestep = timestep
+        # drawing radius used only for displaying not calculating!!!
         self.scaleR = radius
         self.meanVelocity = velocity
 
@@ -24,33 +25,21 @@ class Planet:
         self.r_x[0] = x
         self.r_z[0] = y
 
-    def drawlineonly(self, window,move_x, move_y, draw_line,scale, width, height, pause, rocket, show):
-        if draw_line:
-            line = self.lineIsInScreen(np.array((self.r_x[self.aktuellerschritt:self.aktuellerrechenschritt]*scale, self.r_z[self.aktuellerschritt:self.aktuellerrechenschritt]*scale)).T, move_x, move_y, height, width)
-            if line.size > 3:
-                pygame.draw.lines(window, self.color, False, line, 1)
-            if show:
-                distance_to_rocket = self.distance_to_rocket = math.sqrt((self.r_x[self.aktuellerschritt]-rocket.r_x[rocket.aktuellerschritt])**2+(self.r_z[self.aktuellerschritt]-rocket.r_z[rocket.aktuellerschritt])**2)
-                distance_text = pygame.font.SysFont("Trebuchet MS", 16).render(self.name+ ": "+str(round(distance_to_rocket * 1.057 * 10 ** -16, 8))+ "light years", True,
-                                          (255,255,255))
-                window.blit(distance_text, (self.r_x[self.aktuellerschritt]*scale+ width/2 - distance_text.get_width() / 2 + move_x,
-                                        self.r_z[self.aktuellerschritt]*scale+ height/2 + distance_text.get_height() / 2 - 20 + move_y))
-                
-    def lineIsInScreen(self, line, move_x, move_y, height , width):
-        lineInScreen = line[(line[:,0]< -move_x+width/2) & (line[:,0] > -move_x-width/2)]
-        lineInScreen = lineInScreen[(lineInScreen[:,1] > -move_y-height/2) & (lineInScreen[:,1] < -move_y+height/2)]
-        lineInScreen[:,0] = lineInScreen[:,0]+move_x+width/2
-        lineInScreen[:,1] = lineInScreen[:,1]+move_y+ height/2
-        return lineInScreen
-
-    def draw(self, window, show, move_x, move_y, draw_line, scale, width, height, pause, rocket):
-        self.drawlineonly(window, move_x, move_y, draw_line, scale, width, height, True, rocket, show)
+    def drawlineonly(self, window,move_x, move_y, draw_line,scale, width, height, show, rocket):
+        if show:
+            self.displayDistances(show, width ,height, window, rocket, move_x, move_y)
+        if not draw_line:
+            return
+        line = self.lineIsInScreen(np.array((self.r_x[self.aktuellerschritt:self.aktuellerrechenschritt]*scale, self.r_z[self.aktuellerschritt:self.aktuellerrechenschritt]*scale)).T, move_x, move_y, height, width)
+        # size > 3 because (2,3) are 2 coordinates for 1 point and you need 2 points to connect a line ((x,y),(x2,y2))
+        if line.size > 3:
+            pygame.draw.lines(window, self.color, False, line, 1)
         
-        #pygame.draw.circle(window, self.color, (0+move_x+width/2,0+move_y+ height/2), max(self.scaleR * scale, 2))
+
+    def draw(self, window, show, move_x, move_y, draw_line, scale, width, height, rocket):
+        self.drawlineonly(window, move_x, move_y, draw_line, scale, width, height, show, rocket)
         pygame.draw.circle(window, self.color, (self.r_x[self.aktuellerschritt]*scale+move_x+width/2, self.r_z[self.aktuellerschritt]*scale+move_y+ height/2), max(self.scaleR * scale, 2))
 
-        #if not pause:
-         #   self.aktuellerschritt += 1 #fixen
 
     def attraction(self, other, i):
         other_x, other_y = other.r_x[i], other.r_z[i]
@@ -70,6 +59,7 @@ class Planet:
         self.v_z[0:NUM_OF_PREDICTIONS] = self.v_z[self.aktuellerschritt:self.aktuellerschritt+NUM_OF_PREDICTIONS]
         self.aktuellerschritt = 0
         self.aktuellerrechenschritt = NUM_OF_PREDICTIONS-1
+
     def resetArray(self):
         self.r_x[1:NUM_OF_PREDICTIONS+1] = self.r_x[NUM_OF_PREDICTIONS:]
         self.r_z[1:NUM_OF_PREDICTIONS+1] = self.r_z[NUM_OF_PREDICTIONS:]
@@ -115,3 +105,19 @@ class Planet:
 
         if not pause:
             self.aktuellerrechenschritt += 1
+        
+    def lineIsInScreen(self, line, move_x, move_y, height , width):
+        lineInScreen = line[(line[:,0]< -move_x+width/2) & (line[:,0] > -move_x-width/2)]
+        lineInScreen = lineInScreen[(lineInScreen[:,1] > -move_y-height/2) & (lineInScreen[:,1] < -move_y+height/2)]
+        lineInScreen[:,0] = lineInScreen[:,0]+move_x+width/2
+        lineInScreen[:,1] = lineInScreen[:,1]+move_y+ height/2
+        return lineInScreen
+    
+    def displayDistances(self, show, width ,height, window, rocket, move_x, move_y):
+        if not show:
+            return
+        distance_to_rocket = self.distance_to_rocket = math.sqrt((self.r_x[self.aktuellerschritt]-rocket.r_x[rocket.aktuellerschritt])**2+(self.r_z[self.aktuellerschritt]-rocket.r_z[rocket.aktuellerschritt])**2)
+        distance_text = pygame.font.SysFont("Trebuchet MS", 16).render(self.name+ ": "+str(round(distance_to_rocket * 1.057 * 10 ** -16, 8))+ "light years", True,
+                                    (255,255,255))
+        window.blit(distance_text, (self.r_x[self.aktuellerschritt]*scale+ width/2 - distance_text.get_width() / 2 + move_x,
+                                self.r_z[self.aktuellerschritt]*scale+ height/2 + distance_text.get_height() / 2 - 20 + move_y))

@@ -1,4 +1,3 @@
-import pygame
 import json
 from methods.json_methods import *
 

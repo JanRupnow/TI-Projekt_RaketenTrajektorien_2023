@@ -1,6 +1,8 @@
-import numpy as np
 import pygame
-
+pygame.init()
+WIDTH, HEIGHT = pygame.display.Info().current_w, pygame.display.Info().current_h
+FONT_1 = pygame.font.SysFont("Trebuchet MS", 21)
+FONT_2 = pygame.font.SysFont("Trebuchet MS", 16)
 COLOR_WHITE = (255, 255, 255)
 COLOR_UNIVERSE = (36, 36, 36)
 COLOR_SUN = (252, 150, 1)

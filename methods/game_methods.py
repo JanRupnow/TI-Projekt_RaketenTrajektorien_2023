@@ -1,5 +1,3 @@
-import math
-import numpy as np
 from objects.planet import *
 from variables.konstanten import *
 from objects.rocket import *
@@ -8,7 +6,6 @@ import datetime
 from methods.support_methods import *
 from views.hotkey_view import *
 from objects.DtoProcessEvent import DTOProcessEvent
-import time 
 
 def addClockTime(pause, time_passed, timestep):
     if not pause:
