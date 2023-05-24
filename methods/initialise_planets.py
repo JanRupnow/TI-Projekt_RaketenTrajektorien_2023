@@ -3,25 +3,26 @@ from variables.konstanten import *
 import datetime
 from astropy.time import Time
 from sunpy.coordinates import get_body_heliographic_stonyhurst
-import astropy.units as u
-import pygame
 from objects.planet import *
 import math
+import json
 
 
 
 
-
-
-##api für planeten koodinaten
-now = datetime.datetime.now()
-obstime = Time(now)
-planet_coord = [get_body_heliographic_stonyhurst(
-    this_planet, time=obstime, include_velocity=True) for this_planet in planetNameArray]
 
 # Metric from: https://nssdc.gsfc.nasa.gov/planetary/factsheet/
 
 def getInitialPlanets():
+    jsonfile = open("./variables/rocket_config/current_rocket_config.json")
+    config = json.load(jsonfile)
+    time_year = config["StartTime"]["Year"]["value"]
+    time_month = config["StartTime"]["Month"]["value"]
+    time_day = config["StartTime"]["Day"]["value"]
+    obstime = Time(f"{time_year}-{time_month}-{time_day}")
+    planet_coord = [get_body_heliographic_stonyhurst(
+    this_planet, time=obstime, include_velocity=True) for this_planet in planetNameArray]
+
     sun = Planet(0, 0, 695 * 10 ** 6, COLOR_SUN, 1.98892 * 10 ** 30,planetNameArray[0], 0)
     #sun.sun = True
 

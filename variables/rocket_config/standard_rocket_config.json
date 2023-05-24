@@ -26,6 +26,16 @@
             "value": 2000,
             "text": "mass of the propellant"
         }
+    }, "StartTime":{
+        "Year":{
+            "value":2023,
+            "text": "year of rocketstart"},
+        "Month":{
+            "value":5,
+            "text": "month of rocketstart"},
+        "Day":{
+            "value":24,
+            "text": "day of rocketstart"}
     },
     "Color": {
         "red": 255, 

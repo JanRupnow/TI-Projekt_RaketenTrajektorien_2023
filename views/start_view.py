@@ -85,6 +85,9 @@ def initializeRocketConfigurationUI():
     createUiTextBoxAndTextEntry(configPairs[3][1], configPairs[3][0], WIDTH*0.7, HEIGHT*0.45, manager)
     createUiTextBoxAndTextEntry(configPairs[4][1], configPairs[4][0], WIDTH*0.7, HEIGHT*0.5, manager,size_x=WIDTH*0.03)
     createUiTextBoxAndTextEntry(configPairs[5][1], configPairs[5][0], WIDTH*0.7, HEIGHT*0.55, manager)
+    createUiTextBoxAndTextEntry(configPairs[6][1], configPairs[6][0], WIDTH*0.2, HEIGHT*0.3, manager)
+    createUiTextBoxAndTextEntry(configPairs[7][1], configPairs[7][0], WIDTH*0.2, HEIGHT*0.35, manager)
+    createUiTextBoxAndTextEntry(configPairs[8][1], configPairs[8][0], WIDTH*0.2, HEIGHT*0.4, manager)
 # removes all ui elements => no used object_ids
 def clearStartUI():
     manager.clear_and_reset() 
@@ -162,6 +165,31 @@ def showStartUI():
                         updateRocketConfigs(event)
                 resetAndShowUI(selectedNumber)
             
+            if event.type == pg.UI_TEXT_ENTRY_FINISHED and event.ui_object_id == "yearofrocketstart_input":
+                if is_convertible_to_int(event.text):
+                    if int(event.text) <= 10000 and int(event.text) >= 0:
+                        updateRocketConfigs(event)
+                resetAndShowUI(selectedNumber)
+            if event.type == pg.UI_TEXT_ENTRY_FINISHED and event.ui_object_id == "monthofrocketstart_input":
+                if is_convertible_to_int(event.text):
+                    if int(event.text) <= 12 and int(event.text) > 0:
+                        updateRocketConfigs(event)
+                resetAndShowUI(selectedNumber)
+            if event.type == pg.UI_TEXT_ENTRY_FINISHED and event.ui_object_id == "dayofrocketstart_input":
+                if is_convertible_to_int(event.text):
+                    if getMonth() in [1,3,5,7,8,10,12]:
+                        if int(event.text) <= 31 and int(event.text) > 0:
+                            updateRocketConfigs(event)
+                    elif getMonth() in [4,6,9,11]:
+                        if int(event.text) <= 30 and int(event.text) > 0:
+                            updateRocketConfigs(event)
+                    elif getYear() % 4:
+                        if int(event.text) <= 28 and int(event.text) > 0:
+                            updateRocketConfigs(event)
+                    else:
+                        if int(event.text) <= 29 and int(event.text) > 0:
+                            updateRocketConfigs(event)
+                resetAndShowUI(selectedNumber)
             manager.process_events(event)
         
         WINDOW.fill((0, 0, 0))
