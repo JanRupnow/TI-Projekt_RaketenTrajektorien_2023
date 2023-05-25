@@ -169,12 +169,22 @@ def showStartUI():
                 if is_convertible_to_int(event.text):
                     if int(event.text) <= 10000 and int(event.text) >= 0:
                         updateRocketConfigs(event)
+                        if checkDate(getMonth(), getDay()):
+                            updateRocketConfigs(event)
+                        else:
+                            updateRocketConfigs(event)
+                            overWriteStandardDay()
                 resetAndShowUI(selectedNumber)
             if event.type == pg.UI_TEXT_ENTRY_FINISHED and event.ui_object_id == "monthofrocketstart_input":
                 if is_convertible_to_int(event.text):
                     if int(event.text) <= 12 and int(event.text) > 0:
-                        updateRocketConfigs(event)
+                        if checkDate(event.text, getDay()):
+                            updateRocketConfigs(event)
+                        else:
+                            updateRocketConfigs(event)
+                            overWriteStandardDay()
                 resetAndShowUI(selectedNumber)
+            
             if event.type == pg.UI_TEXT_ENTRY_FINISHED and event.ui_object_id == "dayofrocketstart_input":
                 if is_convertible_to_int(event.text):
                     if getMonth() in [1,3,5,7,8,10,12]:
@@ -183,16 +193,12 @@ def showStartUI():
                     elif getMonth() in [4,6,9,11]:
                         if int(event.text) <= 30 and int(event.text) > 0:
                             updateRocketConfigs(event)
-                    elif getYear() % 4 == 0:
+                    elif getYear() % 4 != 0:
                         if int(event.text) <= 28 and int(event.text) > 0:
                             updateRocketConfigs(event)
-                        else: 
-                            overWriteStandardDay()
                     else:
                         if int(event.text) <= 29 and int(event.text) > 0:
                             updateRocketConfigs(event)
-                        else:
-                            overWriteStandardDay()
                 resetAndShowUI(selectedNumber)
             manager.process_events(event)
         
