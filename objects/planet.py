@@ -11,6 +11,7 @@ class Planet:
         self.mass = mass
         self.name = name
         self.timestep = timestep
+        self.distance_to_rocket = 2* radius
         # drawing radius used only for displaying not calculating!!!
         self.scaleR = radius
         self.meanVelocity = velocity
@@ -71,7 +72,7 @@ class Planet:
     def update_scale(self, scale):
         self.scaleR *= scale
 
-    def predictStep(self, i, planets, pause):
+    def predictStep(self, i, planets, pause, rocket):
         self.aktuellerrechenschritt = i
 
         total_fx = total_fy = 0
@@ -86,6 +87,7 @@ class Planet:
         self.r_x[i+1] = self.r_x[i] + self.v_x[i+1] * self.timestep
         self.r_z[i+1] = self.r_z[i] + self.v_z[i+1] * self.timestep
 
+        self.distance_to_rocket = math.sqrt((self.r_x[self.aktuellerschritt]-rocket.r_x[rocket.aktuellerschritt])**2+(self.r_z[self.aktuellerschritt]-rocket.r_z[rocket.aktuellerschritt])**2)
         if not pause:
             self.aktuellerrechenschritt += 1
 
@@ -116,8 +118,17 @@ class Planet:
     def displayDistances(self, show, width ,height, window, rocket, move_x, move_y):
         if not show:
             return
-        distance_to_rocket = self.distance_to_rocket = math.sqrt((self.r_x[self.aktuellerschritt]-rocket.r_x[rocket.aktuellerschritt])**2+(self.r_z[self.aktuellerschritt]-rocket.r_z[rocket.aktuellerschritt])**2)
-        distance_text = pygame.font.SysFont("Trebuchet MS", 16).render(self.name+ ": "+str(round(distance_to_rocket * 1.057 * 10 ** -16, 8))+ "light years", True,
+        distance_text = pygame.font.SysFont("Trebuchet MS", 16).render(self.name+ ": "+str(round(self.distance_to_rocket * 1.057 * 10 ** -16, 8))+ "light years", True,
                                     (255,255,255))
         window.blit(distance_text, (self.r_x[self.aktuellerschritt]*scale+ width/2 - distance_text.get_width() / 2 + move_x,
                                 self.r_z[self.aktuellerschritt]*scale+ height/2 + distance_text.get_height() / 2 - 20 + move_y))
+        
+    def checkCollision(self):
+        if self.distance_to_rocket <= self.radius/2:
+            return True
+        return False
+    
+    def checkLanding(self, rocket):
+        if self.distance_to_rocket <= self.radius/2 and rocket.getAbsoluteVelocity() < 10000:
+            return True
+        return False

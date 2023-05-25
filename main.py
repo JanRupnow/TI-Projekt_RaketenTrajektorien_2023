@@ -54,6 +54,7 @@ def main():
         
         move_x, move_y = automaticZoomOnRocket(rocket, scale, move_x, move_y)
         rocket.draw(WINDOW,move_x,move_y, planets, pause, scale, WIDTH, HEIGHT)
+        
         for planet in planets:
             #if not pause:
             #    planet.update_position(planets, rocket)
@@ -65,6 +66,13 @@ def main():
                 planet.drawlineonly(WINDOW, move_x, move_y, draw_line, scale, WIDTH, HEIGHT, show_distance, rocket)
 
         time_passed = renderTextView(WINDOW, rocket, now, FONT_1, pause, clock, time_passed, timestep)
+        if rocket.nextPlanet.checkCollision():
+            if rocket.nextPlanet.checkLanding(rocket):
+                rocket.landed = True
+                print("you landed")
+            else:
+                print("you have crashed")
+                run = False
         pygame.display.update()
     pygame.quit()
 

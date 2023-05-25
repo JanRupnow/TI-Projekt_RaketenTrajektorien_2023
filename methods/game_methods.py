@@ -61,7 +61,7 @@ def processKeyEvent(event, dto: DTOProcessEvent, rocket: Rocket, planets):
     mouse_x, mouse_y = pygame.mouse.get_pos()
     window_w, window_h = pygame.display.get_surface().get_size()
     distance = 10
-    if keysP[keys.H_moveScreenLeft[0]] or mouse_x == 0:
+    if  keysP[keys.H_moveScreenLeft[0]] or mouse_x == 0:
         dto.move_x += distance
     elif keysP[keys.H_moveScreenRight[0]] or mouse_x == window_w - 1:
         dto.move_x -= distance

@@ -22,7 +22,9 @@ class Rocket:
         self.radius = radius
         self.thrust = 0                     # aktuell nicht genutzt     
         self.angle = 0  
-        self.powerchanged = False   
+        self.landed = False
+        self.powerchanged = False
+        self.rocketstarted = False   
         self.color = color
         self.startplanet = startplanet
         self.predictions = []
@@ -31,7 +33,6 @@ class Rocket:
         ## Berechnung der Startposition der Rakete abhängig vom Startplaneten ohne Skalierung
         self.r_x[0]= startplanet.r_x[self.aktuellerschritt] + startplanet.radius * np.cos(self.startwinkel * np.pi / 180)  
         self.r_z[0]= startplanet.r_z[self.aktuellerschritt] + startplanet.radius * np.sin(self.startwinkel * np.pi / 180)
-        self.rocketstarted = False
         self.img = img0
         self.img0 = img0
         self.notRotatedImg = pygame.transform.scale_by(img0, min(0.1*self.radius, 1))
@@ -52,7 +53,7 @@ class Rocket:
         x -= (G*self.sun.mass/distanceToSun**2)* ((self.r_x[i] - self.sun.r_x[i])/distanceToSun)
         #y=-(G*m_E/(r_x**2 + r_z**2)**1.5) * r_x - c*x**2*np.sign(x)
         if self.thrust != 0:
-            x += math.cos(math.atan2(self.v_z[i], self.v_x[i]) + self.angle*np.pi/180)*self.thrust
+            x += math.cos(math.atan2(self.v_z[i], self.v_x[i]) + self.angle*np.pi/180)*self.thrust*10
         return x
     # Methode für die z-Komponente
     def f1(self, v,i:int):
@@ -66,7 +67,7 @@ class Rocket:
         # TODO muss die Geschwindigkeit relativ zum Planet sein? Eigentlich ja oder? (Luftwiderstand) (wie kann man das besser machen? planetenabhängig?)
 
         if self.thrust != 0:
-            z += math.sin(math.atan2(self.v_z[i], self.v_x[i]) + self.angle*np.pi/180)*self.thrust
+            z += math.sin(math.atan2(self.v_z[i], self.v_x[i]) + self.angle*np.pi/180)*self.thrust*10
         return z
     # Berechnung nach Runge-Kutta Verfahren
     def berechneNaechstenSchritt(self, i: int, planets):
@@ -146,7 +147,7 @@ class Rocket:
                 self.calculateNewCalculationOfPredictions(firstTime, planets, paused)
                 if not (firstTime or self.timestepChanged):
                     for planet in planets:
-                        planet.predictStep(self.aktuellerrechenschritt-1, planets, paused)
+                        planet.predictStep(self.aktuellerrechenschritt-1, planets, paused, self)
 
                 self.powerchanged = False
                 self.timestepChanged = False
@@ -225,12 +226,12 @@ class Rocket:
         for i in range(NUM_OF_PREDICTIONS):
             if firstTime or self.timestepChanged:
                 for planet in planets:
-                    planet.predictStep(self.aktuellerrechenschritt, planets, paused)
+                    planet.predictStep(self.aktuellerrechenschritt, planets, paused, self)
             self.berechneNaechstenSchritt(self.aktuellerrechenschritt, planets)
             self.aktuellerrechenschritt += 1
 
     def calculateOnePrediction(self, planets, paused):
         for planet in planets:
-            planet.predictStep(self.aktuellerrechenschritt, planets, paused)
+            planet.predictStep(self.aktuellerrechenschritt, planets, paused, self)
         self.berechneNaechstenSchritt(self.aktuellerrechenschritt, planets)
         self.aktuellerrechenschritt += 1
