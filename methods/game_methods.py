@@ -72,6 +72,7 @@ def processKeyEvent(event, dto: DTOProcessEvent, rocket: Rocket, planets):
     elif ( not event.type == pygame.KEYDOWN ) and keysP[keys.H_rocketBoostForward[0]] and rocket.thrust<10 and (rocket.rocketstarted or  not dto.pause):
         rocket.thrust += 1
         rocket.powerchanged = True
+        rocket.landed = False
         rocket.rocketstarted = True
     elif ( not event.type == pygame.KEYDOWN ) and keysP[keys.H_rocketBoostLeft[0]] and rocket.angle>-45:
         rocket.angle -= 1

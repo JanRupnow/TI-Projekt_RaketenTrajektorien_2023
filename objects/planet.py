@@ -124,11 +124,15 @@ class Planet:
                                 self.r_z[self.aktuellerschritt]*scale+ height/2 + distance_text.get_height() / 2 - 20 + move_y))
         
     def checkCollision(self):
-        if self.distance_to_rocket <= self.radius/2:
+        if self.distance_to_rocket <= self.radius*4/5:
             return True
         return False
     
-    def checkLanding(self, rocket):
-        if self.distance_to_rocket <= self.radius/2 and rocket.getAbsoluteVelocity() < 10000:
+    def checkLanding(self, rocket, run):
+        if self.distance_to_rocket <= self.radius*4/5 and rocket.getAbsoluteVelocity() < 1000000:
+            rocket.landed = True
+            rocket.calculateEntryAngle()
+            rocket.clearArray()
             return True
-        return False
+        run = False
+        return False, run

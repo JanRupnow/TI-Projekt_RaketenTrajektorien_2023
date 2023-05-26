@@ -2,6 +2,7 @@ import numpy as np
 from variables.konstanten import *
 import pygame
 import math
+import datetime
 
 
 
@@ -39,16 +40,17 @@ class Rocket:
         self.notRotatedImg = pygame.transform.scale_by(img0, min(0.1*self.radius, 1))
         self.zoomOnRocket = False
         self.sun = sun
-
+        self.entryAngle = 0
         self.nextPlanet = self.startplanet
-        self.nearestPlanet = self.nextPlanet
+        self.planetNearEnough = True
+        self.nearestPlanet = self.startplanet
         #self.imgage = img0
     # Methode für die x-Komponente
     def f2(self, v, i:int):
         x = 0
-        if self.nextPlanet != None:
-            r0 = np.sqrt( (self.r_x[i] - self.nextPlanet.r_x[i])**2 + (self.r_z[i] - self.nextPlanet.r_z[i])**2)
-            x = ( -(G*self.nextPlanet.mass/r0**2) - (Luftwiederstand*self.getRelativeVelocity(i)**2*np.sign(self.v_z[i]) * p_0 * np.exp(-abs((r0-self.nextPlanet.radius)) / h_s))/(2 * self.KoerperMasse) ) * ((self.r_x[i] - self.nextPlanet.r_x[i])/r0) #Extrakraft x einbauen
+        if self.planetNearEnough:
+            r0 = np.sqrt( (self.r_x[i] - self.nearestPlanet.r_x[i])**2 + (self.r_z[i] - self.nearestPlanet.r_z[i])**2)
+            x = ( -(G*self.nearestPlanet.mass/r0**2) - (Luftwiederstand*self.getRelativeVelocity(i)**2*np.sign(self.v_x[i]) * p_0 * np.exp(-abs((r0-self.nearestPlanet.radius)) / h_s))/(2 * self.KoerperMasse) ) * ((self.r_x[i] - self.nearestPlanet.r_x[i])/r0) #Extrakraft x einbauen
 
         distanceToSun = np.sqrt( (self.r_x[i] - self.sun.r_x[i])**2 + (self.r_z[i] - self.sun.r_z[i])**2)
         x -= (G*self.sun.mass/distanceToSun**2)* ((self.r_x[i] - self.sun.r_x[i])/distanceToSun)
@@ -59,9 +61,9 @@ class Rocket:
     # Methode für die z-Komponente
     def f1(self, v,i:int):
         z = 0       
-        if self.nextPlanet != None:
-            r0 = np.sqrt( (self.r_x[i] - self.nextPlanet.r_x[i])**2 + (self.r_z[i] - self.nextPlanet.r_z[i])**2)
-            z = ( -(G*self.nextPlanet.mass/r0**2) - (Luftwiederstand*self.getRelativeVelocity(i)**2*np.sign(self.v_z[i]) * p_0 * np.exp(-abs((r0-self.nextPlanet.radius)) / h_s))/(2 * self.KoerperMasse) )
+        if self.planetNearEnough:
+            r0 = np.sqrt( (self.r_x[i] - self.nearestPlanet.r_x[i])**2 + (self.r_z[i] - self.nearestPlanet.r_z[i])**2)
+            z = ( -(G*self.nearestPlanet.mass/r0**2) - (Luftwiederstand*self.getRelativeVelocity(i)**2*np.sign(self.v_z[i]) * p_0 * np.exp(-abs((r0-self.nearestPlanet.radius)) / h_s))/(2 * self.KoerperMasse) ) * ((self.r_z[i] - self.nearestPlanet.r_z[i])/r0)
 
         distanceToSun = np.sqrt( (self.r_x[i] - self.sun.r_x[i])**2 + (self.r_z[i] - self.sun.r_z[i])**2)
         z -= (G*self.sun.mass/distanceToSun**2)* ((self.r_z[i] - self.sun.r_z[i])/distanceToSun)
@@ -94,13 +96,15 @@ class Rocket:
         self.updateNextPlanet(planets)
 
     def updateNextPlanet(self, planets):
-        if self.nextPlanet != None and not self.isPlanetNearEnough(self.nextPlanet):
-            self.nextPlanet = None
-        elif self.nextPlanet == None:
+        if self.planetNearEnough and not self.isPlanetNearEnough(self.nearestPlanet):
+            self.planetNearEnough = False
+        elif self.planetNearEnough == False:
             for planet in planets:
                 if self.isPlanetNearEnough(planet):
-                    self.nextPlanet = planet
+                    self.planetNearEnough = True
                     self.nearestPlanet = planet
+
+        print(f"nearest planet: {self.nearestPlanet.name}")
                     
         
     def isPlanetNearEnough(self, planet):
@@ -112,13 +116,18 @@ class Rocket:
         if self.radius > MIN_ROCKET_RADIUS and self.radius < 0.1:
             self.notRotatedImg = pygame.transform.scale_by(self.img0, max(min(0.1*self.radius, 1), 0.1))
     def draw(self, window, move_x, move_y, planets, paused, scale, width, height):
-        if not self.rocketstarted:
-            self.drawAndValueBeforeStarting(self.startplanet, window, scale, width, height, move_x, move_y)
+        print(self.entryAngle)
+        if not self.rocketstarted or self.landed:
+            #self.drawAndValueBeforeStarting(window, scale, width, height, move_x, move_y)
+            self.drawIfNotStarted(paused, planets, window, scale, width, height, move_x, move_y)
+            return
+        """"
         if self.landed:
-            self.landing() 
+            self.landing(window, scale, width, height, move_x, move_y)
             if paused:
                 return
             if planets[0].aktuellerschritt == 0 or self.timestepChanged:
+                print("Bedingung erreicht")
                 for planet in planets:
                     planet.aktuellerrechenschritt = planet.aktuellerschritt
                 for i in range(NUM_OF_PREDICTIONS):
@@ -128,17 +137,18 @@ class Rocket:
                 if self.timestepChanged:
                     self.timestepChanged = False
 
-            else:
-                for planet in planets:
-                    planet.predictNext(planets, paused)
+                else:
+                    for planet in planets:
+                        planet.predictNext(planets, paused)
 
-            for planet in planets:
-                planet.aktuellerschritt += 1
-
-            if planets[0].aktuellerschritt >= NUM_OF_PREDICTIONS:
                 for planet in planets:
-                    planet.resetArray()
+                    planet.aktuellerschritt += 1
+
+                if planets[0].aktuellerschritt >= NUM_OF_PREDICTIONS:
+                    for planet in planets:
+                        planet.resetArray()
             return
+        """
         if not paused:
             if self.powerchanged or self.aktuellerschritt==0 or self.timestepChanged:
                 firstTime = self.aktuellerrechenschritt == 0
@@ -175,10 +185,10 @@ class Rocket:
             
                 
     def getCurrentDistanceToNextPlanet(self):
-        if self.nextPlanet == None:
+        if self.planetNearEnough == False:
             return -1
-        return np.sqrt((self.r_x[self.aktuellerrechenschritt] - self.nextPlanet.r_x[self.aktuellerrechenschritt])**2 + 
-                           (self.r_z[self.aktuellerrechenschritt] - self.nextPlanet.r_z[self.aktuellerrechenschritt])**2)
+        return np.sqrt((self.r_x[self.aktuellerrechenschritt] - self.nearestPlanet.r_x[self.aktuellerrechenschritt])**2 + 
+                           (self.r_z[self.aktuellerrechenschritt] - self.nearestPlanet.r_z[self.aktuellerrechenschritt])**2)
 
 
     def drawRocket(self, window, width, height, move_x, move_y, scale):
@@ -215,23 +225,22 @@ class Rocket:
         self.aktuellerschritt = 1
         self.aktuellerrechenschritt = NUM_OF_PREDICTIONS
 
-    def drawAndValueBeforeStarting(self, startplanet,window, scale, width, height, move_x, move_y):
-        self.r_x[0] = startplanet.r_x[startplanet.aktuellerschritt] + startplanet.radius * np.cos(self.startwinkel * np.pi / 180)  
-        self.r_z[0] = startplanet.r_z[startplanet.aktuellerschritt] + startplanet.radius * np.sin(self.startwinkel * np.pi / 180)
-        self.v_x[0] = startplanet.v_x[startplanet.aktuellerschritt]
-        self.v_z[0] = startplanet.v_z[startplanet.aktuellerschritt]
+    def drawAndValueBeforeStarting(self,window, scale, width, height, move_x, move_y):
+        
+        angle = self.entryAngle if self.landed else self.startwinkel
+        self.r_x[0] = self.startplanet.r_x[self.startplanet.aktuellerschritt] + self.startplanet.radius * np.cos(angle * np.pi / 180)  
+        self.r_z[0] = self.startplanet.r_z[self.startplanet.aktuellerschritt] + self.startplanet.radius * np.sin(angle * np.pi / 180)
+        self.v_x[0] = self.startplanet.v_x[self.startplanet.aktuellerschritt]
+        self.v_z[0] = self.startplanet.v_z[self.startplanet.aktuellerschritt]
 
         self.drawRocket(window, width, height, move_x, move_y, scale)
 
-    def calculateEntryAngle():
-        print(1)
-    def landing(self,window, scale, width, height, move_x, move_y,entryAngle):
-        self.r_x[0] = self.nearestPlanet.r_x[self.nearestPlanet.aktuellerschritt] + self.nearestPlanet.radius * np.cos(entryAngle * np.pi / 180)  
-        self.r_z[0] = self.nearestPlanet.r_z[self.nearestPlanet.aktuellerschritt] + self.nearestPlanet.radius * np.sin(entryAngle * np.pi / 180)
-        self.v_x[0] = self.nearestPlanet.v_x[self.nearestPlanet.aktuellerschritt]
-        self.v_z[0] = self.nearestPlanet.v_z[self.nearestPlanet.aktuellerschritt]
+    def calculateEntryAngle(self):
+        self.entryAngle =  math.atan2(self.r_z[self.aktuellerschritt] - self.nearestPlanet.r_z[self.nearestPlanet.aktuellerschritt],
+                          self.r_x[self.aktuellerschritt] - self.nearestPlanet.r_x[self.nearestPlanet.aktuellerschritt]) * (180 / np.pi)
+        print(self.entryAngle)
 
-        self.drawRocket(window, width, height, move_x, move_y, scale)
+        
     def calculateNewCalculationOfPredictions(self, firstTime, planets, paused):
         for i in range(NUM_OF_PREDICTIONS):
             if firstTime or self.timestepChanged:
@@ -245,3 +254,43 @@ class Rocket:
             planet.predictStep(self.aktuellerrechenschritt, planets, paused, self)
         self.berechneNaechstenSchritt(self.aktuellerrechenschritt, planets)
         self.aktuellerrechenschritt += 1
+        
+    def clearArray(self):
+        self.r_x = np.zeros(LEN_OF_PREDICTIONS_ARRAY)
+        self.r_z = np.zeros(LEN_OF_PREDICTIONS_ARRAY)
+        self.v_x = np.zeros(LEN_OF_PREDICTIONS_ARRAY)
+        self.v_z = np.zeros(LEN_OF_PREDICTIONS_ARRAY)
+
+        self.aktuellerschritt = 0
+        self.aktuellerrechenschritt = 0
+
+        self.r_x[0] = self.nearestPlanet.r_x[self.nearestPlanet.aktuellerschritt] + self.nearestPlanet.radius * np.cos(self.entryAngle * np.pi / 180)  
+        self.r_z[0] = self.nearestPlanet.r_z[self.nearestPlanet.aktuellerschritt] + self.nearestPlanet.radius * np.sin(self.entryAngle * np.pi / 180)
+        self.v_x[0] = self.nearestPlanet.v_x[self.nearestPlanet.aktuellerschritt]
+        self.v_z[0] = self.nearestPlanet.v_z[self.nearestPlanet.aktuellerschritt]
+
+
+    def drawIfNotStarted(self, paused, planets, window, scale, width, height, move_x, move_y):
+        self.drawAndValueBeforeStarting(window, scale, width, height, move_x, move_y)
+            
+        if not paused:
+            if planets[0].aktuellerschritt == 0 or self.timestepChanged:
+                for planet in planets:
+                    planet.aktuellerrechenschritt = planet.aktuellerschritt
+                for i in range(NUM_OF_PREDICTIONS):
+                    for planet in planets:
+                        planet.predictNext(planets, paused)
+
+                if self.timestepChanged:
+                    self.timestepChanged = False
+
+            else:
+                for planet in planets:
+                    planet.predictNext(planets, paused)
+
+            for planet in planets:
+                planet.aktuellerschritt += 1
+
+            if planets[0].aktuellerschritt >= NUM_OF_PREDICTIONS:
+                for planet in planets:
+                    planet.resetArray()
