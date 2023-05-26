@@ -55,7 +55,7 @@ def planetIsInScreen(scale, planet, move_x, move_y, height, width):
 
 
 
-def processKeyEvent(event, dto: DTOProcessEvent, rocket: Rocket, planets):
+def processKeyEvent(event, dto: DTOProcessEvent, rocket, planets):
 
     keysP = pygame.key.get_pressed()
     mouse_x, mouse_y = pygame.mouse.get_pos()

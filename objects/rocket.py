@@ -3,7 +3,7 @@ from variables.konstanten import *
 import pygame
 import math
 import datetime
-
+from methods.game_methods import automaticZoomOnRocket
 
 
 class Rocket:
@@ -116,7 +116,6 @@ class Rocket:
         if self.radius > MIN_ROCKET_RADIUS and self.radius < 0.1:
             self.notRotatedImg = pygame.transform.scale_by(self.img0, max(min(0.1*self.radius, 1), 0.1))
     def draw(self, window, move_x, move_y, planets, paused, scale, width, height):
-        print(self.entryAngle)
         if not self.rocketstarted or self.landed:
             #self.drawAndValueBeforeStarting(window, scale, width, height, move_x, move_y)
             self.drawIfNotStarted(paused, planets, window, scale, width, height, move_x, move_y)
@@ -168,6 +167,7 @@ class Rocket:
                 self.calculateOnePrediction(planets, paused)
         # move_x and move_y verschieben je nach bewegung des Bildschirm
         if self.aktuellerrechenschritt > 2:
+            move_x, move_y = automaticZoomOnRocket(self, scale, move_x, move_y)
             pygame.draw.lines(window, self.color, False, np.array((self.r_x[self.aktuellerschritt:self.aktuellerrechenschritt]*scale+move_x+width/2, self.r_z[self.aktuellerschritt:self.aktuellerrechenschritt]*scale+move_y+ height/2)).T, 1)
             
             self.drawRocket(window, width, height, move_x, move_y, scale)
@@ -208,8 +208,8 @@ class Rocket:
     def getCurrentRelativeVelocity(self):
         if not self.rocketstarted:
             return 0
-        return np.sqrt( (self.v_x[self.aktuellerschritt] - self.nearestPlanet.v_x[self.aktuellerschritt])**2 
-                        + (self.v_z[self.aktuellerschritt] - self.nearestPlanet.v_z[self.aktuellerschritt])**2)
+        return np.sqrt( (self.v_x[self.aktuellerschritt] - self.nearestPlanet.v_x[self.nearestPlanet.aktuellerschritt])**2 
+                        + (self.v_z[self.aktuellerschritt] - self.nearestPlanet.v_z[self.nearestPlanet.aktuellerschritt])**2)
 
 
     # in m/s
@@ -233,13 +233,12 @@ class Rocket:
         self.v_x[0] = self.startplanet.v_x[self.startplanet.aktuellerschritt]
         self.v_z[0] = self.startplanet.v_z[self.startplanet.aktuellerschritt]
 
+        move_x, move_y = automaticZoomOnRocket(self, scale, move_x, move_y)
         self.drawRocket(window, width, height, move_x, move_y, scale)
 
     def calculateEntryAngle(self):
         self.entryAngle =  math.atan2(self.r_z[self.aktuellerschritt] - self.nearestPlanet.r_z[self.nearestPlanet.aktuellerschritt],
                           self.r_x[self.aktuellerschritt] - self.nearestPlanet.r_x[self.nearestPlanet.aktuellerschritt]) * (180 / np.pi)
-        print(self.entryAngle)
-
         
     def calculateNewCalculationOfPredictions(self, firstTime, planets, paused):
         for i in range(NUM_OF_PREDICTIONS):
@@ -271,7 +270,6 @@ class Rocket:
 
 
     def drawIfNotStarted(self, paused, planets, window, scale, width, height, move_x, move_y):
-        self.drawAndValueBeforeStarting(window, scale, width, height, move_x, move_y)
             
         if not paused:
             if planets[0].aktuellerschritt == 0 or self.timestepChanged:
@@ -294,3 +292,5 @@ class Rocket:
             if planets[0].aktuellerschritt >= NUM_OF_PREDICTIONS:
                 for planet in planets:
                     planet.resetArray()
+
+        self.drawAndValueBeforeStarting(window, scale, width, height, move_x, move_y)

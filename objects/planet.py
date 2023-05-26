@@ -129,7 +129,7 @@ class Planet:
         return False
     
     def checkLanding(self, rocket, run):
-        if self.distance_to_rocket <= self.radius*4/5 and rocket.getAbsoluteVelocity() < 1000000:
+        if self.distance_to_rocket <= self.radius*4/5 and rocket.getCurrentRelativeVelocity() < 1000000:
             rocket.landed = True
             rocket.calculateEntryAngle()
             rocket.clearArray()

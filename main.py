@@ -51,10 +51,8 @@ def main():
             draw_line = dtoProcessEvent.draw_line
             timestep = dtoProcessEvent.timestep
             pause = dtoProcessEvent.pause
-        
         move_x, move_y = automaticZoomOnRocket(rocket, scale, move_x, move_y)
-        rocket.draw(WINDOW,move_x,move_y, planets, pause, scale, WIDTH, HEIGHT)
-        
+        move_x, move_y = automaticZoomOnRocket(rocket, scale, move_x, move_y)
         for planet in planets:
             #if not pause:
             #    planet.update_position(planets, rocket)
@@ -69,7 +67,7 @@ def main():
         if rocket.nearestPlanet.checkCollision():
             if not rocket.landed:
                 rocket.nearestPlanet.checkLanding(rocket,run)
-            
+        rocket.draw(WINDOW,move_x,move_y, planets, pause, scale, WIDTH, HEIGHT)
         pygame.display.update()
     pygame.quit()
 
