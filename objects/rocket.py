@@ -24,7 +24,8 @@ class Rocket:
         self.angle = 0  
         self.landed = False
         self.powerchanged = False
-        self.rocketstarted = False   
+        self.rocketstarted = False 
+        self.landed = False  
         self.color = color
         self.startplanet = startplanet
         self.predictions = []
@@ -113,7 +114,8 @@ class Rocket:
     def draw(self, window, move_x, move_y, planets, paused, scale, width, height):
         if not self.rocketstarted:
             self.drawAndValueBeforeStarting(self.startplanet, window, scale, width, height, move_x, move_y)
-            
+        if self.landed:
+            self.landing() 
             if paused:
                 return
             if planets[0].aktuellerschritt == 0 or self.timestepChanged:
@@ -221,7 +223,15 @@ class Rocket:
 
         self.drawRocket(window, width, height, move_x, move_y, scale)
 
+    def calculateEntryAngle():
+        print(1)
+    def landing(self,window, scale, width, height, move_x, move_y,entryAngle):
+        self.r_x[0] = self.nearestPlanet.r_x[self.nearestPlanet.aktuellerschritt] + self.nearestPlanet.radius * np.cos(entryAngle * np.pi / 180)  
+        self.r_z[0] = self.nearestPlanet.r_z[self.nearestPlanet.aktuellerschritt] + self.nearestPlanet.radius * np.sin(entryAngle * np.pi / 180)
+        self.v_x[0] = self.nearestPlanet.v_x[self.nearestPlanet.aktuellerschritt]
+        self.v_z[0] = self.nearestPlanet.v_z[self.nearestPlanet.aktuellerschritt]
 
+        self.drawRocket(window, width, height, move_x, move_y, scale)
     def calculateNewCalculationOfPredictions(self, firstTime, planets, paused):
         for i in range(NUM_OF_PREDICTIONS):
             if firstTime or self.timestepChanged:
