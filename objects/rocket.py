@@ -103,8 +103,6 @@ class Rocket:
                 if self.isPlanetNearEnough(planet):
                     self.planetNearEnough = True
                     self.nearestPlanet = planet
-
-        print(f"nearest planet: {self.nearestPlanet.name}")
                     
         
     def isPlanetNearEnough(self, planet):

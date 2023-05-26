@@ -87,9 +87,13 @@ class Planet:
         self.r_x[i+1] = self.r_x[i] + self.v_x[i+1] * self.timestep
         self.r_z[i+1] = self.r_z[i] + self.v_z[i+1] * self.timestep
 
-        self.distance_to_rocket = math.sqrt((self.r_x[self.aktuellerschritt]-rocket.r_x[rocket.aktuellerschritt])**2+(self.r_z[self.aktuellerschritt]-rocket.r_z[rocket.aktuellerschritt])**2)
+        self.updateDistanceToRocket(rocket)
+
         if not pause:
             self.aktuellerrechenschritt += 1
+
+    def updateDistanceToRocket(self, rocket):
+        self.distance_to_rocket = math.sqrt((self.r_x[self.aktuellerschritt]-rocket.r_x[rocket.aktuellerschritt])**2+(self.r_z[self.aktuellerschritt]-rocket.r_z[rocket.aktuellerschritt])**2)
 
     def predictNext(self, planets, pause):
 
@@ -133,6 +137,7 @@ class Planet:
             rocket.landed = True
             rocket.calculateEntryAngle()
             rocket.clearArray()
+            self.updateDistanceToRocket(rocket)
             return True
         run = False
         return False, run

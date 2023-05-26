@@ -51,7 +51,7 @@ def main():
             draw_line = dtoProcessEvent.draw_line
             timestep = dtoProcessEvent.timestep
             pause = dtoProcessEvent.pause
-        move_x, move_y = automaticZoomOnRocket(rocket, scale, move_x, move_y)
+
         move_x, move_y = automaticZoomOnRocket(rocket, scale, move_x, move_y)
         for planet in planets:
             #if not pause:
