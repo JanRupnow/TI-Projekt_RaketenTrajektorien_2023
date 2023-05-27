@@ -59,9 +59,9 @@ def main():
             # Ohne Radius verschwinden die Balken bugs im Screen
 
             if planetIsInScreen(scale, planet, move_x, move_y, HEIGHT, WIDTH):
-                planet.draw(WINDOW, show_distance, move_x, move_y, draw_line,scale, WIDTH, HEIGHT, rocket)
+                planet.draw(WINDOW, show_distance, move_x, move_y, draw_line,scale, WIDTH, HEIGHT)
             else: 
-                planet.drawlineonly(WINDOW, move_x, move_y, draw_line, scale, WIDTH, HEIGHT, show_distance, rocket)
+                planet.drawlineonly(WINDOW, move_x, move_y, draw_line, scale, WIDTH, HEIGHT, show_distance)
 
         time_passed = renderTextView(WINDOW, rocket, now, FONT_1, pause, clock, time_passed, timestep)
         if rocket.nearestPlanet.checkCollision():

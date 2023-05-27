@@ -26,9 +26,9 @@ class Planet:
         self.r_x[0] = x
         self.r_z[0] = y
 
-    def drawlineonly(self, window,move_x, move_y, draw_line,scale, width, height, show, rocket):
+    def drawlineonly(self, window,move_x, move_y, draw_line,scale, width, height, show):
         if show:
-            self.displayDistances(show, width ,height, window, rocket, move_x, move_y)
+            self.displayDistances(show, scale, width ,height, window, move_x, move_y)
         if not draw_line:
             return
         line = self.lineIsInScreen(np.array((self.r_x[self.aktuellerschritt:self.aktuellerrechenschritt]*scale, self.r_z[self.aktuellerschritt:self.aktuellerrechenschritt]*scale)).T, move_x, move_y, height, width)
@@ -37,8 +37,8 @@ class Planet:
             pygame.draw.lines(window, self.color, False, line, 1)
         
 
-    def draw(self, window, show, move_x, move_y, draw_line, scale, width, height, rocket):
-        self.drawlineonly(window, move_x, move_y, draw_line, scale, width, height, show, rocket)
+    def draw(self, window, show, move_x, move_y, draw_line, scale, width, height):
+        self.drawlineonly(window, move_x, move_y, draw_line, scale, width, height, show)
         pygame.draw.circle(window, self.color, (self.r_x[self.aktuellerschritt]*scale+move_x+width/2, self.r_z[self.aktuellerschritt]*scale+move_y+ height/2), max(self.scaleR * scale, 2))
 
 
@@ -119,7 +119,7 @@ class Planet:
         lineInScreen[:,1] = lineInScreen[:,1]+move_y+ height/2
         return lineInScreen
     
-    def displayDistances(self, show, width ,height, window, rocket, move_x, move_y):
+    def displayDistances(self, show, scale, width, height, window, move_x, move_y):
         if not show:
             return
         distance_text = pygame.font.SysFont("Trebuchet MS", 16).render(self.name+ ": "+str(round(self.distance_to_rocket * 1.057 * 10 ** -16, 8))+ "light years", True,
@@ -128,13 +128,14 @@ class Planet:
                                 self.r_z[self.aktuellerschritt]*scale+ height/2 + distance_text.get_height() / 2 - 20 + move_y))
         
     def checkCollision(self):
-        if self.distance_to_rocket <= self.radius*4/5:
+        if self.distance_to_rocket <= self.radius*95/100:
             return True
         return False
     
     def checkLanding(self, rocket, run):
-        if self.distance_to_rocket <= self.radius*4/5 and rocket.getCurrentRelativeVelocity() < 1000000:
+        if self.distance_to_rocket <= self.radius *95/100 and rocket.getCurrentRelativeVelocity() < 1000000:
             rocket.landed = True
+            rocket.thrust = 0
             rocket.calculateEntryAngle()
             rocket.clearArray()
             self.updateDistanceToRocket(rocket)
