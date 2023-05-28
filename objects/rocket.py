@@ -2,7 +2,6 @@ import numpy as np
 from variables.konstanten import *
 import pygame
 import math
-import datetime
 from methods.game_methods import automaticZoomOnRocket
 
 
