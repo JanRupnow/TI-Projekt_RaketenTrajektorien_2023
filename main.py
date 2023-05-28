@@ -24,7 +24,6 @@ def main():
     mouse_y = 0
     draw_line = True
     static_View()
-    
     planets = getInitialPlanets()
     rocket = loadRocket(planets)
     #rocket = Rocket(45,0,10000,earth,2,(255,255,255), sun)

@@ -209,7 +209,7 @@ class Rocket:
                         + (self.v_z[i] - self.nearestPlanet.v_z[i])**2)
         
     def getCurrentRelativeVelocity(self):
-        if not self.rocketstarted:
+        if not self.rocketstarted or self.landed:
             return 0
         return np.sqrt( (self.v_x[self.aktuellerschritt] - self.nearestPlanet.v_x[self.nearestPlanet.aktuellerschritt])**2 
                         + (self.v_z[self.aktuellerschritt] - self.nearestPlanet.v_z[self.nearestPlanet.aktuellerschritt])**2)

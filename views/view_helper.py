@@ -35,7 +35,6 @@ def checkDate(month, day ):
         else:
              if day> 0 and 29>= day:
                   return True
-             print("Schaltjahr")
     return False
 def overWriteStandardDay():
     jsonfile = open("./variables/rocket_config/current_rocket_config.json", "r+")
