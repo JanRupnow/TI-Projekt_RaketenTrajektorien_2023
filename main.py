@@ -18,6 +18,7 @@ def main():
     time_passed = datetime.timedelta(seconds=0)
     global scale, timestep, now, move_x, move_y, clock
     run = True
+    zoomReferencePlanet = False
     pause = False
     show_distance = False
     mouse_x = 0
@@ -35,9 +36,9 @@ def main():
 
             dtoProcessEvent = processKeyEvent(
                 event,
-                DTOProcessEvent(run, scale, move_x, move_y, mouse_x, mouse_y, show_distance, draw_line, timestep, pause),
+                DTOProcessEvent(run, scale, move_x, move_y, mouse_x, mouse_y, show_distance, draw_line, timestep, pause, zoomReferencePlanet),
                 rocket,
-                planets
+                planets,
             )
 
             run = dtoProcessEvent.run
@@ -50,8 +51,12 @@ def main():
             draw_line = dtoProcessEvent.draw_line
             timestep = dtoProcessEvent.timestep
             pause = dtoProcessEvent.pause
+            zoomReferencePlanet = dtoProcessEvent.zoomReferencePlanet
 
-        move_x, move_y = automaticZoomOnRocket(rocket, scale, move_x, move_y)
+        if  zoomReferencePlanet:
+            move_x, move_y = centerScreenOnPlanet(rocket.nearestPlanet, scale, move_x, move_y)
+        else:
+            move_x, move_y = automaticZoomOnRocket(rocket, scale, move_x, move_y) 
         for planet in planets:
             #if not pause:
             #    planet.update_position(planets, rocket)

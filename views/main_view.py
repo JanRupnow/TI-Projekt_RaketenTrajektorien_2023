@@ -19,7 +19,7 @@ def renderTextView(WINDOW, rocket, now, FONT_1, pause, clock, time_passed, times
 
     distance = np.sqrt( (rocket.r_x[rocket.aktuellerschritt] - rocket.nearestPlanet.r_x[rocket.nearestPlanet.aktuellerschritt])**2 
                         + (rocket.r_z[rocket.aktuellerschritt] - rocket.nearestPlanet.r_z[rocket.nearestPlanet.aktuellerschritt])**2)
-    speed = round(rocket.getCurrentRelativeVelocity()) if distance < rocket.nextPlanet.radius*5 else round(rocket.getAbsoluteVelocity())
+    speed = round(rocket.getCurrentRelativeVelocity()) if distance < rocket.nearestPlanet.radius*5 else round(rocket.getAbsoluteVelocity())
     rocket_velocity = FONT_1.render(f'Rocket Speed: {speed}km/h', True, COLOR_WHITE)
     WINDOW.blit(rocket_velocity, (WIDTH*0.8, HEIGHT*0.12))
     rocket_fuel = FONT_1.render(f'Rocket Fuel: %', True, COLOR_WHITE)
