@@ -155,7 +155,7 @@ class Rocket:
         if self.radius < MIN_ROCKET_RADIUS:
             pygame.draw.circle(window, self.color, (self.r_x[self.aktuellerschritt]*scale+move_x+width/2, self.r_z[self.aktuellerschritt]*scale+move_y+height/2), MIN_ROCKET_RADIUS)
             return
-        if self.landed:
+        if self.landed or not self.rocketstarted:
             self.img = pygame.transform.rotate(self.notRotatedImg, math.atan2(self.r_z[self.aktuellerschritt] - self.nearestPlanet.r_z[self.aktuellerschritt], 
                                                                               self.r_x[self.aktuellerschritt] - self.nearestPlanet.r_x[self.aktuellerschritt]) * (-180) /np.pi - 90)
         else:
