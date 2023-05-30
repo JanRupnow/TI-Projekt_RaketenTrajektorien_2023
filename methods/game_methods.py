@@ -34,16 +34,13 @@ def mousePositionShiftScreen(mouse_x, mouse_y, move_x, move_y):
     return move_x, move_y
 
 def shiftTimeStep(shiftUp, rocket, planets, timestep):
-    if shiftUp:
-        index = min(alleZeitschritte.index(timestep) + 1, len(alleZeitschritte) - 1)
-    else:
-        index = max(alleZeitschritte.index(timestep) - 1, 0)
-        
+    index = min(alleZeitschritte.index(timestep) + 1, len(alleZeitschritte) - 1) if shiftUp else max(alleZeitschritte.index(timestep) - 1, 0)
+    
     timestep = alleZeitschritte[index]
     rocket.timestep = timestep
     rocket.timestepChanged = True
     for planet in planets:
-        planet.timestep = rocket.timestep = timestep
+        planet.timestep = timestep
     return timestep
 
 

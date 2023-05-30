@@ -72,6 +72,9 @@ def main():
             if not rocket.landed:
                 rocket.nearestPlanet.checkLanding(rocket,run)
         rocket.draw(WINDOW,move_x,move_y, planets, pause, scale, WIDTH, HEIGHT)
+        if not rocket.landed:
+            rocket.updatePlanetsInRangeList(planets)
+            rocket.updateNearestPlanet(planets)
         pygame.display.update()
     pygame.quit()
 

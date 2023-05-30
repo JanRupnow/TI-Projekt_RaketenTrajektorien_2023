@@ -54,13 +54,13 @@ def getInitialPlanets():
         θ = math.atan2(planet.r_z[0], planet.r_x[0])
         # Calculate positional velocity from mean velocity
         if planet.name != "Moon":
-            planet.v_x[0] = -planet.meanVelocity * np.sin(θ)
-            planet.v_z[0] = planet.meanVelocity * np.cos(θ)
+            planet.v_x[0] = -planet.meanVelocity* np.sin(θ) 
+            planet.v_z[0] = planet.meanVelocity * np.cos(θ) 
 
     moon = next(filter(lambda x: x.name == "Moon", planetlist))
     earth = next(filter(lambda x: x.name == "Earth", planetlist))
     θ = math.atan2(moon.r_x[0]-earth.r_x[0], moon.r_z[0]-earth.r_z[0])
-    moon.v_x[0] = earth.v_x[0] - moon.meanVelocity * np.sin(θ)
+    moon.v_x[0] = earth.v_x[0] - moon.meanVelocity * np.sin(θ) 
     moon.v_z[0] = earth.v_z[0] + moon.meanVelocity * np.cos(θ)
         
     return [neptune, uranus, saturn, jupiter, mars, moon, earth, venus, mercury, sun]
