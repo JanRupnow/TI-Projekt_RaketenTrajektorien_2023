@@ -46,11 +46,11 @@ class Rocket:
         self.nearestPlanet = self.startplanet
         #self.imgage = img0
     # Methode für die x-Komponente
-    def f2(self, v, i:int, r0, distanceToSun):
+    def f2(self, v, i:int, r0, distanceToSun, relativeVelocity):
         x = 0
         if self.planetNearEnough:
             #r0 = np.sqrt( (self.r_x[i] - self.nearestPlanet.r_x[i])**2 + (self.r_z[i] - self.nearestPlanet.r_z[i])**2)
-            x = ( -(G*self.nearestPlanet.mass/r0**2) - (Luftwiederstand*self.getRelativeVelocity(i)**2*np.sign(self.v_x[i]) * p_0 * np.exp(-abs((r0-self.nearestPlanet.radius)) / h_s))/(2 * self.KoerperMasse) ) * ((self.r_x[i] - self.nearestPlanet.r_x[i])/r0) #Extrakraft x einbauen
+            x = ( -(G*self.nearestPlanet.mass/r0**2) - (Luftwiederstand*relativeVelocity**2*np.sign(self.v_x[i]) * p_0 * np.exp(-abs((r0-self.nearestPlanet.radius)) / h_s))/(2 * self.KoerperMasse) ) * ((self.r_x[i] - self.nearestPlanet.r_x[i])/r0) #Extrakraft x einbauen
 
         #distanceToSun = np.sqrt( (self.r_x[i] - self.sun.r_x[i])**2 + (self.r_z[i] - self.sun.r_z[i])**2)
         x -= (G*self.sun.mass/distanceToSun**2)* ((self.r_x[i] - self.sun.r_x[i])/distanceToSun)
@@ -59,11 +59,11 @@ class Rocket:
             x += math.cos(math.atan2(self.v_z[i], self.v_x[i]) + self.angle*np.pi/180)*self.thrust*10
         return x
     # Methode für die z-Komponente
-    def f1(self, v,i:int, r0, distanceToSun):
+    def f1(self, v,i:int, r0, distanceToSun, relativeVelocity):
         z = 0       
         if self.planetNearEnough:
             #r0 = np.sqrt( (self.r_x[i] - self.nearestPlanet.r_x[i])**2 + (self.r_z[i] - self.nearestPlanet.r_z[i])**2)
-            z = ( -(G*self.nearestPlanet.mass/r0**2) - (Luftwiederstand*self.getRelativeVelocity(i)**2*np.sign(self.v_z[i]) * p_0 * np.exp(-abs((r0-self.nearestPlanet.radius)) / h_s))/(2 * self.KoerperMasse) ) * ((self.r_z[i] - self.nearestPlanet.r_z[i])/r0)
+            z = ( -(G*self.nearestPlanet.mass/r0**2) - (Luftwiederstand*relativeVelocity**2*np.sign(self.v_z[i]) * p_0 * np.exp(-abs((r0-self.nearestPlanet.radius)) / h_s))/(2 * self.KoerperMasse) ) * ((self.r_z[i] - self.nearestPlanet.r_z[i])/r0)
 
         #distanceToSun = np.sqrt( (self.r_x[i] - self.sun.r_x[i])**2 + (self.r_z[i] - self.sun.r_z[i])**2)
         z -= (G*self.sun.mass/distanceToSun**2)* ((self.r_z[i] - self.sun.r_z[i])/distanceToSun)
@@ -76,24 +76,26 @@ class Rocket:
     def berechneNaechstenSchritt(self, i: int, planets):
         
         r0 = 0
+        relativeVelocity = 0
         if self.planetNearEnough:
            r0 = np.sqrt( (self.r_x[i] - self.nearestPlanet.r_x[i])**2 + (self.r_z[i] - self.nearestPlanet.r_z[i])**2)
+           relativeVelocity = self.getRelativeVelocity(i)
         distanceToSun = np.sqrt( (self.r_x[i] - self.sun.r_x[i])**2 + (self.r_z[i] - self.sun.r_z[i])**2)
 
         # z-Komponente
-        k1 = self.f1(self.v_z[i],i, r0, distanceToSun)
-        k2 = self.f1(self.v_z[i] + k1*self.timestep/2,i, r0, distanceToSun)
-        k3 = self.f1(self.v_z[i] + k2*self.timestep/2,i, r0, distanceToSun)
-        k4 = self.f1(self.v_z[i] + k3*self.timestep/2,i, r0, distanceToSun)
+        k1 = self.f1(self.v_z[i],i, r0, distanceToSun, relativeVelocity)
+        k2 = self.f1(self.v_z[i] + k1*self.timestep/2,i, r0, distanceToSun, relativeVelocity)
+        k3 = self.f1(self.v_z[i] + k2*self.timestep/2,i, r0, distanceToSun, relativeVelocity)
+        k4 = self.f1(self.v_z[i] + k3*self.timestep/2,i, r0, distanceToSun, relativeVelocity)
         k = (k1 + 2*k2 + 2*k3 + k4)/6
         self.v_z[i+1] = self.v_z[i] + k*self.timestep
         self.r_z[i+1] = self.r_z[i] + self.v_z[i]*self.timestep
 
         # x-Komponente
-        k1 = self.f2(self.v_x[i],i, r0, distanceToSun)
-        k2 = self.f2(self.v_x[i] + k1*self.timestep/2,i, r0, distanceToSun)
-        k3 = self.f2(self.v_x[i] + k2*self.timestep/2,i, r0, distanceToSun)
-        k4 = self.f2(self.v_x[i] + k3*self.timestep/2,i, r0, distanceToSun)
+        k1 = self.f2(self.v_x[i],i, r0, distanceToSun, relativeVelocity)
+        k2 = self.f2(self.v_x[i] + k1*self.timestep/2,i, r0, distanceToSun, relativeVelocity)
+        k3 = self.f2(self.v_x[i] + k2*self.timestep/2,i, r0, distanceToSun, relativeVelocity)
+        k4 = self.f2(self.v_x[i] + k3*self.timestep/2,i, r0, distanceToSun, relativeVelocity)
         k = (k1 + 2*k2 + 2*k3 + k4)/6
         self.v_x[i+1] = self.v_x[i] + k*self.timestep
         self.r_x[i+1] = self.r_x[i] + self.v_x[i]*self.timestep
