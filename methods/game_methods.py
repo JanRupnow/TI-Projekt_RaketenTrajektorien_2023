@@ -56,7 +56,6 @@ def planetIsInScreen(scale, planet, move_x, move_y, height, width):
 
 
 def processKeyEvent(event, dto: DTOProcessEvent, rocket, planets):
-
     keysP = pygame.key.get_pressed()
     mouse_x, mouse_y = pygame.mouse.get_pos()
     window_w, window_h = pygame.display.get_surface().get_size()
@@ -85,24 +84,7 @@ def processKeyEvent(event, dto: DTOProcessEvent, rocket, planets):
         rocket.powerchanged = True
     elif event.type == pygame.QUIT or checkKeyDown(event, keys.H_leaveSimulation[0]) or checkKeyDown(event, keys.H_closeWindow[0]):
         dto.run = False
-    # Raketenboost erhöhen
-    #elif checkKeyDown(event, keys.H_rocketBoostForward[0]) and rocket.thrust<10 and (rocket.rocketstarted or  not dto.pause):
-    #    rocket.thrust += 1
     #    rocket.powerchanged = True
-    #    rocket.rocketstarted = True
-    # Raketenboost Links   
-    #elif checkKeyDown(event, keys.H_rocketBoostLeft[0]) and rocket.angle>-45:
-    #    rocket.angle -= 1
-    #    rocket.powerchanged = True
-    # Raketenboost verrigern
-    #elif checkKeyDown(event, keys.H_lowerRocketBoost[0]) and rocket.thrust>0:
-    #    rocket.thrust -= 1
-    #    rocket.powerchanged = True
-    # Raketenboost Rechts
-    #elif checkKeyDown(event, keys.H_rocketBoostRight[0]) and rocket.angle<45:
-    #    rocket.angle += 1
-    #    rocket.powerchanged = True
-
     elif checkKeyDown(event, keys.H_zoomRocketStart[0]):
         dto.scale = scaleRelative(100000, STARTSCALE)
         rocket.update_scale(100000)
@@ -118,7 +100,9 @@ def processKeyEvent(event, dto: DTOProcessEvent, rocket, planets):
         rocket.update_scale(1)
         dto.move_x, dto.move_y = automaticZoomOnRocketOnce(rocket, dto.scale, dto.move_x, dto.move_y)
 
-    elif checkKeyDown(event, keys.H_zoomAutoOnRocket[0]):
+    elif checkKeyDown(event, keys.H_zoomAutoOnReferencePlanet[0]) and not rocket.zoomOnRocket:
+        dto.zoomReferencePlanet = not dto.zoomReferencePlanet
+    elif checkKeyDown(event, keys.H_zoomAutoOnRocket[0]) and not dto.zoomReferencePlanet:
         rocket.zoomOnRocket = not rocket.zoomOnRocket
     elif checkKeyDown(event, keys.H_pauseSimulation[0]):
         dto.pause = not dto.pause

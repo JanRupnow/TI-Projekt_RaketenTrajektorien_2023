@@ -1,6 +1,5 @@
 from objects.planet import Planet
 from variables.konstanten import *
-import datetime
 from astropy.time import Time
 from sunpy.coordinates import get_body_heliographic_stonyhurst
 from objects.planet import *

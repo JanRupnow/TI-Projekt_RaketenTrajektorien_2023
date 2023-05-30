@@ -1,7 +1,7 @@
 
 class DTOProcessEvent:
 
-    def __init__(self, run, scale, move_x, move_y, mouse_x, mouse_y, show_distance, draw_line, timestep, pause):
+    def __init__(self, run, scale, move_x, move_y, mouse_x, mouse_y, show_distance, draw_line, timestep, pause, zoomReferencePlanet):
         self.run = run
         self.scale = scale
         self.move_x = move_x
@@ -12,3 +12,4 @@ class DTOProcessEvent:
         self.draw_line = draw_line
         self.timestep = timestep
         self.pause = pause
+        self.zoomReferencePlanet = zoomReferencePlanet

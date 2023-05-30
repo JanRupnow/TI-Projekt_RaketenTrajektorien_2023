@@ -68,6 +68,11 @@ def getH_zoomAutoOnRocket(hotkeysJson):
         hotkeysJson["RocketZooms"]["H_zoomAutoOnRocket"]["key"],
         hotkeysJson["RocketZooms"]["H_zoomAutoOnRocket"]["text"]
     ]
+def getH_zoomAutoOnReferencePlanet(hotkeysJson):
+    return [
+        hotkeysJson["RocketZooms"]["H_zoomAutoOnReferencePlanet"]["key"],
+        hotkeysJson["RocketZooms"]["H_zoomAutoOnReferencePlanet"]["text"]
+    ]
 
 # Centering
 def getH_centerOnSun(hotkeysJson):

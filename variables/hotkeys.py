@@ -28,6 +28,8 @@ try:
     listHotKeys.append(H_zoomRocketPlanetSystem)
     H_zoomAutoOnRocket = getH_zoomAutoOnRocket(hotkeysJson)
     listHotKeys.append(H_zoomAutoOnRocket)
+    H_zoomAutoOnReferencePlanet = getH_zoomAutoOnReferencePlanet(hotkeysJson)
+    listHotKeys.append(H_zoomAutoOnReferencePlanet)
 
     ### Centering 
     H_centerOnSun = getH_centerOnSun(hotkeysJson)
@@ -98,6 +100,8 @@ except:
     listHotKeys.append(H_zoomRocketPlanetSystem)
     H_zoomAutoOnRocket = getH_zoomAutoOnRocket(hotkeysJson)
     listHotKeys.append(H_zoomAutoOnRocket)
+    H_zoomAutoOnReferencePlanet = getH_zoomAutoOnReferencePlanet(hotkeysJson)
+    listHotKeys.append(H_zoomAutoOnReferencePlanet)
 
     ### Centering 
     H_centerOnSun = getH_centerOnSun(hotkeysJson)
@@ -172,6 +176,8 @@ def resetOverwriteCurrent():
     listHotKeys.append(H_zoomRocketPlanetSystem)
     H_zoomAutoOnRocket = getH_zoomAutoOnRocket(hotkeysJson)
     listHotKeys.append(H_zoomAutoOnRocket)
+    H_zoomAutoOnReferencePlanet = getH_zoomAutoOnReferencePlanet(hotkeysJson)
+    listHotKeys.append(H_zoomAutoOnReferencePlanet)
 
     ### Centering 
     H_centerOnSun = getH_centerOnSun(hotkeysJson)

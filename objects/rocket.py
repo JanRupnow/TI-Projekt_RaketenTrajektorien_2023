@@ -2,7 +2,6 @@ import numpy as np
 from variables.konstanten import *
 import pygame
 import math
-import datetime
 from methods.game_methods import automaticZoomOnRocket
 
 
@@ -41,6 +40,7 @@ class Rocket:
         self.zoomOnRocket = False
         self.sun = sun
         self.entryAngle = 0
+
         self.nextPlanet = self.startplanet
         self.planetNearEnough = True
         self.nearestPlanet = self.startplanet
@@ -211,7 +211,7 @@ class Rocket:
                         + (self.v_z[i] - self.nearestPlanet.v_z[i])**2)
         
     def getCurrentRelativeVelocity(self):
-        if not self.rocketstarted:
+        if not self.rocketstarted or self.landed:
             return 0
         return np.sqrt( (self.v_x[self.aktuellerschritt] - self.nearestPlanet.v_x[self.nearestPlanet.aktuellerschritt])**2 
                         + (self.v_z[self.aktuellerschritt] - self.nearestPlanet.v_z[self.nearestPlanet.aktuellerschritt])**2)
@@ -231,12 +231,12 @@ class Rocket:
         self.aktuellerrechenschritt = NUM_OF_PREDICTIONS
 
     def drawAndValueBeforeStarting(self,window, scale, width, height, move_x, move_y):
-        
+        planet = self.nearestPlanet if self.landed else self.startplanet
         angle = self.entryAngle if self.landed else self.startwinkel
-        self.r_x[0] = self.startplanet.r_x[self.startplanet.aktuellerschritt] + self.startplanet.radius * np.cos(angle * np.pi / 180)  
-        self.r_z[0] = self.startplanet.r_z[self.startplanet.aktuellerschritt] + self.startplanet.radius * np.sin(angle * np.pi / 180)
-        self.v_x[0] = self.startplanet.v_x[self.startplanet.aktuellerschritt]
-        self.v_z[0] = self.startplanet.v_z[self.startplanet.aktuellerschritt]
+        self.r_x[0] = planet.r_x[planet.aktuellerschritt] + planet.radius * np.cos(angle * np.pi / 180)  
+        self.r_z[0] = planet.r_z[planet.aktuellerschritt] + planet.radius * np.sin(angle * np.pi / 180)
+        self.v_x[0] = planet.v_x[planet.aktuellerschritt]
+        self.v_z[0] = planet.v_z[planet.aktuellerschritt]
 
         move_x, move_y = automaticZoomOnRocket(self, scale, move_x, move_y)
         self.drawRocket(window, width, height, move_x, move_y, scale)

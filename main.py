@@ -5,7 +5,7 @@ from methods.game_methods import *
 import datetime
 from objects.DtoProcessEvent import DTOProcessEvent
 from methods.initialise_planets import *
-from views.main_view import *
+from views.main_view import renderTextView
 from views.start_view import *
 from methods.rocket_config import *
 from views.static_view import static_View
@@ -18,13 +18,13 @@ def main():
     time_passed = datetime.timedelta(seconds=0)
     global scale, timestep, now, move_x, move_y, clock
     run = True
+    zoomReferencePlanet = False
     pause = False
     show_distance = False
     mouse_x = 0
     mouse_y = 0
     draw_line = True
     static_View()
-    
     planets = getInitialPlanets()
     rocket = loadRocket(planets)
     #rocket = Rocket(45,0,10000,earth,2,(255,255,255), sun)
@@ -36,9 +36,9 @@ def main():
 
             dtoProcessEvent = processKeyEvent(
                 event,
-                DTOProcessEvent(run, scale, move_x, move_y, mouse_x, mouse_y, show_distance, draw_line, timestep, pause),
+                DTOProcessEvent(run, scale, move_x, move_y, mouse_x, mouse_y, show_distance, draw_line, timestep, pause, zoomReferencePlanet),
                 rocket,
-                planets
+                planets,
             )
 
             run = dtoProcessEvent.run
@@ -51,17 +51,21 @@ def main():
             draw_line = dtoProcessEvent.draw_line
             timestep = dtoProcessEvent.timestep
             pause = dtoProcessEvent.pause
+            zoomReferencePlanet = dtoProcessEvent.zoomReferencePlanet
 
-        move_x, move_y = automaticZoomOnRocket(rocket, scale, move_x, move_y)
+        if  zoomReferencePlanet:
+            move_x, move_y = centerScreenOnPlanet(rocket.nearestPlanet, scale, move_x, move_y)
+        else:
+            move_x, move_y = automaticZoomOnRocket(rocket, scale, move_x, move_y) 
         for planet in planets:
             #if not pause:
             #    planet.update_position(planets, rocket)
             # Ohne Radius verschwinden die Balken bugs im Screen
 
             if planetIsInScreen(scale, planet, move_x, move_y, HEIGHT, WIDTH):
-                planet.draw(WINDOW, show_distance, move_x, move_y, draw_line,scale, WIDTH, HEIGHT, rocket)
+                planet.draw(WINDOW, show_distance, move_x, move_y, draw_line,scale, WIDTH, HEIGHT)
             else: 
-                planet.drawlineonly(WINDOW, move_x, move_y, draw_line, scale, WIDTH, HEIGHT, show_distance, rocket)
+                planet.drawlineonly(WINDOW, move_x, move_y, draw_line, scale, WIDTH, HEIGHT, show_distance)
 
         time_passed = renderTextView(WINDOW, rocket, now, FONT_1, pause, clock, time_passed, timestep)
         if rocket.nearestPlanet.checkCollision():
