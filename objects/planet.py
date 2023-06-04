@@ -86,8 +86,7 @@ class Planet:
         self.r_x[i+1] = self.r_x[i] + self.v_x[i+1] * self.timestep
         self.r_z[i+1] = self.r_z[i] + self.v_z[i+1] * self.timestep
 
-        if self.aktuellerschritt % math.ceil(100/self.timestep) == 0:
-            self.updateDistanceToRocket(rocket)
+        self.updateDistanceToRocket(rocket)
 
         if not pause:
             self.aktuellerrechenschritt += 1
@@ -132,6 +131,8 @@ class Planet:
         return False
     
     def checkLanding(self, rocket, run):
+        if not self.aktuellerschritt % math.ceil(100/self.timestep) == 0:
+            return
         if self.distance_to_rocket <= self.radius *95/100 and rocket.getCurrentRelativeVelocity() < 1000000000:
             rocket.landed = True
             rocket.thrust = 0

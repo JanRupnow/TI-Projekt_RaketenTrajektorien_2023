@@ -22,10 +22,17 @@ def renderTextView(WINDOW, rocket, now, FONT_1, pause, clock, time_passed, times
     speed = round(rocket.getCurrentRelativeVelocity()) if distance < rocket.nearestPlanet.radius*5 else round(rocket.getAbsoluteVelocity())
     rocket_velocity = FONT_1.render(f'Rocket Speed: {speed}km/h', True, COLOR_WHITE)
     WINDOW.blit(rocket_velocity, (WIDTH*0.8, HEIGHT*0.12))
+    if (not rocket.rocketstarted) or rocket.landed:
+        rocket_velocity = FONT_1.render(f'Altitude: {0} km (Rocket has not started)',True, COLOR_WHITE)
+    elif rocket.nearestPlanet.distance_to_rocket-rocket.nearestPlanet.radius < 3/2* rocket.nearestPlanet.radius:
+        rocket_velocity = FONT_1.render(f'Altitude: {round((rocket.nearestPlanet.distance_to_rocket-rocket.nearestPlanet.radius)/1000,0)} km', True, COLOR_WHITE)
+    else:
+        rocket_velocity = FONT_1.render(f'Altitude: not available in space', True, COLOR_WHITE)
+    WINDOW.blit(rocket_velocity, (WIDTH*0.8, HEIGHT*0.15))
     rocket_fuel = FONT_1.render(f'Rocket Fuel: %', True, COLOR_WHITE)
-    WINDOW.blit(rocket_fuel, (WIDTH*0.8, HEIGHT*0.15)) 
+    WINDOW.blit(rocket_fuel, (WIDTH*0.8, HEIGHT*0.18)) 
     rocket_maxQ = FONT_1.render(f'MaxQ: %', True, COLOR_WHITE)
-    WINDOW.blit(rocket_maxQ, (WIDTH*0.8, HEIGHT*0.18))
+    WINDOW.blit(rocket_maxQ, (WIDTH*0.8, HEIGHT*0.21))
 
     thrust_text = FONT_1.render(f'Thrust: {rocket.thrust}m/s^2', True, COLOR_WHITE)
     WINDOW.blit(thrust_text, (WIDTH*0.8, HEIGHT*0.8))
