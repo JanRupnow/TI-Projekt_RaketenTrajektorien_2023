@@ -24,14 +24,16 @@ def main():
     mouse_x = 0
     mouse_y = 0
     draw_line = True
-    static_View()
+    manager = pg.UIManager((WIDTH,HEIGHT))
     planets = getInitialPlanets()
     rocket = loadRocket(planets)
-    #rocket = Rocket(45,0,10000,earth,2,(255,255,255), sun)
+
     while run:
         clock.tick(60)
-        WINDOW.fill(COLOR_UNIVERSE)
         
+        WINDOW.fill(COLOR_UNIVERSE)
+        static_View()
+
         for event in pygame.event.get():
 
             dtoProcessEvent = processKeyEvent(
@@ -52,7 +54,6 @@ def main():
             timestep = dtoProcessEvent.timestep
             pause = dtoProcessEvent.pause
             zoomReferencePlanet = dtoProcessEvent.zoomReferencePlanet
-
         if  zoomReferencePlanet:
             move_x, move_y = centerScreenOnPlanet(rocket.nearestPlanet, scale, move_x, move_y)
         else:
@@ -67,7 +68,7 @@ def main():
             else: 
                 planet.drawlineonly(WINDOW, move_x, move_y, draw_line, scale, WIDTH, HEIGHT, show_distance)
 
-        time_passed = renderTextView(WINDOW, rocket, now, FONT_1, pause, clock, time_passed, timestep)
+        time_passed = renderTextView(WINDOW, rocket, now, FONT_1, pause, clock, time_passed, timestep, manager)
         if rocket.nearestPlanet.checkCollision():
             if not rocket.landed:
                 rocket.nearestPlanet.checkLanding(rocket,run)

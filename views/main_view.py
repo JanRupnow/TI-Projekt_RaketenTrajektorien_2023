@@ -1,16 +1,16 @@
 from variables.konstanten import * 
 from methods.game_methods import addClockTime
 import numpy as np
-
-def renderTextView(WINDOW, rocket, now, FONT_1, pause, clock, time_passed, timestep):
+import pygame_gui as pg
+def renderTextView(WINDOW, rocket, now, FONT_1, pause, clock, time_passed, timestep, manager):
 
     fps_text = FONT_1.render("FPS: " + str(int(clock.get_fps())), True, COLOR_WHITE)
     ### Menü implementieren zur Übersicht der Tasten
     WINDOW.blit(fps_text, (WIDTH*0.03, HEIGHT*0.03))
 
     time_passed = addClockTime(pause, time_passed, timestep)
-
-    text_surface = FONT_1.render(f"Time step: {timestep}x", True, COLOR_WHITE)
+    #angle_slider = pg.elements.UIHorizontalSlider(pygame.Rect((WIDTH*0.8,HEIGHT*0.6),(WIDTH*0.15,HEIGHT*0.05)),start_value = 0,value_range=[-45,45],manager=manager,visible=1,click_increment=1,object_id="angle_slider")                               
+    text_surface = FONT_1.render(f"Time step: {int(timestep*60)}x", True, COLOR_WHITE)
     WINDOW.blit(text_surface, (WIDTH*0.8, HEIGHT*0.03))
     text_actual_time = FONT_1.render(f'Current time: {(now+time_passed).strftime("%d/%m/%Y, %H:%M:%S")}', True, COLOR_WHITE)
     WINDOW.blit(text_actual_time, (WIDTH*0.8, HEIGHT*0.06))
@@ -38,5 +38,7 @@ def renderTextView(WINDOW, rocket, now, FONT_1, pause, clock, time_passed, times
     WINDOW.blit(thrust_text, (WIDTH*0.8, HEIGHT*0.8))
     angle_text = FONT_1.render(f'Angle: {rocket.angle}°', True, COLOR_WHITE)
     WINDOW.blit(angle_text, (WIDTH*0.8, HEIGHT*0.85))
+
+   # manager.process_events(event)
 
     return time_passed

@@ -30,10 +30,10 @@ Startzeit = 0                   # [s]                # [s]
 Rechenschritte = 100000
 Endzeit = Rechenschritte*5
 #dt=(Endzeit-Startzeit)/Rechenschritte
-timestep = 1
 AktuellerSchritt = 0
 AktuellerRechenschritt = 0
-alleZeitschritte = [1, 5, 10, 25, 100, 500, 1000, 2500, 10000, 25000, 100000]
+alleZeitschritte = [1/60, 5/60, 10/60, 25/60, 100/60, 500/60, 1000/60, 2500/60, 10000/60, 25000/60, 100000/60]
+timestep = alleZeitschritte[0]
 
 move_x = 0
 move_y = 0
