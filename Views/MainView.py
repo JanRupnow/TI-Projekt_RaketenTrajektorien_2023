@@ -1,7 +1,9 @@
-from variables.konstanten import * 
-from methods.game_methods import addClockTime
 import numpy as np
-import pygame_gui as pg
+
+from Globals.Constants import * 
+
+from Methods.GameMethods import addClockTime
+
 def renderTextView(WINDOW, rocket, now, FONT_1, pause, clock, time_passed, timestep, manager):
 
     fps_text = FONT_1.render("FPS: " + str(int(clock.get_fps())), True, COLOR_WHITE)

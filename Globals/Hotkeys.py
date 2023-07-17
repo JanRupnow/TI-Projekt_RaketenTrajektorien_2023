@@ -1,9 +1,10 @@
 import json
-from methods.json_methods import *
+
+from Methods.JsonMethods import *
 
 
 try: 
-    jsonFile = open("./variables/hotkeys_config/current_hotkeys.json")
+    jsonFile = open("./Globals/HotkeysConfig/CurrentHotkeys.json")
     hotkeysJson = json.load(jsonFile)
 
     listHotKeys = []
@@ -71,11 +72,11 @@ try:
 
 except:
     ### Error or Empty while Reading triggers copy from standard to current
-    jsonFile = open("./variables/hotkeys_config/standard_hotkeys.json")
+    jsonFile = open("./Globals/HotkeysConfig/StandardHotkeys.json")
 
     hotkeysJson = json.load(jsonFile)
 
-    with open("./variables/hotkeys_config/current_hotkeys.json", "w") as outfile:
+    with open("./Globals/HotkeysConfig/CurrentHotkeys.json", "w") as outfile:
         json.dump(hotkeysJson, outfile, indent=4, ensure_ascii=False)
 
     listHotKeys = []
@@ -147,14 +148,14 @@ jsonFile.close()
 
 def resetOverwriteCurrent():
     global listHotKeys, H_rocketBoostForward, H_rocketBoostLeft, H_rocketBoostRight, H_lowerRocketBoost, H_zoomRocketStart, H_zoomRocketPlanet, H_zoomRocketPlanetSystem, H_zoomAutoOnRocket, H_centerOnSun, H_centerOnRocket, H_shiftTimeStepUp, H_centerOnRocket, H_shiftTimeStepUp, H_shiftTimeStepDown, H_drawLine, H_showDistance, H_pauseSimulation, H_displayHotKeys, H_leaveSimulation, H_openSettings, H_closeWindow
-    jsonFile = open("./variables/hotkeys_config/standard_hotkeys.json")
+    jsonFile = open("./Globals/HotkeysConfig/StandardHotkeys.json")
     hotkeysJson = json.load(jsonFile)
 
-    with open("./variables/hotkeys_config/current_hotkeys.json", "w") as outfile:
+    with open("./Globals/HotkeysConfig/CurrentHotkeys.json", "w") as outfile:
         json.dump(hotkeysJson, outfile, indent=4, ensure_ascii=False)
 
     listHotKeys = []
-    jsonFile = open("./variables/hotkeys_config/current_hotkeys.json")
+    jsonFile = open("./Globals/HotkeysConfig/CurrentHotkeys.json")
     hotkeysJson = json.load(jsonFile)
     ### Rocket Controls
 

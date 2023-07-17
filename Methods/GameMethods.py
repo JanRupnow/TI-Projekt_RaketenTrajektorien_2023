@@ -1,11 +1,14 @@
-from objects.planet import *
-from variables.konstanten import *
-from objects.rocket import *
-import variables.hotkeys as keys
+
 import datetime
-from methods.support_methods import *
-from views.hotkey_view import *
-from objects.DtoProcessEvent import DTOProcessEvent
+
+from Globals.Constants import *
+import Globals.Hotkeys as keys
+
+from Views.HotkeyView import *
+
+from ViewController.DtoProcessEvent import DTOProcessEvent
+
+from Methods.SupportMethods import *
 
 def addClockTime(pause, time_passed, timestep):
     if not pause:

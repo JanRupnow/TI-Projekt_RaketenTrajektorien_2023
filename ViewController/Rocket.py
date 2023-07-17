@@ -1,8 +1,10 @@
 import numpy as np
-from variables.konstanten import *
 import pygame
 import math
-from methods.game_methods import automaticZoomOnRocket
+
+from Globals.Constants import *
+
+from Methods.GameMethods import automaticZoomOnRocket
 
 
 class Rocket:

@@ -1,20 +1,24 @@
 import pygame
 import pygame_gui as pg
-import sys
-import variables.hotkeys as keys
-from variables.konstanten import *
-from methods.support_methods import *
-from methods.json_methods import *
-from views.view_helper import *
 import json
+import sys
+
+import Globals.Hotkeys as keys
+from Globals.Constants import *
+
+from Views.ViewElements import *
+
+from Methods.SupportMethods import *
+from Methods.JsonMethods import *
+from Methods.ViewMethods import *
 
 manager = pg.UIManager((WIDTH,HEIGHT))
 UI_REFRESH_RATE = clock.tick(60)/1000
 
 
 def resetCurrentRocketConfig():
-    currentJsonFile = open("./variables/rocket_config/current_rocket_config.json", "w")
-    standardJsonFile = open("./variables/rocket_config/standard_rocket_config.json", "r")
+    currentJsonFile = open("./Globals/RocketConfig/CurrentRocketConfig.json", "w")
+    standardJsonFile = open("./Globals/RocketConfig/StandardRocketConfig.json", "r")
 
     json.dump(json.load(standardJsonFile), currentJsonFile, indent=4, ensure_ascii=False)
 
@@ -22,7 +26,7 @@ def resetCurrentRocketConfig():
     standardJsonFile.close()
 
 def updateRocketConfigs(event):
-    jsonfile = open("./variables/rocket_config/current_rocket_config.json", "r+")
+    jsonfile = open("./Globals/RocketConfig/CurrentRocketConfig.json", "r+")
     newJson = keys.updateKeyInJsonRocket(json.load(jsonfile), event.ui_object_id, event.text)
 
     jsonfile.seek(0)
@@ -31,13 +35,13 @@ def updateRocketConfigs(event):
     jsonfile.close()
 
 def getSelectedRocket():
-    return json.load(open("./variables/rocket_config/current_rocket_config.json", "r+"))["Image"]["selectedNumber"]
+    return json.load(open("./Globals/RocketConfig/CurrentRocketConfig.json", "r+"))["Image"]["selectedNumber"]
 
 def getStartplanetName():
-    return json.load(open("./variables/rocket_config/current_rocket_config.json", "r+"))["Start"]["Startplanet"]["value"]
+    return json.load(open("./Globals/RocketConfig/CurrentRocketConfig.json", "r+"))["Start"]["Startplanet"]["value"]
 
 def updateSelectedRocket(selectedRocket):
-    jsonfile = open("./variables/rocket_config/current_rocket_config.json", "r+")
+    jsonfile = open("./Globals/RocketConfig/CurrentRocketConfig.json", "r+")
     
     config = json.load(jsonfile)
     config["Image"]["selectedNumber"] = selectedRocket
@@ -48,7 +52,7 @@ def updateSelectedRocket(selectedRocket):
     jsonfile.close()
 
 def getTextsAndValuesForConfigUI():
-    jsonfile = open("./variables/rocket_config/current_rocket_config.json", "r")
+    jsonfile = open("./Globals/RocketConfig/CurrentRocketConfig.json", "r")
     config = json.load(jsonfile)
 
     configPairs = []

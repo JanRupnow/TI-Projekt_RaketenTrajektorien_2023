@@ -1,19 +1,19 @@
-from objects.planet import Planet
-from variables.konstanten import *
 from astropy.time import Time
+import numpy as np
 from sunpy.coordinates import get_body_heliographic_stonyhurst
-from objects.planet import *
 import math
 import json
 
+from Globals.Constants import *
 
+from ViewController.Planet import Planet
 
 
 
 # Metric from: https://nssdc.gsfc.nasa.gov/planetary/factsheet/
 
 def getInitialPlanets():
-    jsonfile = open("./variables/rocket_config/current_rocket_config.json")
+    jsonfile = open("./Globals/RocketConfig/CurrentRocketConfig.json")
     config = json.load(jsonfile)
     time_year = config["StartTime"]["Year"]["value"]
     time_month = config["StartTime"]["Month"]["value"]

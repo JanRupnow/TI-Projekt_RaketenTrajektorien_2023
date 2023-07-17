@@ -1,7 +1,7 @@
 {
     "Start": {
         "AngleOnPlanet": {
-            "value": 90,
+            "value": 30,
             "text": "angle on planet"
         },
         "Startplanet": {
@@ -22,37 +22,33 @@
             "value": 10000,
             "text": "mass of the rocket structure"
         },
-        "PropellantMass": {
+        "PropellantMass":{
             "value": 2000,
             "text": "mass of the propellant"
         }
-    },
-    "StartTime": {
-        "Year": {
-            "value": 2008,
-            "text": "year of rocketstart"
-        },
-        "Month": {
-            "value": 2,
-            "text": "month of rocketstart"
-        },
-        "Day": {
-            "value": 29,
-            "text": "day of rocketstart"
-        }
+    }, "StartTime":{
+        "Year":{
+            "value":2023,
+            "text": "year of rocketstart"},
+        "Month":{
+            "value":5,
+            "text": "month of rocketstart"},
+        "Day":{
+            "value":24,
+            "text": "day of rocketstart"}
     },
     "Color": {
-        "red": 255,
+        "red": 255, 
         "green": 255,
         "blue": 255
     },
     "Image": {
         "selectedNumber": 0,
         "path": [
-            "./image_sources/Rocket1.png",
-            "./image_sources/Rocket2.png",
-            "./image_sources/Rocket3.png",
-            "./image_sources/Rocket4.png"
+            "./Images/Rocket1.png",
+            "./Images/Rocket2.png",
+            "./Images/Rocket3.png",
+            "./Images/Rocket4.png"
         ]
     },
     "Radius": 2

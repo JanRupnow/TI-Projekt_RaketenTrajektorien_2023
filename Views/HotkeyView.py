@@ -1,12 +1,17 @@
 import pygame
 import pygame_gui as pg
 import sys
-import variables.hotkeys as keys
-from variables.konstanten import *
-from methods.support_methods import *
-from methods.json_methods import *
 import json
-from views.view_helper import *
+
+import Globals.Hotkeys as keys
+from Globals.Constants import *
+
+from Views.ViewElements import *
+
+from Methods.SupportMethods import *
+from Methods.JsonMethods import *
+from Methods.ViewMethods import *
+
 
 manager = pg.UIManager((WIDTH,HEIGHT))
 UI_REFRESH_RATE = clock.tick(60)/1000

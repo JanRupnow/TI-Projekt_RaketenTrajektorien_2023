@@ -1,48 +1,9 @@
-from variables.konstanten import *
-from methods.support_methods import *
+from Globals.Constants import *
+from Methods.SupportMethods import *
 import pygame_gui as pg
 import json
 
-def getMonth():
-    jsonfile = open("./variables/rocket_config/current_rocket_config.json")
-    config = json.load(jsonfile)
-    month = config["StartTime"]["Month"]["value"]
-    return month
 
-def getDay():
-    jsonfile = open("./variables/rocket_config/current_rocket_config.json")
-    config = json.load(jsonfile)
-    day = config["StartTime"]["Day"]["value"]
-    return day
-
-def getYear():
-    jsonfile = open("./variables/rocket_config/current_rocket_config.json")
-    config = json.load(jsonfile)
-    year = config["StartTime"]["Year"]["value"]
-    return year
-
-def checkDate(month, day ):
-    if month in [1,3,5,7,8,10,12]:
-         if day > 0 and 31 >= day:
-              return True
-    elif month in [4,6,8,11]:
-         if day > 0 and 30 >= day:
-              return True
-    else:
-        if getYear() % 4 != 0:
-            if day > 0 and 28>= day:
-                return True
-        else:
-             if day> 0 and 29>= day:
-                  return True
-    return False
-def overWriteStandardDay():
-    jsonfile = open("./variables/rocket_config/current_rocket_config.json", "r+")
-    config = json.load(jsonfile)
-    config["StartTime"]["Day"]["value"] = 28
-    jsonfile.seek(0)
-    jsonfile.truncate()
-    json.dump(config, jsonfile, indent=4, ensure_ascii=False)
 
 def createUiLabel(text, position_x, position_y, manager, size_x = WIDTH*0.1):
     return pg.elements.UILabel(relative_rect=pygame.Rect((position_x,position_y), (size_x,HEIGHT*0.05)),
@@ -65,7 +26,7 @@ def createUiTextBoxAndTextEntryHotkey(hotkey,position_x, position_y, manager, mu
     return TEXT_BOX, TEXT_INPUT
 
 def getRocketImgage(rocketImageNumber):
-    jsonfile = open("./variables/rocket_config/current_rocket_config.json")
+    jsonfile = open("./Globals/RocketConfig/CurrentRocketConfig.json")
     config = json.load(jsonfile)
     img = pygame.image.load(config["Image"]["path"][rocketImageNumber])
     return pygame.transform.scale_by(img, 300/img.get_height())
@@ -74,7 +35,7 @@ def createRocketImage(rocketImageNumber,manager, position_x = WIDTH*0.5, positio
     for element in manager.root_container.elements:
                     if "rocket_image" in element.get_object_ids():
                         element.kill()
-    jsonfile = open("./variables/rocket_config/current_rocket_config.json")
+    jsonfile = open("./Globals/RocketConfig/CurrentRocketConfig.json")
     config = json.load(jsonfile)
     img = pygame.image.load(config["Image"]["path"][rocketImageNumber])
     img = pygame.transform.scale_by(img, 300/img.get_height())

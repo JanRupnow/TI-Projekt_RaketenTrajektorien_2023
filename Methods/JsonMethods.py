@@ -1,4 +1,4 @@
-from methods.support_methods import *
+from Methods.SupportMethods import *
 
 def updateKeyInJson(json, hotkey):
     for category in json.keys():

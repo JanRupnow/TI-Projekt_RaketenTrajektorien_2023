@@ -1,7 +1,8 @@
 import math
 import pygame
 import numpy as np
-from variables.konstanten import *
+
+from Globals.Constants import *
 
 class Planet:
 
