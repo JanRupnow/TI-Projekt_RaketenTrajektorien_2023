@@ -1,10 +1,10 @@
 import json
 
-from ViewController.Rocket import *
+from ViewController.Rocket.Rocket import *
 from ViewController.Planet import *
 
 from Methods.JsonMethods import *
-from Methods.InitialisePlanets import *
+from Methods.ConfigurePlanets import *
 
 def LoadRocketFromPath(path, planets : list[Planet]):
     jsonfile = open(path)

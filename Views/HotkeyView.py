@@ -14,7 +14,7 @@ from Methods.ViewMethods import *
 
 
 manager = pg.UIManager((WIDTH,HEIGHT))
-UI_REFRESH_RATE = clock.tick(60)/1000
+UI_REFRESH_RATE = Clock.tick(60)/1000
 
 
 def ChangeHotKeyFromInput(event,hotkey):

@@ -2,7 +2,7 @@ import numpy as np
 
 from Globals.Constants import * 
 
-from ViewController.Rocket import Rocket
+from ViewController.Rocket.Rocket import Rocket
 
 from Methods.GameMethods import AddClockTime
 
@@ -21,15 +21,15 @@ def RenderFlightInterface(WINDOW, rocket : Rocket, now, FONT_1, pause, clock, ti
     text_time_passed = FONT_1.render(f'Passed time: {time_passed}', True, COLOR_WHITE)
     WINDOW.blit(text_time_passed, (WIDTH*0.8, HEIGHT*0.09))
 
-    distance = np.sqrt( (rocket.r_x[rocket.aktuellerschritt] - rocket.nearestPlanet.r_x[rocket.nearestPlanet.aktuellerschritt])**2 
-                        + (rocket.r_z[rocket.aktuellerschritt] - rocket.nearestPlanet.r_z[rocket.nearestPlanet.aktuellerschritt])**2)
+    distance = np.sqrt( (rocket.r_x[rocket.currentStep] - rocket.nearestPlanet.r_x[rocket.nearestPlanet.currentStep])**2 
+                        + (rocket.r_z[rocket.currentStep] - rocket.nearestPlanet.r_z[rocket.nearestPlanet.currentStep])**2)
     speed = round(rocket.GetCurrentRelativeVelocity()) if distance < rocket.nearestPlanet.radius*5 else round(rocket.GetAbsoluteVelocity())
     rocket_velocity = FONT_1.render(f'Rocket Speed: {speed}km/h', True, COLOR_WHITE)
     WINDOW.blit(rocket_velocity, (WIDTH*0.8, HEIGHT*0.12))
     if (not rocket.rocketstarted) or rocket.landed:
         rocket_velocity = FONT_1.render(f'Altitude: {0} km (Rocket has not started)',True, COLOR_WHITE)
-    elif rocket.nearestPlanet.distance_to_rocket-rocket.nearestPlanet.radius < 3/2* rocket.nearestPlanet.radius:
-        rocket_velocity = FONT_1.render(f'Altitude: {round((rocket.nearestPlanet.distance_to_rocket-rocket.nearestPlanet.radius)/1000,0)} km', True, COLOR_WHITE)
+    elif rocket.nearestPlanet.distanceToRocket-rocket.nearestPlanet.radius < 3/2* rocket.nearestPlanet.radius:
+        rocket_velocity = FONT_1.render(f'Altitude: {round((rocket.nearestPlanet.distanceToRocket-rocket.nearestPlanet.radius)/1000,0)} km', True, COLOR_WHITE)
     else:
         rocket_velocity = FONT_1.render(f'Altitude: not available in space', True, COLOR_WHITE)
     WINDOW.blit(rocket_velocity, (WIDTH*0.8, HEIGHT*0.15))

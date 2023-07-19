@@ -7,7 +7,7 @@ import Globals.Hotkeys as keys
 from Views.HotkeyView import *
 
 from ViewController.DtoProcessEvent import DTOProcessEvent
-from ViewController.Rocket import Rocket
+from ViewController.Rocket.Rocket import Rocket
 from ViewController.Planet import Planet
 
 from Methods.SupportMethods import *
@@ -19,15 +19,15 @@ def AddClockTime(pause, time_passed, timestep):
 
 def AutomaticZoomOnRocket(rocket : Rocket, scale, move_x, move_y):
     if rocket.zoomOnRocket:
-        move_x, move_y = -rocket.r_x[rocket.aktuellerschritt] * scale, -rocket.r_z[rocket.aktuellerschritt] * scale
+        move_x, move_y = -rocket.r_x[rocket.currentStep] * scale, -rocket.r_z[rocket.currentStep] * scale
     return move_x, move_y
 
 def AutomaticZoomOnRocketOnce(rocket : Rocket, scale, move_x, move_y):
-    move_x, move_y = -rocket.r_x[rocket.aktuellerschritt] * scale, -rocket.r_z[rocket.aktuellerschritt] * scale
+    move_x, move_y = -rocket.r_x[rocket.currentStep] * scale, -rocket.r_z[rocket.currentStep] * scale
     return move_x, move_y
 
 def CenterScreenOnPlanet(planet : Planet, scale, move_x, move_y):
-     move_x, move_y = -planet.r_x[planet.aktuellerschritt] * scale, -planet.r_z[planet.aktuellerschritt] * scale
+     move_x, move_y = -planet.r_x[planet.currentStep] * scale, -planet.r_z[planet.currentStep] * scale
      return move_x, move_y
 
 def ScaleRelative(factor, startscale):
@@ -39,9 +39,9 @@ def MousePositionShiftScreen(mouse_x, mouse_y, move_x, move_y):
     return move_x, move_y
 
 def ShiftTimeStep(shiftUp, rocket : Rocket, planets : list[Planet], timestep):
-    index = min(alleZeitschritte.index(timestep) + 1, len(alleZeitschritte) - 1) if shiftUp else max(alleZeitschritte.index(timestep) - 1, 0)
+    index = min(AllTimeSteps.index(timestep) + 1, len(AllTimeSteps) - 1) if shiftUp else max(AllTimeSteps.index(timestep) - 1, 0)
     
-    timestep = alleZeitschritte[index]
+    timestep = AllTimeSteps[index]
     rocket.timestep = timestep
     rocket.timestepChanged = True
     for planet in planets:
@@ -50,10 +50,10 @@ def ShiftTimeStep(shiftUp, rocket : Rocket, planets : list[Planet], timestep):
 
 
 def PlanetIsInScreen(scale, planet : Planet, move_x, move_y, height, width):
-    inScreen = planet.r_z[planet.aktuellerschritt]*scale+planet.radius*scale > -move_y-height/2
-    inScreen = inScreen and planet.r_z[planet.aktuellerschritt]*scale-planet.radius*scale < -move_y+height/2
-    inScreen = inScreen and planet.r_x[planet.aktuellerschritt]*scale+planet.radius*scale > -move_x-width/2
-    return inScreen and planet.r_x[planet.aktuellerschritt]*scale-planet.radius*scale < -move_x+width/2
+    inScreen = planet.r_z[planet.currentStep]*scale+planet.radius*scale > -move_y-height/2
+    inScreen = inScreen and planet.r_z[planet.currentStep]*scale-planet.radius*scale < -move_y+height/2
+    inScreen = inScreen and planet.r_x[planet.currentStep]*scale+planet.radius*scale > -move_x-width/2
+    return inScreen and planet.r_x[planet.currentStep]*scale-planet.radius*scale < -move_x+width/2
 
 
 def ProcessHotKeyEvents(event, dto: DTOProcessEvent, rocket : Rocket, planets : list[Planet]):
