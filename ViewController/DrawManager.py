@@ -43,7 +43,7 @@ class DrawManager():
         
     @abstractmethod
     def RocketDraw(rocket : Rocket, window, move_x, move_y, planets : list[Planet], paused, scale, width, height):
-        if not rocket.state == RocketState.currentlyFlying:
+        if not rocket.state == RocketState.flying:
             #self.drawAndValueBeforeStarting(window, scale, width, height, move_x, move_y)
             DrawManager.RocketDrawIfNotStarted(rocket, paused, planets, window, scale, width, height, move_x, move_y)
             return
@@ -125,7 +125,7 @@ class DrawManager():
         if rocket.radius < MIN_ROCKET_RADIUS:
             pygame.draw.circle(window, rocket.color, (rocket.r_x[rocket.currentStep]*scale+move_x+width/2, rocket.r_z[rocket.currentStep]*scale+move_y+height/2), MIN_ROCKET_RADIUS)
             return
-        if rocket.state == RocketState.currentlyFlying:
+        if rocket.state == RocketState.flying:
             rocket.img = pygame.transform.rotate(rocket.notRotatedImg, math.atan2(rocket.r_z[rocket.currentStep] - rocket.nearestPlanet.r_z[rocket.currentStep], 
                                                                               rocket.r_x[rocket.currentStep] - rocket.nearestPlanet.r_x[rocket.currentStep]) * (-180) /np.pi - 90)
         else:

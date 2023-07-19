@@ -15,93 +15,6 @@ from Methods.ViewMethods import *
 manager = pg.UIManager((WIDTH,HEIGHT))
 UI_REFRESH_RATE = Clock.tick(60)/1000
 
-
-def ResetCurrentRocketConfig():
-    currentJsonFile = open("./Globals/RocketConfig/CurrentRocketConfig.json", "w")
-    standardJsonFile = open("./Globals/RocketConfig/StandardRocketConfig.json", "r")
-
-    json.dump(json.load(standardJsonFile), currentJsonFile, indent=4, ensure_ascii=False)
-
-    currentJsonFile.close()
-    standardJsonFile.close()
-
-def UpdateRocketConfigs(event):
-    jsonfile = open("./Globals/RocketConfig/CurrentRocketConfig.json", "r+")
-    newJson = keys.UpdateKeyInJsonRocket(json.load(jsonfile), event.ui_object_id, event.text)
-
-    jsonfile.seek(0)
-    jsonfile.truncate()
-    json.dump(newJson, jsonfile, indent=4, ensure_ascii=False)
-    jsonfile.close()
-
-def GetSelectedRocket():
-    return json.load(open("./Globals/RocketConfig/CurrentRocketConfig.json", "r+"))["Image"]["selectedNumber"]
-
-def GetStartplanetName():
-    return json.load(open("./Globals/RocketConfig/CurrentRocketConfig.json", "r+"))["Start"]["Startplanet"]["value"]
-
-def UpdateSelectedRocket(selectedRocket):
-    jsonfile = open("./Globals/RocketConfig/CurrentRocketConfig.json", "r+")
-    
-    config = json.load(jsonfile)
-    config["Image"]["selectedNumber"] = selectedRocket
-
-    jsonfile.seek(0)
-    jsonfile.truncate()
-    json.dump(config, jsonfile, indent=4, ensure_ascii=False)
-    jsonfile.close()
-
-def GetTextsAndValuesForConfigUI():
-    jsonfile = open("./Globals/RocketConfig/CurrentRocketConfig.json", "r")
-    config = json.load(jsonfile)
-
-    configPairs = []
-
-    for category in config.keys():
-        try:
-            for key in config[category].keys():
-                configPairs.append((config[category][key]["value"], config[category][key]["text"]))
-        except:
-            pass
-
-    jsonfile.close()
-    return configPairs
-
-
-def InitializeStartUI(selectedNumber=0):
-    CreateUiGameTitleLabel("Spaceflight Simulator", WIDTH*0.45, HEIGHT*0.05, manager)
-    CreateUiButton("Start the Game", WIDTH*0.465, HEIGHT*0.8, manager)
-    CreateUiButton("Configure the Rocket", WIDTH*0.45, HEIGHT*0.7, manager, WIDTH*0.1)
-    CreateRocketImage(selectedNumber, manager)
-
-def InitializeRocketConfigurationUI():
-    CreateUiLabel("Rocket Configuration", WIDTH*0.7, HEIGHT*0.2, manager)
-    CreateUiButton("Reset Configuration", WIDTH*0.8, HEIGHT*0.8, manager, length_x= WIDTH*0.1)
-    CreateUiButton("Previous", WIDTH*0.38, HEIGHT*0.7, manager)
-    CreateUiButton("Next", WIDTH*0.55, HEIGHT*0.7, manager)
-    configPairs = GetTextsAndValuesForConfigUI()
-    CreateUiTextBoxAndTextEntry(configPairs[0][1], configPairs[0][0], WIDTH*0.7, HEIGHT*0.3, manager)
-    CreateUiTextBox(configPairs[1][1],WIDTH*0.7, HEIGHT*0.35, manager)
-    CreateDropDown(planetNameArray,
-                              planetNameArray.index(GetStartplanetName()),
-                              WIDTH*0.8, HEIGHT*0.35, manager)
-    CreateUiTextBoxAndTextEntry(configPairs[2][1], configPairs[2][0], WIDTH*0.7, HEIGHT*0.4, manager)
-    CreateUiTextBoxAndTextEntry(configPairs[3][1], configPairs[3][0], WIDTH*0.7, HEIGHT*0.45, manager)
-    CreateUiTextBoxAndTextEntry(configPairs[4][1], configPairs[4][0], WIDTH*0.7, HEIGHT*0.5, manager,size_x=WIDTH*0.03)
-    CreateUiTextBoxAndTextEntry(configPairs[5][1], configPairs[5][0], WIDTH*0.7, HEIGHT*0.55, manager)
-    CreateUiTextBoxAndTextEntry(configPairs[6][1], configPairs[6][0], WIDTH*0.2, HEIGHT*0.3, manager)
-    CreateUiTextBoxAndTextEntry(configPairs[7][1], configPairs[7][0], WIDTH*0.2, HEIGHT*0.35, manager)
-    CreateUiTextBoxAndTextEntry(configPairs[8][1], configPairs[8][0], WIDTH*0.2, HEIGHT*0.4, manager)
-# removes all ui elements => no used object_ids
-def ClearStartUI():
-    manager.clear_and_reset() 
-
-def ResetAndShowUI(selectedNumber):
-    ClearStartUI()
-    InitializeStartUI(selectedNumber)
-    InitializeRocketConfigurationUI()
-
-
 def ShowStartUI():
     showGUI = True
     showConfiguration = False
@@ -212,3 +125,92 @@ def ShowStartUI():
         pygame.display.update()
     
     ClearStartUI()
+
+
+
+def InitializeStartUI(selectedNumber=0):
+    CreateUiGameTitleLabel("Spaceflight Simulator", WIDTH*0.45, HEIGHT*0.05, manager)
+    CreateUiButton("Start the Game", WIDTH*0.465, HEIGHT*0.8, manager)
+    CreateUiButton("Configure the Rocket", WIDTH*0.45, HEIGHT*0.7, manager, WIDTH*0.1)
+    CreateRocketImage(selectedNumber, manager)
+
+def InitializeRocketConfigurationUI():
+    CreateUiLabel("Rocket Configuration", WIDTH*0.7, HEIGHT*0.2, manager)
+    CreateUiButton("Reset Configuration", WIDTH*0.8, HEIGHT*0.8, manager, length_x= WIDTH*0.1)
+    CreateUiButton("Previous", WIDTH*0.38, HEIGHT*0.7, manager)
+    CreateUiButton("Next", WIDTH*0.55, HEIGHT*0.7, manager)
+    configPairs = GetTextsAndValuesForConfigUI()
+    CreateUiTextBoxAndTextEntry(configPairs[0][1], configPairs[0][0], WIDTH*0.7, HEIGHT*0.3, manager)
+    CreateUiTextBox(configPairs[1][1],WIDTH*0.7, HEIGHT*0.35, manager)
+    CreateDropDown(planetNameArray,
+                              planetNameArray.index(GetStartplanetName()),
+                              WIDTH*0.8, HEIGHT*0.35, manager)
+    CreateUiTextBoxAndTextEntry(configPairs[2][1], configPairs[2][0], WIDTH*0.7, HEIGHT*0.4, manager)
+    CreateUiTextBoxAndTextEntry(configPairs[3][1], configPairs[3][0], WIDTH*0.7, HEIGHT*0.45, manager)
+    CreateUiTextBoxAndTextEntry(configPairs[4][1], configPairs[4][0], WIDTH*0.7, HEIGHT*0.5, manager,size_x=WIDTH*0.03)
+    CreateUiTextBoxAndTextEntry(configPairs[5][1], configPairs[5][0], WIDTH*0.7, HEIGHT*0.55, manager)
+    CreateUiTextBoxAndTextEntry(configPairs[6][1], configPairs[6][0], WIDTH*0.2, HEIGHT*0.3, manager)
+    CreateUiTextBoxAndTextEntry(configPairs[7][1], configPairs[7][0], WIDTH*0.2, HEIGHT*0.35, manager)
+    CreateUiTextBoxAndTextEntry(configPairs[8][1], configPairs[8][0], WIDTH*0.2, HEIGHT*0.4, manager)
+# removes all ui elements => no used object_ids
+def ClearStartUI():
+    manager.clear_and_reset() 
+
+def ResetAndShowUI(selectedNumber):
+    ClearStartUI()
+    InitializeStartUI(selectedNumber)
+    InitializeRocketConfigurationUI()
+    
+def ResetCurrentRocketConfig():
+    currentJsonFile = open("./Globals/RocketConfig/CurrentRocketConfig.json", "w")
+    standardJsonFile = open("./Globals/RocketConfig/StandardRocketConfig.json", "r")
+
+    json.dump(json.load(standardJsonFile), currentJsonFile, indent=4, ensure_ascii=False)
+
+    currentJsonFile.close()
+    standardJsonFile.close()
+
+def UpdateRocketConfigs(event):
+    jsonfile = open("./Globals/RocketConfig/CurrentRocketConfig.json", "r+")
+    newJson = keys.UpdateKeyInJsonRocket(json.load(jsonfile), event.ui_object_id, event.text)
+
+    jsonfile.seek(0)
+    jsonfile.truncate()
+    json.dump(newJson, jsonfile, indent=4, ensure_ascii=False)
+    jsonfile.close()
+
+def GetSelectedRocket():
+    return json.load(open("./Globals/RocketConfig/CurrentRocketConfig.json", "r+"))["Image"]["selectedNumber"]
+
+def GetStartplanetName():
+    return json.load(open("./Globals/RocketConfig/CurrentRocketConfig.json", "r+"))["Start"]["Startplanet"]["value"]
+
+def UpdateSelectedRocket(selectedRocket):
+    jsonfile = open("./Globals/RocketConfig/CurrentRocketConfig.json", "r+")
+    
+    config = json.load(jsonfile)
+    config["Image"]["selectedNumber"] = selectedRocket
+
+    jsonfile.seek(0)
+    jsonfile.truncate()
+    json.dump(config, jsonfile, indent=4, ensure_ascii=False)
+    jsonfile.close()
+
+def GetTextsAndValuesForConfigUI():
+    jsonfile = open("./Globals/RocketConfig/CurrentRocketConfig.json", "r")
+    config = json.load(jsonfile)
+
+    configPairs = []
+
+    for category in config.keys():
+        try:
+            for key in config[category].keys():
+                configPairs.append((config[category][key]["value"], config[category][key]["text"]))
+        except:
+            pass
+
+    jsonfile.close()
+    return configPairs
+
+
+

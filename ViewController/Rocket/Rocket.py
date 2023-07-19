@@ -110,13 +110,13 @@ class Rocket:
                            (self.r_z[self.currentCalculationStep] - self.nearestPlanet.r_z[self.currentCalculationStep])**2)
 
     def GetRelativeVelocity(self, i):
-        if not self.state == RocketState.currentlyFlying:
+        if not self.state == RocketState.flying:
             return 0
         return np.sqrt( (self.v_x[i] - self.nearestPlanet.v_x[i])**2 
                         + (self.v_z[i] - self.nearestPlanet.v_z[i])**2)
         
     def GetCurrentRelativeVelocity(self):
-        if not self.state == RocketState.currentlyFlying:
+        if not self.state == RocketState.flying:
             return 0
         return np.sqrt( (self.v_x[self.currentStep] - self.nearestPlanet.v_x[self.nearestPlanet.currentStep])**2 
                         + (self.v_z[self.currentStep] - self.nearestPlanet.v_z[self.nearestPlanet.currentStep])**2)
@@ -124,7 +124,7 @@ class Rocket:
 
     # in m/s
     def GetAbsoluteVelocity(self):
-        if self.state == RocketState.currentlyFlying:
+        if self.state == RocketState.flying:
             return np.sqrt(self.v_x[self.currentStep]**2 + self.v_z[self.currentStep]**2)
         return 0
     def ResetArray(self):

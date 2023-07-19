@@ -70,10 +70,10 @@ def ProcessHotKeyEvents(event, dto: DTOProcessEvent, rocket : Rocket, planets : 
         dto.move_y += distance
     elif KeyPressed[keys.H_moveScreenDown[0]] or mouse_y == window_h - 1:
         dto.move_y -= distance
-    elif ( not event.type == pygame.KEYDOWN ) and KeyPressed[keys.H_rocketBoostForward[0]] and rocket.thrust<10 and (rocket.state == RocketState.currentlyFlying or not dto.pause):
+    elif ( not event.type == pygame.KEYDOWN ) and KeyPressed[keys.H_rocketBoostForward[0]] and rocket.thrust<10 and (rocket.state == RocketState.flying or not dto.pause):
         rocket.thrust += 1
         rocket.powerchanged = True
-        rocket.state = RocketState.currentlyFlying
+        rocket.state = RocketState.flying
     elif ( not event.type == pygame.KEYDOWN ) and KeyPressed[keys.H_rocketBoostLeft[0]] and rocket.angle>-45:
         rocket.angle -= 1
         rocket.powerchanged = True
