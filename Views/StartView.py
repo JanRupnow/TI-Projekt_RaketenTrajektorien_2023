@@ -16,7 +16,7 @@ manager = pg.UIManager((WIDTH,HEIGHT))
 UI_REFRESH_RATE = clock.tick(60)/1000
 
 
-def resetCurrentRocketConfig():
+def ResetCurrentRocketConfig():
     currentJsonFile = open("./Globals/RocketConfig/CurrentRocketConfig.json", "w")
     standardJsonFile = open("./Globals/RocketConfig/StandardRocketConfig.json", "r")
 
@@ -25,22 +25,22 @@ def resetCurrentRocketConfig():
     currentJsonFile.close()
     standardJsonFile.close()
 
-def updateRocketConfigs(event):
+def UpdateRocketConfigs(event):
     jsonfile = open("./Globals/RocketConfig/CurrentRocketConfig.json", "r+")
-    newJson = keys.updateKeyInJsonRocket(json.load(jsonfile), event.ui_object_id, event.text)
+    newJson = keys.UpdateKeyInJsonRocket(json.load(jsonfile), event.ui_object_id, event.text)
 
     jsonfile.seek(0)
     jsonfile.truncate()
     json.dump(newJson, jsonfile, indent=4, ensure_ascii=False)
     jsonfile.close()
 
-def getSelectedRocket():
+def GetSelectedRocket():
     return json.load(open("./Globals/RocketConfig/CurrentRocketConfig.json", "r+"))["Image"]["selectedNumber"]
 
-def getStartplanetName():
+def GetStartplanetName():
     return json.load(open("./Globals/RocketConfig/CurrentRocketConfig.json", "r+"))["Start"]["Startplanet"]["value"]
 
-def updateSelectedRocket(selectedRocket):
+def UpdateSelectedRocket(selectedRocket):
     jsonfile = open("./Globals/RocketConfig/CurrentRocketConfig.json", "r+")
     
     config = json.load(jsonfile)
@@ -51,7 +51,7 @@ def updateSelectedRocket(selectedRocket):
     json.dump(config, jsonfile, indent=4, ensure_ascii=False)
     jsonfile.close()
 
-def getTextsAndValuesForConfigUI():
+def GetTextsAndValuesForConfigUI():
     jsonfile = open("./Globals/RocketConfig/CurrentRocketConfig.json", "r")
     config = json.load(jsonfile)
 
@@ -68,142 +68,142 @@ def getTextsAndValuesForConfigUI():
     return configPairs
 
 
-def initializeStartUI(selectedNumber=0):
-    createUiGameTitleLabel("Spaceflight Simulator", WIDTH*0.45, HEIGHT*0.05, manager)
-    createUiButton("Start the Game", WIDTH*0.465, HEIGHT*0.8, manager)
-    createUiButton("Configure the Rocket", WIDTH*0.45, HEIGHT*0.7, manager, WIDTH*0.1)
-    createRocketImage(selectedNumber, manager)
+def InitializeStartUI(selectedNumber=0):
+    CreateUiGameTitleLabel("Spaceflight Simulator", WIDTH*0.45, HEIGHT*0.05, manager)
+    CreateUiButton("Start the Game", WIDTH*0.465, HEIGHT*0.8, manager)
+    CreateUiButton("Configure the Rocket", WIDTH*0.45, HEIGHT*0.7, manager, WIDTH*0.1)
+    CreateRocketImage(selectedNumber, manager)
 
-def initializeRocketConfigurationUI():
-    createUiLabel("Rocket Configuration", WIDTH*0.7, HEIGHT*0.2, manager)
-    createUiButton("Reset Configuration", WIDTH*0.8, HEIGHT*0.8, manager, length_x= WIDTH*0.1)
-    createUiButton("Previous", WIDTH*0.38, HEIGHT*0.7, manager)
-    createUiButton("Next", WIDTH*0.55, HEIGHT*0.7, manager)
-    configPairs = getTextsAndValuesForConfigUI()
-    createUiTextBoxAndTextEntry(configPairs[0][1], configPairs[0][0], WIDTH*0.7, HEIGHT*0.3, manager)
-    createUiTextBox(configPairs[1][1],WIDTH*0.7, HEIGHT*0.35, manager)
-    createDropDown(planetNameArray,
-                              planetNameArray.index(getStartplanetName()),
+def InitializeRocketConfigurationUI():
+    CreateUiLabel("Rocket Configuration", WIDTH*0.7, HEIGHT*0.2, manager)
+    CreateUiButton("Reset Configuration", WIDTH*0.8, HEIGHT*0.8, manager, length_x= WIDTH*0.1)
+    CreateUiButton("Previous", WIDTH*0.38, HEIGHT*0.7, manager)
+    CreateUiButton("Next", WIDTH*0.55, HEIGHT*0.7, manager)
+    configPairs = GetTextsAndValuesForConfigUI()
+    CreateUiTextBoxAndTextEntry(configPairs[0][1], configPairs[0][0], WIDTH*0.7, HEIGHT*0.3, manager)
+    CreateUiTextBox(configPairs[1][1],WIDTH*0.7, HEIGHT*0.35, manager)
+    CreateDropDown(planetNameArray,
+                              planetNameArray.index(GetStartplanetName()),
                               WIDTH*0.8, HEIGHT*0.35, manager)
-    createUiTextBoxAndTextEntry(configPairs[2][1], configPairs[2][0], WIDTH*0.7, HEIGHT*0.4, manager)
-    createUiTextBoxAndTextEntry(configPairs[3][1], configPairs[3][0], WIDTH*0.7, HEIGHT*0.45, manager)
-    createUiTextBoxAndTextEntry(configPairs[4][1], configPairs[4][0], WIDTH*0.7, HEIGHT*0.5, manager,size_x=WIDTH*0.03)
-    createUiTextBoxAndTextEntry(configPairs[5][1], configPairs[5][0], WIDTH*0.7, HEIGHT*0.55, manager)
-    createUiTextBoxAndTextEntry(configPairs[6][1], configPairs[6][0], WIDTH*0.2, HEIGHT*0.3, manager)
-    createUiTextBoxAndTextEntry(configPairs[7][1], configPairs[7][0], WIDTH*0.2, HEIGHT*0.35, manager)
-    createUiTextBoxAndTextEntry(configPairs[8][1], configPairs[8][0], WIDTH*0.2, HEIGHT*0.4, manager)
+    CreateUiTextBoxAndTextEntry(configPairs[2][1], configPairs[2][0], WIDTH*0.7, HEIGHT*0.4, manager)
+    CreateUiTextBoxAndTextEntry(configPairs[3][1], configPairs[3][0], WIDTH*0.7, HEIGHT*0.45, manager)
+    CreateUiTextBoxAndTextEntry(configPairs[4][1], configPairs[4][0], WIDTH*0.7, HEIGHT*0.5, manager,size_x=WIDTH*0.03)
+    CreateUiTextBoxAndTextEntry(configPairs[5][1], configPairs[5][0], WIDTH*0.7, HEIGHT*0.55, manager)
+    CreateUiTextBoxAndTextEntry(configPairs[6][1], configPairs[6][0], WIDTH*0.2, HEIGHT*0.3, manager)
+    CreateUiTextBoxAndTextEntry(configPairs[7][1], configPairs[7][0], WIDTH*0.2, HEIGHT*0.35, manager)
+    CreateUiTextBoxAndTextEntry(configPairs[8][1], configPairs[8][0], WIDTH*0.2, HEIGHT*0.4, manager)
 # removes all ui elements => no used object_ids
-def clearStartUI():
+def ClearStartUI():
     manager.clear_and_reset() 
 
-def resetAndShowUI(selectedNumber):
-    clearStartUI()
-    initializeStartUI(selectedNumber)
-    initializeRocketConfigurationUI()
+def ResetAndShowUI(selectedNumber):
+    ClearStartUI()
+    InitializeStartUI(selectedNumber)
+    InitializeRocketConfigurationUI()
 
 
-def showStartUI():
+def ShowStartUI():
     showGUI = True
     showConfiguration = False
-    selectedNumber = getSelectedRocket()
+    selectedNumber = GetSelectedRocket()
     if len(manager.get_sprite_group())<4:
-        initializeStartUI(selectedNumber)
+        InitializeStartUI(selectedNumber)
     while showGUI:
         for event in pygame.event.get():
             if event.type == pg.UI_BUTTON_PRESSED and event.ui_object_id == "StarttheGame_button":
                 showGUI = False
             if event.type == pg.UI_BUTTON_PRESSED and event.ui_object_id == "ConfiguretheRocket_button" and not showConfiguration:
-                initializeRocketConfigurationUI()
+                InitializeRocketConfigurationUI()
                 showConfiguration = True
             if event.type == pg.UI_BUTTON_PRESSED and event.ui_object_id == "ResetConfiguration_button":
-                resetCurrentRocketConfig()
-                resetAndShowUI(selectedNumber)
+                ResetCurrentRocketConfig()
+                ResetAndShowUI(selectedNumber)
             if event.type == pg.UI_BUTTON_PRESSED and event.ui_object_id == "Previous_button" and selectedNumber > 0:
                 selectedNumber-= 1
-                createRocketImage(selectedNumber, manager)
-                updateSelectedRocket(selectedNumber)
-                resetAndShowUI(selectedNumber)
+                CreateRocketImage(selectedNumber, manager)
+                UpdateSelectedRocket(selectedNumber)
+                ResetAndShowUI(selectedNumber)
 
             if event.type == pg.UI_BUTTON_PRESSED and event.ui_object_id == "Next_button" and selectedNumber < 3:
                 selectedNumber+= 1
-                updateSelectedRocket(selectedNumber)
-                createRocketImage(selectedNumber, manager)
-                resetAndShowUI(selectedNumber)
+                UpdateSelectedRocket(selectedNumber)
+                CreateRocketImage(selectedNumber, manager)
+                ResetAndShowUI(selectedNumber)
             if event.type == pg.UI_DROP_DOWN_MENU_CHANGED and event.ui_object_id =="startplanet_dropdown":
                 #dropdown.selected_option = "Moon"
-                updateRocketConfigs(event)
-                resetAndShowUI(selectedNumber)
-            if checkKeyDown(event, keys.H_closeWindow[0]):
+                UpdateRocketConfigs(event)
+                ResetAndShowUI(selectedNumber)
+            if CheckKeyDown(event, keys.H_closeWindow[0]):
                 pygame.quit()
                 sys.exit()
-            if checkKeyDown(event, keys.H_leaveSimulation[0]):
+            if CheckKeyDown(event, keys.H_leaveSimulation[0]):
                 pygame.quit()
                 sys.exit()  
             if event.type == pg.UI_TEXT_ENTRY_FINISHED and event.ui_object_id == "angleonplanet_input":
-                if is_convertible_to_int(event.text):
+                if IsConvertibleToInt(event.text):
                     if int(event.text) < 360 and int(event.text) >= 0:
-                        updateRocketConfigs(event)
-                resetAndShowUI(selectedNumber)
+                        UpdateRocketConfigs(event)
+                ResetAndShowUI(selectedNumber)
 
             if event.type == pg.UI_TEXT_ENTRY_FINISHED and event.ui_object_id == "startangle_input":
-                if is_convertible_to_int(event.text):
+                if IsConvertibleToInt(event.text):
                     if int(event.text) <= 45 and int(event.text) >= 0:
-                        updateRocketConfigs(event)
-                resetAndShowUI(selectedNumber)
+                        UpdateRocketConfigs(event)
+                ResetAndShowUI(selectedNumber)
 
             if event.type == pg.UI_TEXT_ENTRY_FINISHED and event.ui_object_id == "startthrust_input":
-                if is_convertible_to_int(event.text):
+                if IsConvertibleToInt(event.text):
                     if int(event.text) <= 10 and int(event.text) >= 0:
-                        updateRocketConfigs(event)
-                resetAndShowUI(selectedNumber)
+                        UpdateRocketConfigs(event)
+                ResetAndShowUI(selectedNumber)
 
             if event.type == pg.UI_TEXT_ENTRY_FINISHED and event.ui_object_id == "massoftherocketstructure_input":
-                if is_convertible_to_int(event.text):
+                if IsConvertibleToInt(event.text):
                     if int(event.text) >= 0:
-                        updateRocketConfigs(event)
-                resetAndShowUI(selectedNumber)
+                        UpdateRocketConfigs(event)
+                ResetAndShowUI(selectedNumber)
 
             if event.type == pg.UI_TEXT_ENTRY_FINISHED and event.ui_object_id == "massofthepropellant_input":
-                if is_convertible_to_int(event.text):
+                if IsConvertibleToInt(event.text):
                     if int(event.text) >= 0:
-                        updateRocketConfigs(event)
-                resetAndShowUI(selectedNumber)
+                        UpdateRocketConfigs(event)
+                ResetAndShowUI(selectedNumber)
             
             if event.type == pg.UI_TEXT_ENTRY_FINISHED and event.ui_object_id == "yearofrocketstart_input":
-                if is_convertible_to_int(event.text):
+                if IsConvertibleToInt(event.text):
                     if int(event.text) <= 10000 and int(event.text) >= 0:
-                        updateRocketConfigs(event)
-                        if checkDate(getMonth(), getDay()):
-                            updateRocketConfigs(event)
+                        UpdateRocketConfigs(event)
+                        if CheckDateIsLegal(GetStartMonth(), GetStartDay()):
+                            UpdateRocketConfigs(event)
                         else:
-                            updateRocketConfigs(event)
-                            overWriteStandardDay()
-                resetAndShowUI(selectedNumber)
+                            UpdateRocketConfigs(event)
+                            OverWriteStandardDay()
+                ResetAndShowUI(selectedNumber)
             if event.type == pg.UI_TEXT_ENTRY_FINISHED and event.ui_object_id == "monthofrocketstart_input":
-                if is_convertible_to_int(event.text):
+                if IsConvertibleToInt(event.text):
                     if int(event.text) <= 12 and int(event.text) > 0:
-                        if checkDate(event.text, getDay()):
-                            updateRocketConfigs(event)
+                        if CheckDateIsLegal(event.text, GetStartDay()):
+                            UpdateRocketConfigs(event)
                         else:
-                            updateRocketConfigs(event)
-                            overWriteStandardDay()
-                resetAndShowUI(selectedNumber)
+                            UpdateRocketConfigs(event)
+                            OverWriteStandardDay()
+                ResetAndShowUI(selectedNumber)
             
             if event.type == pg.UI_TEXT_ENTRY_FINISHED and event.ui_object_id == "dayofrocketstart_input":
-                if is_convertible_to_int(event.text):
-                    if getMonth() in [1,3,5,7,8,10,12]:
+                if IsConvertibleToInt(event.text):
+                    if GetStartMonth() in [1,3,5,7,8,10,12]:
                         if int(event.text) <= 31 and int(event.text) > 0:
-                            updateRocketConfigs(event)
-                    elif getMonth() in [4,6,9,11]:
+                            UpdateRocketConfigs(event)
+                    elif GetStartMonth() in [4,6,9,11]:
                         if int(event.text) <= 30 and int(event.text) > 0:
-                            updateRocketConfigs(event)
-                    elif getYear() % 4 != 0:
+                            UpdateRocketConfigs(event)
+                    elif getStartYear() % 4 != 0:
                         if int(event.text) <= 28 and int(event.text) > 0:
-                            updateRocketConfigs(event)
+                            UpdateRocketConfigs(event)
                     else:
                         if int(event.text) <= 29 and int(event.text) > 0:
-                            updateRocketConfigs(event)
-                resetAndShowUI(selectedNumber)
+                            UpdateRocketConfigs(event)
+                ResetAndShowUI(selectedNumber)
             manager.process_events(event)
         
         WINDOW.fill((0, 0, 0))
@@ -211,4 +211,4 @@ def showStartUI():
         manager.draw_ui(WINDOW)
         pygame.display.update()
     
-    clearStartUI()
+    ClearStartUI()

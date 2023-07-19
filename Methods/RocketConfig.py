@@ -1,11 +1,12 @@
 import json
 
 from ViewController.Rocket import *
+from ViewController.Planet import *
 
 from Methods.JsonMethods import *
 from Methods.InitialisePlanets import *
 
-def loadRocketFromPath(path, planets):
+def LoadRocketFromPath(path, planets : list[Planet]):
     jsonfile = open(path)
     config = json.load(jsonfile)
     
@@ -41,9 +42,9 @@ def loadRocketFromPath(path, planets):
     return rocket
 
 
-def loadRocket(planets):
+def LoadRocket(planets : list[Planet]):
     try:
-        return loadRocketFromPath("./Globals/RocketConfig/CurrentRocketConfig.json", planets)
+        return LoadRocketFromPath("./Globals/RocketConfig/CurrentRocketConfig.json", planets)
     except:
         # write standard config to current config
         with open("./Globals/RocketConfig/CurrentRocketConfig.json", "w") as outfile:
@@ -52,4 +53,4 @@ def loadRocket(planets):
                       indent=4, 
                       ensure_ascii=False)
             
-        return loadRocketFromPath("./Globals/RocketConfig/CurrentRocketConfig.json", planets)
+        return LoadRocketFromPath("./Globals/RocketConfig/CurrentRocketConfig.json", planets)

@@ -1,8 +1,9 @@
 import math
-import pygame
 import numpy as np
 
 from Globals.Constants import *
+
+from ViewController.Rocket import Rocket
 
 class Planet:
 
@@ -27,23 +28,7 @@ class Planet:
         self.r_x[0] = x
         self.r_z[0] = y
 
-    def drawlineonly(self, window,move_x, move_y, draw_line,scale, width, height, show):
-        if show:
-            self.displayDistances(show, scale, width ,height, window, move_x, move_y)
-        if not draw_line:
-            return
-        line = self.lineIsInScreen(np.array((self.r_x[self.aktuellerschritt:self.aktuellerrechenschritt]*scale, self.r_z[self.aktuellerschritt:self.aktuellerrechenschritt]*scale)).T, move_x, move_y, height, width)
-        # size > 3 because (2,3) are 2 coordinates for 1 point and you need 2 points to connect a line ((x,y),(x2,y2))
-        if line.size > 3:
-            pygame.draw.lines(window, self.color, False, line, 1)
-        
-
-    def draw(self, window, show, move_x, move_y, draw_line, scale, width, height):
-        self.drawlineonly(window, move_x, move_y, draw_line, scale, width, height, show)
-        pygame.draw.circle(window, self.color, (self.r_x[self.aktuellerschritt]*scale+move_x+width/2, self.r_z[self.aktuellerschritt]*scale+move_y+ height/2), max(self.scaleR * scale, 2))
-
-
-    def attraction(self, other, i):
+    def Attraction(self, other, i):
         other_x, other_y = other.r_x[i], other.r_z[i]
         distance_x = other_x - self.r_x[i]
         distance_y = other_y - self.r_z[i]
@@ -54,7 +39,7 @@ class Planet:
         force_y = math.sin(theta) * force
         return force_x, force_y
     
-    def resetPlanetsArrayToSyncWithRocket(self):
+    def ResetPlanetsArrayToSyncWithRocket(self):
         self.r_x[0:NUM_OF_PREDICTIONS] = self.r_x[self.aktuellerschritt:self.aktuellerschritt+NUM_OF_PREDICTIONS]
         self.r_z[0:NUM_OF_PREDICTIONS] = self.r_z[self.aktuellerschritt:self.aktuellerschritt+NUM_OF_PREDICTIONS]
         self.v_x[0:NUM_OF_PREDICTIONS] = self.v_x[self.aktuellerschritt:self.aktuellerschritt+NUM_OF_PREDICTIONS]
@@ -62,7 +47,7 @@ class Planet:
         self.aktuellerschritt = 0
         self.aktuellerrechenschritt = NUM_OF_PREDICTIONS-1
 
-    def resetArray(self):
+    def ResetArray(self):
         self.r_x[1:NUM_OF_PREDICTIONS+1] = self.r_x[NUM_OF_PREDICTIONS:]
         self.r_z[1:NUM_OF_PREDICTIONS+1] = self.r_z[NUM_OF_PREDICTIONS:]
         self.v_x[1:NUM_OF_PREDICTIONS+1] = self.v_x[NUM_OF_PREDICTIONS:]
@@ -70,16 +55,16 @@ class Planet:
         self.aktuellerschritt = 1
         self.aktuellerrechenschritt = NUM_OF_PREDICTIONS
 
-    def update_scale(self, scale):
+    def SetScale(self, scale):
         self.scaleR *= scale
 
-    def predictStep(self, i, planets, pause, rocket):
+    def PredictStep(self, i, planets : list[__init__], pause, rocket : Rocket):
         self.aktuellerrechenschritt = i
         total_fx = total_fy = 0
         for planet in planets:
             if self == planet:
                 continue
-            fx, fy = self.attraction(planet, i)
+            fx, fy = self.Attraction(planet, i)
             total_fx += fx
             total_fy += fy
         self.v_x[i+1] = self.v_x[i] + total_fx / self.mass * self.timestep
@@ -87,20 +72,20 @@ class Planet:
         self.r_x[i+1] = self.r_x[i] + self.v_x[i+1] * self.timestep
         self.r_z[i+1] = self.r_z[i] + self.v_z[i+1] * self.timestep
 
-        self.updateDistanceToRocket(rocket)
+        self.UpdateDistanceToRocket(rocket)
 
         if not pause:
             self.aktuellerrechenschritt += 1
 
-    def updateDistanceToRocket(self, rocket):
+    def UpdateDistanceToRocket(self, rocket : Rocket):
         self.distance_to_rocket = math.sqrt((self.r_x[self.aktuellerschritt]-rocket.r_x[rocket.aktuellerschritt])**2+(self.r_z[self.aktuellerschritt]-rocket.r_z[rocket.aktuellerschritt])**2)
 
-    def predictNext(self, planets, pause):
+    def PredictNext(self, planets : list[__init__], pause):
         total_fx = total_fy = 0
         for planet in planets:
             if self == planet:
                 continue
-            fx, fy = self.attraction(planet, self.aktuellerrechenschritt)
+            fx, fy = self.Attraction(planet, self.aktuellerrechenschritt)
             total_fx += fx
             total_fy += fy
         self.v_x[self.aktuellerrechenschritt+1] = self.v_x[self.aktuellerrechenschritt] + total_fx / self.mass * self.timestep
@@ -111,35 +96,27 @@ class Planet:
         if not pause:
             self.aktuellerrechenschritt += 1
         
-    def lineIsInScreen(self, line, move_x, move_y, height , width):
+    def LineIsInScreen(self, line, move_x, move_y, height , width):
         lineInScreen = line[(line[:,0]< -move_x+width/2) & (line[:,0] > -move_x-width/2)]
         lineInScreen = lineInScreen[(lineInScreen[:,1] > -move_y-height/2) & (lineInScreen[:,1] < -move_y+height/2)]
         lineInScreen[:,0] = lineInScreen[:,0]+move_x+width/2
         lineInScreen[:,1] = lineInScreen[:,1]+move_y+ height/2
         return lineInScreen
-    
-    def displayDistances(self, show, scale, width, height, window, move_x, move_y):
-        if not show:
-            return
-        distance_text = pygame.font.SysFont("Trebuchet MS", 16).render(self.name+ ": "+str(round(self.distance_to_rocket * 1.057 * 10 ** -16, 8))+ "light years", True,
-                                    (255,255,255))
-        window.blit(distance_text, (self.r_x[self.aktuellerschritt]*scale+ width/2 - distance_text.get_width() / 2 + move_x,
-                                self.r_z[self.aktuellerschritt]*scale+ height/2 + distance_text.get_height() / 2 - 20 + move_y))
         
-    def checkCollision(self):
+    def CheckCollision(self):
         if self.distance_to_rocket <= self.radius*95/100:
             return True
         return False
     
-    def checkLanding(self, rocket, run):
+    def CheckLanding(self, rocket : Rocket, run):
         if not self.aktuellerschritt % math.ceil(100/self.timestep) == 0:
             return
-        if self.distance_to_rocket <= self.radius *95/100 and rocket.getCurrentRelativeVelocity() < 1000000000:
+        if self.distance_to_rocket <= self.radius *95/100 and rocket.GetCurrentRelativeVelocity() < 1000000000:
             rocket.landed = True
             rocket.thrust = 0
-            rocket.calculateEntryAngle()
-            rocket.clearArray()
-            self.updateDistanceToRocket(rocket)
+            rocket.CalculateEntryAngle()
+            rocket.ClearArray()
+            self.UpdateDistanceToRocket(rocket)
             return True
         run = False
         return False, run

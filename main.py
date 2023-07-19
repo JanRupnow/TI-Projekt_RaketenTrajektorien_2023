@@ -3,14 +3,15 @@ import datetime
 
 from Methods.PackageInstaller import InstallAllPackages
 
-from Views.MainView import renderTextView
+from Views.MainView import RenderFlightInterface
 from Views.StartView import *
 
 from ViewController.DtoProcessEvent import DTOProcessEvent
+from ViewController.DrawManager import DrawManager
 
-from Methods.InitialisePlanets import getInitialPlanets
-from Methods.GameMethods import processKeyEvent, centerScreenOnPlanet, planetIsInScreen, automaticZoomOnRocket
-from Methods.RocketConfig import loadRocket
+from Methods.InitialisePlanets import ConfigurePlanets
+from Methods.GameMethods import ProcessHotKeyEvents, CenterScreenOnPlanet, PlanetIsInScreen, AutomaticZoomOnRocket
+from Methods.RocketConfig import LoadRocket
 
 
 now = datetime.datetime.now()
@@ -27,8 +28,8 @@ def main():
     mouse_y = 0
     draw_line = True
     manager = pg.UIManager((WIDTH,HEIGHT))
-    planets = getInitialPlanets()
-    rocket = loadRocket(planets)
+    planets = ConfigurePlanets()
+    rocket = LoadRocket(planets)
 
     while run:
         clock.tick(60)
@@ -37,7 +38,7 @@ def main():
 
         for event in pygame.event.get():
 
-            dtoProcessEvent = processKeyEvent(
+            dtoProcessEvent = ProcessHotKeyEvents(
                 event,
                 DTOProcessEvent(run, scale, move_x, move_y, mouse_x, mouse_y, show_distance, draw_line, timestep, pause, zoomReferencePlanet),
                 rocket,
@@ -55,33 +56,34 @@ def main():
             timestep = dtoProcessEvent.timestep
             pause = dtoProcessEvent.pause
             zoomReferencePlanet = dtoProcessEvent.zoomReferencePlanet
+
         if  zoomReferencePlanet:
-            move_x, move_y = centerScreenOnPlanet(rocket.nearestPlanet, scale, move_x, move_y)
+            move_x, move_y = CenterScreenOnPlanet(rocket.nearestPlanet, scale, move_x, move_y)
         else:
-            move_x, move_y = automaticZoomOnRocket(rocket, scale, move_x, move_y) 
+            move_x, move_y = AutomaticZoomOnRocket(rocket, scale, move_x, move_y) 
         for planet in planets:
             #if not pause:
             #    planet.update_position(planets, rocket)
             # Ohne Radius verschwinden die Balken bugs im Screen
 
-            if planetIsInScreen(scale, planet, move_x, move_y, HEIGHT, WIDTH):
-                planet.draw(WINDOW, show_distance, move_x, move_y, draw_line,scale, WIDTH, HEIGHT)
+            if PlanetIsInScreen(scale, planet, move_x, move_y, HEIGHT, WIDTH):
+                DrawManager.PlanetDraw(planet, WINDOW, show_distance, move_x, move_y, draw_line, scale, WIDTH, HEIGHT)
             else: 
-                planet.drawlineonly(WINDOW, move_x, move_y, draw_line, scale, WIDTH, HEIGHT, show_distance)
+                DrawManager.PlanetDrawLineOnly(planet, WINDOW, move_x, move_y, draw_line, scale, WIDTH, HEIGHT, show_distance)
 
-        time_passed = renderTextView(WINDOW, rocket, now, FONT_1, pause, clock, time_passed, timestep, manager)
-        if rocket.nearestPlanet.checkCollision():
+        time_passed = RenderFlightInterface(WINDOW, rocket, now, FONT_1, pause, clock, time_passed, timestep, manager)
+        if rocket.nearestPlanet.CheckCollision():
             if not rocket.landed:
-                rocket.nearestPlanet.checkLanding(rocket,run)
-        rocket.draw(WINDOW,move_x,move_y, planets, pause, scale, WIDTH, HEIGHT)
+                rocket.nearestPlanet.CheckLanding(rocket, run)
+        DrawManager.RocketDraw(rocket, WINDOW,move_x,move_y, planets, pause, scale, WIDTH, HEIGHT)
         if not rocket.landed:
-            rocket.updatePlanetsInRangeList(planets)
-            rocket.updateNearestPlanet(planets)
+            rocket.UpdatePlanetsInRangeList(planets)
+            rocket.UpdateNearestPlanet(planets)
         pygame.display.update()
     pygame.quit()
 
 
 if __name__ == "__main__":
     InstallAllPackages()
-    showStartUI()
+    ShowStartUI()
     main()
