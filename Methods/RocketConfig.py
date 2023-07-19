@@ -1,9 +1,12 @@
 import json
-from methods.json_methods import *
-from objects.rocket import *
-from methods.initialise_planets import *
 
-def loadRocketFromPath(path, planets, rocketImage):
+from ViewController.Rocket.Rocket import *
+from ViewController.Planet import *
+
+from Methods.JsonMethods import *
+from Methods.ConfigurePlanets import *
+
+def LoadRocketFromPath(path, planets : list[Planet]):
     jsonfile = open(path)
     config = json.load(jsonfile)
     
@@ -32,22 +35,22 @@ def loadRocketFromPath(path, planets, rocketImage):
     if config["Start"]["Thrust"]["value"] > 0:
         rocket.thrust = config["Start"]["Thrust"]["value"]
         rocket.powerchanged = True
-        rocket.rocketstarted = True
+        rocket.state = RocketState.currentlyFlying
     rocket.angle = config["Start"]["Angle"]["value"]
 
     jsonfile.close()
     return rocket
 
 
-def loadRocket(planets):
+def LoadRocket(planets : list[Planet]):
     try:
-        return loadRocketFromPath("./variables/rocket_config/current_rocket_config.json", planets, 0)
+        return LoadRocketFromPath("./Globals/RocketConfig/CurrentRocketConfig.json", planets)
     except:
         # write standard config to current config
-        with open("./variables/rocket_config/current_rocket_config.json", "w") as outfile:
-            json.dump(json.load(open("./variables/rocket_config/standard_rocket_config.json")), 
+        with open("./Globals/RocketConfig/CurrentRocketConfig.json", "w") as outfile:
+            json.dump(json.load(open("./Globals/RocketConfig/StandardRocketConfig.json")), 
                       outfile, 
                       indent=4, 
                       ensure_ascii=False)
             
-        return loadRocketFromPath("./variables/rocket_config/current_rocket_config.json", planets, 0)
+        return LoadRocketFromPath("./Globals/RocketConfig/CurrentRocketConfig.json", planets)

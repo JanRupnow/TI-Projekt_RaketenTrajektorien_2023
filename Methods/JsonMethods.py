@@ -1,20 +1,20 @@
-from methods.support_methods import *
+from Methods.SupportMethods import *
 
-def updateKeyInJson(json, hotkey):
+def UpdateKeyInJson(json, hotkey):
     for category in json.keys():
         for key in json[category].keys():
             if hotkey[1] == json[category][key]["text"]:
                 json[category][key]["key"] = hotkey[0]
     return json
 
-def updateKeyInJsonRocket(json, identifier, value):
+def UpdateKeyInJsonRocket(json, identifier, value):
     for category in json.keys():
         try:
             for key in json[category].keys():
                 # didn't need to catch because this method should only update values
                 # which are in the form of the if clause
                 try:
-                    if identifier == removeSpaces(json[category][key]["text"]+"_input") or identifier == removeSpaces(json[category][key]["text"]+"_dropdown"):
+                    if identifier == RemoveSpaces(json[category][key]["text"]+"_input") or identifier == RemoveSpaces(json[category][key]["text"]+"_dropdown"):
                         if value.isdigit():
                             json[category][key]["value"] = int(value)
                         else:
@@ -26,127 +26,132 @@ def updateKeyInJsonRocket(json, identifier, value):
     return json
 
 # Rocket Controls
-def getH_rocketBoostForward(hotkeysJson):
+def GetH_rocketBoostForward(hotkeysJson):
     return [
         hotkeysJson["RocketControls"]["H_rocketBoostForward"]["key"],
         hotkeysJson["RocketControls"]["H_rocketBoostForward"]["text"]
     ]
-def getH_rocketBoostLeft(hotkeysJson):
+def GetH_rocketBoostLeft(hotkeysJson):
     return [
         hotkeysJson["RocketControls"]["H_rocketBoostLeft"]["key"],
         hotkeysJson["RocketControls"]["H_rocketBoostLeft"]["text"]
     ]
-def getH_rocketBoostRight(hotkeysJson):
+def GetH_rocketBoostRight(hotkeysJson):
     return [
         hotkeysJson["RocketControls"]["H_rocketBoostRight"]["key"],
         hotkeysJson["RocketControls"]["H_rocketBoostRight"]["text"]
     ]
-def getH_lowerRocketBoost(hotkeysJson):
+def GetH_lowerRocketBoost(hotkeysJson):
     return [
         hotkeysJson["RocketControls"]["H_lowerRocketBoost"]["key"],
         hotkeysJson["RocketControls"]["H_lowerRocketBoost"]["text"]
     ]
 
 # Rocket Zooms
-def getH_zoomRocketStart(hotkeysJson):
+def GetH_zoomRocketStart(hotkeysJson):
     return [
         hotkeysJson["RocketZooms"]["H_zoomRocketStart"]["key"],
         hotkeysJson["RocketZooms"]["H_zoomRocketStart"]["text"]
     ]
-def getH_zoomRocketPlanet(hotkeysJson):
+def GetH_zoomRocketPlanet(hotkeysJson):
     return [
         hotkeysJson["RocketZooms"]["H_zoomRocketPlanet"]["key"],
         hotkeysJson["RocketZooms"]["H_zoomRocketPlanet"]["text"]
     ]
-def getH_zoomRocketPlanetSystem(hotkeysJson):
+def GetH_zoomRocketPlanetSystem(hotkeysJson):
     return [
         hotkeysJson["RocketZooms"]["H_zoomRocketPlanetSystem"]["key"],
         hotkeysJson["RocketZooms"]["H_zoomRocketPlanetSystem"]["text"]
     ]
-def getH_zoomAutoOnRocket(hotkeysJson):
+def GetH_zoomAutoOnRocket(hotkeysJson):
     return [
         hotkeysJson["RocketZooms"]["H_zoomAutoOnRocket"]["key"],
         hotkeysJson["RocketZooms"]["H_zoomAutoOnRocket"]["text"]
     ]
+def GetH_zoomAutoOnReferencePlanet(hotkeysJson):
+    return [
+        hotkeysJson["RocketZooms"]["H_zoomAutoOnReferencePlanet"]["key"],
+        hotkeysJson["RocketZooms"]["H_zoomAutoOnReferencePlanet"]["text"]
+    ]
 
 # Centering
-def getH_centerOnSun(hotkeysJson):
+def GetH_centerOnSun(hotkeysJson):
     return [
         hotkeysJson["Centering"]["H_centerOnSun"]["key"],
         hotkeysJson["Centering"]["H_centerOnSun"]["text"]
     ]
-def getH_centerOnRocket(hotkeysJson):
+def GetH_centerOnRocket(hotkeysJson):
     return [
         hotkeysJson["Centering"]["H_centerOnRocket"]["key"],
         hotkeysJson["Centering"]["H_centerOnRocket"]["text"]
     ]
 
 # Time Manipulation
-def getH_shiftTimeStepUp(hotkeysJson):
+def GetH_shiftTimeStepUp(hotkeysJson):
     return [
         hotkeysJson["TimeManipulation"]["H_shiftTimeStepUp"]["key"],
         hotkeysJson["TimeManipulation"]["H_shiftTimeStepUp"]["text"]
     ]
-def getH_shiftTimeStepDown(hotkeysJson):
+def GetH_shiftTimeStepDown(hotkeysJson):
     return [
         hotkeysJson["TimeManipulation"]["H_shiftTimeStepDown"]["key"],
         hotkeysJson["TimeManipulation"]["H_shiftTimeStepDown"]["text"]
     ]
 
 # Generals
-def getH_drawLine(hotkeysJson):
+def GetH_drawLine(hotkeysJson):
     return [
         hotkeysJson["Generals"]["H_drawLine"]["key"],
         hotkeysJson["Generals"]["H_drawLine"]["text"]
     ]
-def getH_showDistance(hotkeysJson):
+def GetH_showDistance(hotkeysJson):
     return [
         hotkeysJson["Generals"]["H_showDistance"]["key"],
         hotkeysJson["Generals"]["H_showDistance"]["text"]
     ]
-def getH_pauseSimulation(hotkeysJson):
+def GetH_pauseSimulation(hotkeysJson):
     return [
         hotkeysJson["Generals"]["H_pauseSimulation"]["key"],
         hotkeysJson["Generals"]["H_pauseSimulation"]["text"]
     ]
 
 # Navigation
-def getH_displayHotKeys(hotkeysJson):
+def GetH_displayHotKeys(hotkeysJson):
     return [
         hotkeysJson["Navigation"]["H_displayHotKeys"]["key"],
         hotkeysJson["Navigation"]["H_displayHotKeys"]["text"]
     ]
-def getH_leaveSimulation(hotkeysJson):
+def GetH_leaveSimulation(hotkeysJson):
     return [
         hotkeysJson["Navigation"]["H_leaveSimulation"]["key"],
         hotkeysJson["Navigation"]["H_leaveSimulation"]["text"]
     ]
-def getH_openSettings(hotkeysJson):
+def GetH_openSettings(hotkeysJson):
     return [
         hotkeysJson["Navigation"]["H_openSettings"]["key"],
         hotkeysJson["Navigation"]["H_openSettings"]["text"]
     ]
-def getH_closeWindow(hotkeysJson):
+def GetH_closeWindow(hotkeysJson):
     return [
         hotkeysJson["Navigation"]["H_closeWindow"]["key"],
         hotkeysJson["Navigation"]["H_closeWindow"]["text"]
     ]
-def getH_moveScreenUp(hotkeysJson):
+def GetH_moveScreenUp(hotkeysJson):
     return [
         hotkeysJson["Navigation"]["H_moveScreenUp"]["key"],
         hotkeysJson["Navigation"]["H_moveScreenUp"]["text"]
     ]
-def getH_moveScreenDown(hotkeysJson):
+def GetH_moveScreenDown(hotkeysJson):
     return [
         hotkeysJson["Navigation"]["H_moveScreenDown"]["key"],
         hotkeysJson["Navigation"]["H_moveScreenDown"]["text"]
     ]
-def getH_moveScreenRight(hotkeysJson):
+def GetH_moveScreenRight(hotkeysJson):
     return [
         hotkeysJson["Navigation"]["H_moveScreenRight"]["key"],
         hotkeysJson["Navigation"]["H_moveScreenRight"]["text"]
     ]
-def getH_moveScreenLeft(hotkeysJson):
+def GetH_moveScreenLeft(hotkeysJson):
     return [
         hotkeysJson["Navigation"]["H_moveScreenLeft"]["key"],
         hotkeysJson["Navigation"]["H_moveScreenLeft"]["text"]

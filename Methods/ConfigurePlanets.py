@@ -1,33 +1,27 @@
-from objects.planet import Planet
-from variables.konstanten import *
-import datetime
 from astropy.time import Time
-from astropy.coordinates import get_body_barycentric_posvel
+import numpy as np
 from sunpy.coordinates import get_body_heliographic_stonyhurst
-import astropy.units as u
-import pygame
-from objects.planet import *
 import math
+import json
 
-pygame.init()
-WIDTH, HEIGHT = pygame.display.Info().current_w, pygame.display.Info().current_h
+from Globals.Constants import *
 
-
-
-
-##api für planeten koodinaten
-now = datetime.datetime.now()
-obstime = Time(now)
-planet_coord = [get_body_heliographic_stonyhurst(
-    this_planet, time=obstime, include_velocity=True) for this_planet in planetNameArray]
-for planet in planet_coord:
-    print(planet)
+from ViewController.Planet import Planet
 
 # Metric from: https://nssdc.gsfc.nasa.gov/planetary/factsheet/
 
-def getInitialPlanets():
+def ConfigurePlanets():
+    jsonfile = open("./Globals/RocketConfig/CurrentRocketConfig.json")
+    config = json.load(jsonfile)
+    time_year = config["StartTime"]["Year"]["value"]
+    time_month = config["StartTime"]["Month"]["value"]
+    time_day = config["StartTime"]["Day"]["value"]
+    obstime = Time(f"{time_year}-{time_month}-{time_day}")
+    planet_coord = [get_body_heliographic_stonyhurst(
+    this_planet, time=obstime, include_velocity=True) for this_planet in planetNameArray]
+
     sun = Planet(0, 0, 695 * 10 ** 6, COLOR_SUN, 1.98892 * 10 ** 30,planetNameArray[0], 0)
-    sun.sun = True
+    #sun.sun = True
 
     mercury = Planet(-0.387 * AU, 0, 2439 * 10 ** 3, COLOR_MERCURY, 3.30 * 10 ** 23,planetNameArray[1], 47.36 * 1000)
 
@@ -54,23 +48,17 @@ def getInitialPlanets():
         planet.r_x[0] = this_coord.radius.value*(np.cos(this_coord.lon.to("rad")))*AU
         planet.r_z[0] = this_coord.radius.value*(np.sin(this_coord.lon.to("rad")))*AU
 
+        # Calculate Angle relative to the sun
         θ = math.atan2(planet.r_z[0], planet.r_x[0])
+        # Calculate positional velocity from mean velocity
         if planet.name != "Moon":
-            planet.v_x[0] = -planet.meanVelocity * np.sin(θ)
-            planet.v_z[0] = planet.meanVelocity * np.cos(θ)
-        print(f"{planet.name}: r: {planet.r_x[0]}{planet.r_z[0]},v: {planet.v_x[0]} {planet.v_z[0]}")
-        # Convert AU per day to m/s
-        #velocity = np.multiply(get_body_barycentric_posvel(planet_name, Time(datetime.datetime.now()))[1].xyz.value,(-AU/86400))
-        # Set Start Velocity
-        #print(f"{planet.name}: {velocity}")
-        #planet.v_x[0] = velocity[2]
-        #planet.v_z[0] = velocity[0]
-        #print(f"{planet.name}: {planet.v_x[0]} {planet.v_z[0]}")
+            planet.v_x[0] = -planet.meanVelocity* np.sin(θ) 
+            planet.v_z[0] = planet.meanVelocity * np.cos(θ) 
 
     moon = next(filter(lambda x: x.name == "Moon", planetlist))
     earth = next(filter(lambda x: x.name == "Earth", planetlist))
     θ = math.atan2(moon.r_x[0]-earth.r_x[0], moon.r_z[0]-earth.r_z[0])
-    moon.v_x[0] = earth.v_x[0] - moon.meanVelocity * np.sin(θ)
+    moon.v_x[0] = earth.v_x[0] - moon.meanVelocity * np.sin(θ) 
     moon.v_z[0] = earth.v_z[0] + moon.meanVelocity * np.cos(θ)
         
     return [neptune, uranus, saturn, jupiter, mars, moon, earth, venus, mercury, sun]
