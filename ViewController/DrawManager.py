@@ -9,6 +9,7 @@ from Globals.Constants import NUM_OF_PREDICTIONS, MIN_ROCKET_RADIUS
 
 from ViewController.Planet import Planet
 from ViewController.Rocket.Rocket import Rocket
+from ViewController.Rocket.RocketState import RocketState
 
 class DrawManager():
 
@@ -42,7 +43,7 @@ class DrawManager():
         
     @abstractmethod
     def RocketDraw(rocket : Rocket, window, move_x, move_y, planets : list[Planet], paused, scale, width, height):
-        if not rocket.rocketstarted or rocket.landed:
+        if not rocket.state == RocketState.currentlyFlying:
             #self.drawAndValueBeforeStarting(window, scale, width, height, move_x, move_y)
             DrawManager.RocketDrawIfNotStarted(rocket, paused, planets, window, scale, width, height, move_x, move_y)
             return
@@ -108,8 +109,8 @@ class DrawManager():
 
     @abstractmethod
     def RocketDrawAndValueBeforeStarting(rocket : Rocket, planet : Planet ,window, scale, width, height, move_x, move_y):
-        rocket.planet = rocket.nearestPlanet if rocket.landed else rocket.startplanet
-        rocket.angle = rocket.entryAngle if rocket.landed else rocket.startingAngle
+        rocket.planet = rocket.nearestPlanet if rocket.state == RocketState.landed else rocket.startplanet
+        rocket.angle = rocket.entryAngle if rocket.state == RocketState.landed else rocket.startingAngle
         rocket.r_x[0] = planet.r_x[planet.currentStep] + planet.radius * np.cos(rocket.angle * np.pi / 180)  
         rocket.r_z[0] = planet.r_z[planet.currentStep] + planet.radius * np.sin(rocket.angle * np.pi / 180)
         rocket.v_x[0] = planet.v_x[planet.currentStep]
@@ -124,7 +125,7 @@ class DrawManager():
         if rocket.radius < MIN_ROCKET_RADIUS:
             pygame.draw.circle(window, rocket.color, (rocket.r_x[rocket.currentStep]*scale+move_x+width/2, rocket.r_z[rocket.currentStep]*scale+move_y+height/2), MIN_ROCKET_RADIUS)
             return
-        if rocket.landed or not rocket.rocketstarted:
+        if rocket.state == RocketState.currentlyFlying:
             rocket.img = pygame.transform.rotate(rocket.notRotatedImg, math.atan2(rocket.r_z[rocket.currentStep] - rocket.nearestPlanet.r_z[rocket.currentStep], 
                                                                               rocket.r_x[rocket.currentStep] - rocket.nearestPlanet.r_x[rocket.currentStep]) * (-180) /np.pi - 90)
         else:

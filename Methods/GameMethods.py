@@ -8,6 +8,7 @@ from Views.HotkeyView import *
 
 from ViewController.DtoProcessEvent import DTOProcessEvent
 from ViewController.Rocket.Rocket import Rocket
+from ViewController.Rocket.RocketState import RocketState
 from ViewController.Planet import Planet
 
 from Methods.SupportMethods import *
@@ -57,30 +58,29 @@ def PlanetIsInScreen(scale, planet : Planet, move_x, move_y, height, width):
 
 
 def ProcessHotKeyEvents(event, dto: DTOProcessEvent, rocket : Rocket, planets : list[Planet]):
-    keysP = pygame.key.get_pressed()
+    KeyPressed = pygame.key.get_pressed()
     mouse_x, mouse_y = pygame.mouse.get_pos()
     window_w, window_h = pygame.display.get_surface().get_size()
     distance = 10
-    if  keysP[keys.H_moveScreenLeft[0]] or mouse_x == 0:
+    if  KeyPressed[keys.H_moveScreenLeft[0]] or mouse_x == 0:
         dto.move_x += distance
-    elif keysP[keys.H_moveScreenRight[0]] or mouse_x == window_w - 1:
+    elif KeyPressed[keys.H_moveScreenRight[0]] or mouse_x == window_w - 1:
         dto.move_x -= distance
-    elif keysP[keys.H_moveScreenUp[0]] or mouse_y == 0:
+    elif KeyPressed[keys.H_moveScreenUp[0]] or mouse_y == 0:
         dto.move_y += distance
-    elif keysP[keys.H_moveScreenDown[0]] or mouse_y == window_h - 1:
+    elif KeyPressed[keys.H_moveScreenDown[0]] or mouse_y == window_h - 1:
         dto.move_y -= distance
-    elif ( not event.type == pygame.KEYDOWN ) and keysP[keys.H_rocketBoostForward[0]] and rocket.thrust<10 and (rocket.rocketstarted or  not dto.pause):
+    elif ( not event.type == pygame.KEYDOWN ) and KeyPressed[keys.H_rocketBoostForward[0]] and rocket.thrust<10 and (rocket.state == RocketState.currentlyFlying or not dto.pause):
         rocket.thrust += 1
         rocket.powerchanged = True
-        rocket.landed = False
-        rocket.rocketstarted = True
-    elif ( not event.type == pygame.KEYDOWN ) and keysP[keys.H_rocketBoostLeft[0]] and rocket.angle>-45:
+        rocket.state = RocketState.currentlyFlying
+    elif ( not event.type == pygame.KEYDOWN ) and KeyPressed[keys.H_rocketBoostLeft[0]] and rocket.angle>-45:
         rocket.angle -= 1
         rocket.powerchanged = True
-    elif ( not event.type == pygame.KEYDOWN ) and keysP[keys.H_rocketBoostRight[0]]  and rocket.angle<45:
+    elif ( not event.type == pygame.KEYDOWN ) and KeyPressed[keys.H_rocketBoostRight[0]]  and rocket.angle<45:
         rocket.angle += 1
         rocket.powerchanged = True
-    elif ( not event.type == pygame.KEYDOWN ) and keysP[keys.H_lowerRocketBoost[0]] and rocket.thrust>0:
+    elif ( not event.type == pygame.KEYDOWN ) and KeyPressed[keys.H_lowerRocketBoost[0]] and rocket.thrust>0:
         rocket.thrust -= 1
         rocket.powerchanged = True
     elif event.type == pygame.QUIT or CheckKeyDown(event, keys.H_leaveSimulation[0]) or CheckKeyDown(event, keys.H_closeWindow[0]):

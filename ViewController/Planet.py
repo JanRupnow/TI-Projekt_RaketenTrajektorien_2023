@@ -4,6 +4,7 @@ import numpy as np
 from Globals.Constants import *
 
 from ViewController.Rocket.Rocket import Rocket
+from ViewController.Rocket.RocketState import RocketState
 
 class Planet:
 
@@ -112,7 +113,7 @@ class Planet:
         if not self.currentStep % math.ceil(100/self.timestep) == 0:
             return
         if self.distanceToRocket <= self.radius *95/100 and rocket.GetCurrentRelativeVelocity() < 1000000000:
-            rocket.landed = True
+            rocket.state = RocketState.landed
             rocket.thrust = 0
             rocket.CalculateEntryAngle()
             rocket.ClearArray()

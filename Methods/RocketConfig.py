@@ -35,7 +35,7 @@ def LoadRocketFromPath(path, planets : list[Planet]):
     if config["Start"]["Thrust"]["value"] > 0:
         rocket.thrust = config["Start"]["Thrust"]["value"]
         rocket.powerchanged = True
-        rocket.rocketstarted = True
+        rocket.state = RocketState.currentlyFlying
     rocket.angle = config["Start"]["Angle"]["value"]
 
     jsonfile.close()

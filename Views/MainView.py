@@ -3,6 +3,7 @@ import numpy as np
 from Globals.Constants import * 
 
 from ViewController.Rocket.Rocket import Rocket
+from ViewController.Rocket.RocketState import RocketState
 
 from Methods.GameMethods import AddClockTime
 
@@ -26,7 +27,7 @@ def RenderFlightInterface(WINDOW, rocket : Rocket, now, FONT_1, pause, clock, ti
     speed = round(rocket.GetCurrentRelativeVelocity()) if distance < rocket.nearestPlanet.radius*5 else round(rocket.GetAbsoluteVelocity())
     rocket_velocity = FONT_1.render(f'Rocket Speed: {speed}km/h', True, COLOR_WHITE)
     WINDOW.blit(rocket_velocity, (WIDTH*0.8, HEIGHT*0.12))
-    if (not rocket.rocketstarted) or rocket.landed:
+    if not rocket.state == RocketState.currentlyFlying:
         rocket_velocity = FONT_1.render(f'Altitude: {0} km (Rocket has not started)',True, COLOR_WHITE)
     elif rocket.nearestPlanet.distanceToRocket-rocket.nearestPlanet.radius < 3/2* rocket.nearestPlanet.radius:
         rocket_velocity = FONT_1.render(f'Altitude: {round((rocket.nearestPlanet.distanceToRocket-rocket.nearestPlanet.radius)/1000,0)} km', True, COLOR_WHITE)

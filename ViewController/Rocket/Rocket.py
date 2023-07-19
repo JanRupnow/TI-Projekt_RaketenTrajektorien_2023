@@ -4,6 +4,7 @@ import math
 
 from Globals.Constants import *
 
+from ViewController.Rocket.RocketState import RocketState
 
 
 class Rocket:
@@ -23,9 +24,8 @@ class Rocket:
         self.radius = radius
         self.thrust = 0                     # aktuell nicht genutzt     
         self.angle = 0  
-        self.landed = False
+        self.state = RocketState.notStarted
         self.powerchanged = False
-        self.rocketstarted = False 
         self.color = color
         self.startplanet = startplanet
         self.predictions = []
@@ -110,13 +110,13 @@ class Rocket:
                            (self.r_z[self.currentCalculationStep] - self.nearestPlanet.r_z[self.currentCalculationStep])**2)
 
     def GetRelativeVelocity(self, i):
-        if not self.rocketstarted:
+        if not self.state == RocketState.currentlyFlying:
             return 0
         return np.sqrt( (self.v_x[i] - self.nearestPlanet.v_x[i])**2 
                         + (self.v_z[i] - self.nearestPlanet.v_z[i])**2)
         
     def GetCurrentRelativeVelocity(self):
-        if not self.rocketstarted or self.landed:
+        if not self.state == RocketState.currentlyFlying:
             return 0
         return np.sqrt( (self.v_x[self.currentStep] - self.nearestPlanet.v_x[self.nearestPlanet.currentStep])**2 
                         + (self.v_z[self.currentStep] - self.nearestPlanet.v_z[self.nearestPlanet.currentStep])**2)
@@ -124,9 +124,9 @@ class Rocket:
 
     # in m/s
     def GetAbsoluteVelocity(self):
-        if not self.rocketstarted:
-            return 0
-        return np.sqrt(self.v_x[self.currentStep]**2 + self.v_z[self.currentStep]**2)
+        if self.state == RocketState.currentlyFlying:
+            return np.sqrt(self.v_x[self.currentStep]**2 + self.v_z[self.currentStep]**2)
+        return 0
     def ResetArray(self):
         self.r_x[1:NUM_OF_PREDICTIONS+1] = self.r_x[NUM_OF_PREDICTIONS:]
         self.r_z[1:NUM_OF_PREDICTIONS+1] = self.r_z[NUM_OF_PREDICTIONS:]
