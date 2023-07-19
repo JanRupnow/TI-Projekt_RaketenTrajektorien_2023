@@ -15,7 +15,6 @@ from Methods.RocketConfig import LoadRocket
 
 
 now = datetime.datetime.now()
-o
 
 def main():
     time_passed = datetime.timedelta(seconds=0)
