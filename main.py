@@ -8,7 +8,7 @@ from Views.StartView import *
 
 from ViewController.DtoProcessEvent import DTOProcessEvent
 from ViewController.DrawManager import DrawManager
-from ViewController.Rocket.RocketState import RocketState
+from ViewController.Rocket.RocketFlightState import RocketFlightState
 
 from Methods.ConfigurePlanets import ConfigurePlanets
 from Methods.GameMethods import ProcessHotKeyEvents, CenterScreenOnPlanet, PlanetIsInScreen, AutomaticZoomOnRocket
@@ -19,6 +19,7 @@ now = datetime.datetime.now()
 
 def main():
     time_passed = datetime.timedelta(seconds=0)
+
     global Scale, TimeStep, now, MoveX, MoveY, Clock
     run = True
     zoomReferencePlanet = False
@@ -73,10 +74,10 @@ def main():
 
         time_passed = RenderFlightInterface(WINDOW, rocket, now, FONT_1, pause, Clock, time_passed, TimeStep, manager)
         if rocket.nearestPlanet.CheckCollision():
-            if not rocket.state == RocketState.landed:
+            if not rocket.flightState == RocketFlightState.landed:
                 rocket.nearestPlanet.CheckLanding(rocket, run)
         DrawManager.RocketDraw(rocket, WINDOW,MoveX,MoveY, planets, pause, Scale, WIDTH, HEIGHT)
-        if not rocket.state == RocketState.landed:
+        if not rocket.flightState == RocketFlightState.landed:
             rocket.UpdatePlanetsInRangeList(planets)
             rocket.UpdateNearestPlanet(planets)
         pygame.display.update()

@@ -8,7 +8,8 @@ from Views.HotkeyView import *
 
 from ViewController.DtoProcessEvent import DTOProcessEvent
 from ViewController.Rocket.Rocket import Rocket
-from ViewController.Rocket.RocketState import RocketState
+from ViewController.Rocket.RocketFlightState import RocketFlightState
+from ViewController.Rocket.RocketChangeState import RocketChangeState
 from ViewController.Planet import Planet
 
 from Methods.SupportMethods import *
@@ -20,15 +21,15 @@ def AddClockTime(pause, time_passed, timestep):
 
 def AutomaticZoomOnRocket(rocket : Rocket, scale, move_x, move_y):
     if rocket.zoomOnRocket:
-        move_x, move_y = -rocket.r_x[rocket.currentStep] * scale, -rocket.r_z[rocket.currentStep] * scale
+        move_x, move_y = -rocket.position_X[rocket.currentStep] * scale, -rocket.position_Y[rocket.currentStep] * scale
     return move_x, move_y
 
 def AutomaticZoomOnRocketOnce(rocket : Rocket, scale, move_x, move_y):
-    move_x, move_y = -rocket.r_x[rocket.currentStep] * scale, -rocket.r_z[rocket.currentStep] * scale
+    move_x, move_y = -rocket.position_X[rocket.currentStep] * scale, -rocket.position_Y[rocket.currentStep] * scale
     return move_x, move_y
 
 def CenterScreenOnPlanet(planet : Planet, scale, move_x, move_y):
-     move_x, move_y = -planet.r_x[planet.currentStep] * scale, -planet.r_z[planet.currentStep] * scale
+     move_x, move_y = -planet.position_X[planet.currentStep] * scale, -planet.position_Y[planet.currentStep] * scale
      return move_x, move_y
 
 def ScaleRelative(factor, startscale):
@@ -44,17 +45,17 @@ def ShiftTimeStep(shiftUp, rocket : Rocket, planets : list[Planet], timestep):
     
     timestep = AllTimeSteps[index]
     rocket.timestep = timestep
-    rocket.timestepChanged = True
+    rocket.changeState = RocketChangeState.timeStepChanged
     for planet in planets:
         planet.timestep = timestep
     return timestep
 
 
 def PlanetIsInScreen(scale, planet : Planet, move_x, move_y, height, width):
-    inScreen = planet.r_z[planet.currentStep]*scale+planet.radius*scale > -move_y-height/2
-    inScreen = inScreen and planet.r_z[planet.currentStep]*scale-planet.radius*scale < -move_y+height/2
-    inScreen = inScreen and planet.r_x[planet.currentStep]*scale+planet.radius*scale > -move_x-width/2
-    return inScreen and planet.r_x[planet.currentStep]*scale-planet.radius*scale < -move_x+width/2
+    inScreen = planet.position_Y[planet.currentStep]*scale+planet.radius*scale > -move_y-height/2
+    inScreen = inScreen and planet.position_Y[planet.currentStep]*scale-planet.radius*scale < -move_y+height/2
+    inScreen = inScreen and planet.position_X[planet.currentStep]*scale+planet.radius*scale > -move_x-width/2
+    return inScreen and planet.position_X[planet.currentStep]*scale-planet.radius*scale < -move_x+width/2
 
 
 def ProcessHotKeyEvents(event, dto: DTOProcessEvent, rocket : Rocket, planets : list[Planet]):
@@ -70,22 +71,21 @@ def ProcessHotKeyEvents(event, dto: DTOProcessEvent, rocket : Rocket, planets : 
         dto.move_y += distance
     elif KeyPressed[keys.H_moveScreenDown[0]] or mouse_y == window_h - 1:
         dto.move_y -= distance
-    elif ( not event.type == pygame.KEYDOWN ) and KeyPressed[keys.H_rocketBoostForward[0]] and rocket.thrust<10 and (rocket.state == RocketState.flying or not dto.pause):
+    elif ( not event.type == pygame.KEYDOWN ) and KeyPressed[keys.H_rocketBoostForward[0]] and rocket.thrust<10 and (rocket.flightState == RocketFlightState.flying or not dto.pause):
         rocket.thrust += 1
-        rocket.powerchanged = True
-        rocket.state = RocketState.flying
+        rocket.changeState = RocketChangeState.powerChanged
+        rocket.flightState = RocketFlightState.flying
     elif ( not event.type == pygame.KEYDOWN ) and KeyPressed[keys.H_rocketBoostLeft[0]] and rocket.angle>-45:
         rocket.angle -= 1
-        rocket.powerchanged = True
+        rocket.changeState = RocketChangeState.powerChanged
     elif ( not event.type == pygame.KEYDOWN ) and KeyPressed[keys.H_rocketBoostRight[0]]  and rocket.angle<45:
         rocket.angle += 1
-        rocket.powerchanged = True
+        rocket.changeState = RocketChangeState.powerChanged
     elif ( not event.type == pygame.KEYDOWN ) and KeyPressed[keys.H_lowerRocketBoost[0]] and rocket.thrust>0:
         rocket.thrust -= 1
-        rocket.powerchanged = True
+        rocket.changeState = RocketChangeState.powerChanged
     elif event.type == pygame.QUIT or CheckKeyDown(event, keys.H_leaveSimulation[0]) or CheckKeyDown(event, keys.H_closeWindow[0]):
         dto.run = False
-    #    rocket.powerchanged = True
     elif CheckKeyDown(event, keys.H_zoomRocketStart[0]):
         dto.scale = ScaleRelative(100000, STARTSCALE)
         rocket.SetScale(100000)

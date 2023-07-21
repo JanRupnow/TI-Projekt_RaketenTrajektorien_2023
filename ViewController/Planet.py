@@ -4,7 +4,7 @@ import numpy as np
 from Globals.Constants import *
 
 from ViewController.Rocket.Rocket import Rocket
-from ViewController.Rocket.RocketState import RocketState
+from ViewController.Rocket.RocketFlightState import RocketFlightState
 
 class Planet:
 
@@ -19,20 +19,20 @@ class Planet:
         self.scaleR = radius
         self.meanVelocity = velocity
 
-        self.r_x = np.zeros(LEN_OF_PREDICTIONS_ARRAY)
-        self.r_z = np.zeros(LEN_OF_PREDICTIONS_ARRAY)
-        self.v_x = np.zeros(LEN_OF_PREDICTIONS_ARRAY)
-        self.v_z = np.zeros(LEN_OF_PREDICTIONS_ARRAY)
+        self.position_X = np.zeros(LEN_OF_PREDICTIONS_ARRAY)
+        self.position_Y = np.zeros(LEN_OF_PREDICTIONS_ARRAY)
+        self.velocity_X = np.zeros(LEN_OF_PREDICTIONS_ARRAY)
+        self.velocity_Y = np.zeros(LEN_OF_PREDICTIONS_ARRAY)
         self.currentStep = 0
         self.currentCalculationStep = 0
 
-        self.r_x[0] = x
-        self.r_z[0] = y
+        self.position_X[0] = x
+        self.position_Y[0] = y
 
     def Attraction(self, other, i):
-        other_x, other_y = other.r_x[i], other.r_z[i]
-        distance_x = other_x - self.r_x[i]
-        distance_y = other_y - self.r_z[i]
+        otheposition_X, other_y = other.position_X[i], other.position_Y[i]
+        distance_x = otheposition_X - self.position_X[i]
+        distance_y = other_y - self.position_Y[i]
         distance = math.sqrt(distance_x ** 2 + distance_y ** 2)
         force = G * self.mass * other.mass / distance ** 2
         theta = math.atan2(distance_y, distance_x)
@@ -41,18 +41,18 @@ class Planet:
         return force_x, force_y
     
     def ResetPlanetsArrayToSyncWithRocket(self):
-        self.r_x[0:NUM_OF_PREDICTIONS] = self.r_x[self.currentStep:self.currentStep+NUM_OF_PREDICTIONS]
-        self.r_z[0:NUM_OF_PREDICTIONS] = self.r_z[self.currentStep:self.currentStep+NUM_OF_PREDICTIONS]
-        self.v_x[0:NUM_OF_PREDICTIONS] = self.v_x[self.currentStep:self.currentStep+NUM_OF_PREDICTIONS]
-        self.v_z[0:NUM_OF_PREDICTIONS] = self.v_z[self.currentStep:self.currentStep+NUM_OF_PREDICTIONS]
+        self.position_X[0:NUM_OF_PREDICTIONS] = self.position_X[self.currentStep:self.currentStep+NUM_OF_PREDICTIONS]
+        self.position_Y[0:NUM_OF_PREDICTIONS] = self.position_Y[self.currentStep:self.currentStep+NUM_OF_PREDICTIONS]
+        self.velocity_X[0:NUM_OF_PREDICTIONS] = self.velocity_X[self.currentStep:self.currentStep+NUM_OF_PREDICTIONS]
+        self.velocity_Y[0:NUM_OF_PREDICTIONS] = self.velocity_Y[self.currentStep:self.currentStep+NUM_OF_PREDICTIONS]
         self.currentStep = 0
         self.currentCalculationStep = NUM_OF_PREDICTIONS-1
 
     def ResetArray(self):
-        self.r_x[1:NUM_OF_PREDICTIONS+1] = self.r_x[NUM_OF_PREDICTIONS:]
-        self.r_z[1:NUM_OF_PREDICTIONS+1] = self.r_z[NUM_OF_PREDICTIONS:]
-        self.v_x[1:NUM_OF_PREDICTIONS+1] = self.v_x[NUM_OF_PREDICTIONS:]
-        self.v_z[1:NUM_OF_PREDICTIONS+1] = self.v_z[NUM_OF_PREDICTIONS:]
+        self.position_X[1:NUM_OF_PREDICTIONS+1] = self.position_X[NUM_OF_PREDICTIONS:]
+        self.position_Y[1:NUM_OF_PREDICTIONS+1] = self.position_Y[NUM_OF_PREDICTIONS:]
+        self.velocity_X[1:NUM_OF_PREDICTIONS+1] = self.velocity_X[NUM_OF_PREDICTIONS:]
+        self.velocity_Y[1:NUM_OF_PREDICTIONS+1] = self.velocity_Y[NUM_OF_PREDICTIONS:]
         self.currentStep = 1
         self.currentCalculationStep = NUM_OF_PREDICTIONS
 
@@ -68,10 +68,10 @@ class Planet:
             fx, fy = self.Attraction(planet, i)
             total_fx += fx
             total_fy += fy
-        self.v_x[i+1] = self.v_x[i] + total_fx / self.mass * self.timestep
-        self.v_z[i+1] = self.v_z[i] + total_fy / self.mass * self.timestep
-        self.r_x[i+1] = self.r_x[i] + self.v_x[i+1] * self.timestep
-        self.r_z[i+1] = self.r_z[i] + self.v_z[i+1] * self.timestep
+        self.velocity_X[i+1] = self.velocity_X[i] + total_fx / self.mass * self.timestep
+        self.velocity_Y[i+1] = self.velocity_Y[i] + total_fy / self.mass * self.timestep
+        self.position_X[i+1] = self.position_X[i] + self.velocity_X[i+1] * self.timestep
+        self.position_Y[i+1] = self.position_Y[i] + self.velocity_Y[i+1] * self.timestep
 
         self.UpdateDistanceToRocket(rocket)
 
@@ -79,7 +79,7 @@ class Planet:
             self.currentCalculationStep += 1
 
     def UpdateDistanceToRocket(self, rocket : Rocket):
-        self.distanceToRocket = math.sqrt((self.r_x[self.currentStep]-rocket.r_x[rocket.currentStep])**2+(self.r_z[self.currentStep]-rocket.r_z[rocket.currentStep])**2)
+        self.distanceToRocket = math.sqrt((self.position_X[self.currentStep]-rocket.position_X[rocket.currentStep])**2+(self.position_Y[self.currentStep]-rocket.position_Y[rocket.currentStep])**2)
 
     def PredictNext(self, planets : list[__init__], pause):
         total_fx = total_fy = 0
@@ -89,10 +89,10 @@ class Planet:
             fx, fy = self.Attraction(planet, self.currentCalculationStep)
             total_fx += fx
             total_fy += fy
-        self.v_x[self.currentCalculationStep+1] = self.v_x[self.currentCalculationStep] + total_fx / self.mass * self.timestep
-        self.v_z[self.currentCalculationStep+1] = self.v_z[self.currentCalculationStep] + total_fy / self.mass * self.timestep
-        self.r_x[self.currentCalculationStep+1] = self.r_x[self.currentCalculationStep] + self.v_x[self.currentCalculationStep+1] * self.timestep
-        self.r_z[self.currentCalculationStep+1] = self.r_z[self.currentCalculationStep] + self.v_z[self.currentCalculationStep+1] * self.timestep
+        self.velocity_X[self.currentCalculationStep+1] = self.velocity_X[self.currentCalculationStep] + total_fx / self.mass * self.timestep
+        self.velocity_Y[self.currentCalculationStep+1] = self.velocity_Y[self.currentCalculationStep] + total_fy / self.mass * self.timestep
+        self.position_X[self.currentCalculationStep+1] = self.position_X[self.currentCalculationStep] + self.velocity_X[self.currentCalculationStep+1] * self.timestep
+        self.position_Y[self.currentCalculationStep+1] = self.position_Y[self.currentCalculationStep] + self.velocity_Y[self.currentCalculationStep+1] * self.timestep
 
         if not pause:
             self.currentCalculationStep += 1
@@ -113,7 +113,7 @@ class Planet:
         if not self.currentStep % math.ceil(100/self.timestep) == 0:
             return
         if self.distanceToRocket <= self.radius *95/100 and rocket.GetCurrentRelativeVelocity() < 1000000000:
-            rocket.state = RocketState.landed
+            rocket.flightState = RocketFlightState.landed
             rocket.thrust = 0
             rocket.CalculateEntryAngle()
             rocket.ClearArray()

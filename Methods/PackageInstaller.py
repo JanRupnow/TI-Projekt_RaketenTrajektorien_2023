@@ -10,7 +10,7 @@ def InstallAllPackages():
     
     hotkeysJson = json.load(jsonFile)
     if (not hotkeysJson["downloaded"]):
-        package_list = ["numpy", "pygame", "pygame_gui", "datetime", "astropy", "sunpy"]
+        package_list = ["numpy", "pygame", "pygame_gui", "datetime", "astropy", "sunpy", "json"]
         for package in package_list:
             Install(package)
         # Overwriting package status

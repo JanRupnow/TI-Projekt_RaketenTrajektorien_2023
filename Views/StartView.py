@@ -6,7 +6,7 @@ import sys
 import Globals.Hotkeys as keys
 from Globals.Constants import *
 
-from Views.ViewElements import *
+from Views.ViewComponents import *
 
 from Methods.SupportMethods import *
 from Methods.JsonMethods import *

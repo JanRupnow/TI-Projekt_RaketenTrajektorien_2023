@@ -1,6 +1,6 @@
 from enum import Enum
 
-class RocketState(Enum):
+class RocketFlightState(Enum):
     notStarted = 0,
     flying = 1,
     landed = 2,
