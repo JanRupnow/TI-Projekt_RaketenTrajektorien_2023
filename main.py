@@ -67,16 +67,16 @@ def main():
             #    planet.update_position(planets, rocket)
             # Ohne Radius verschwinden die Balken bugs im Screen
 
-            if PlanetIsInScreen(Scale, planet, MoveX, MoveY, HEIGHT, WIDTH):
-                DrawManager.PlanetDraw(planet, WINDOW, show_distance, MoveX, MoveY, draw_line, Scale, WIDTH, HEIGHT)
+            if PlanetIsInScreen(Scale, planet, MoveX, MoveY):
+                DrawManager.PlanetDraw(planet, show_distance, MoveX, MoveY, draw_line, Scale)
             else: 
-                DrawManager.PlanetDrawLineOnly(planet, WINDOW, MoveX, MoveY, draw_line, Scale, WIDTH, HEIGHT, show_distance)
+                DrawManager.PlanetDrawLineOnly(planet, MoveX, MoveY, draw_line, Scale, show_distance)
 
-        time_passed = RenderFlightInterface(WINDOW, rocket, now, FONT_1, pause, Clock, time_passed, TimeStep, manager)
+        time_passed = RenderFlightInterface(rocket, now, pause, Clock, time_passed, TimeStep)
         if rocket.nearestPlanet.CheckCollision():
             if not rocket.flightState == RocketFlightState.landed:
                 rocket.nearestPlanet.CheckLanding(rocket, run)
-        DrawManager.RocketDraw(rocket, WINDOW,MoveX,MoveY, planets, pause, Scale, WIDTH, HEIGHT)
+        DrawManager.RocketDraw(rocket, MoveX, MoveY, planets, pause, Scale)
         if not rocket.flightState == RocketFlightState.landed:
             rocket.UpdatePlanetsInRangeList(planets)
             rocket.UpdateNearestPlanet(planets)

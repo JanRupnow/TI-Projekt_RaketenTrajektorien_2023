@@ -1,7 +1,7 @@
 
 import datetime
 
-from Globals.Constants import *
+from Globals.Constants import HEIGHT, WIDTH
 import Globals.Hotkeys as keys
 
 from Views.HotkeyView import *
@@ -51,11 +51,11 @@ def ShiftTimeStep(shiftUp, rocket : Rocket, planets : list[Planet], timestep):
     return timestep
 
 
-def PlanetIsInScreen(scale, planet : Planet, move_x, move_y, height, width):
-    inScreen = planet.position_Y[planet.currentStep]*scale+planet.radius*scale > -move_y-height/2
-    inScreen = inScreen and planet.position_Y[planet.currentStep]*scale-planet.radius*scale < -move_y+height/2
-    inScreen = inScreen and planet.position_X[planet.currentStep]*scale+planet.radius*scale > -move_x-width/2
-    return inScreen and planet.position_X[planet.currentStep]*scale-planet.radius*scale < -move_x+width/2
+def PlanetIsInScreen(scale, planet : Planet, move_x, move_y):
+    inScreen = planet.position_Y[planet.currentStep]*scale+planet.radius*scale > -move_y-HEIGHT/2
+    inScreen = inScreen and planet.position_Y[planet.currentStep]*scale-planet.radius*scale < -move_y+HEIGHT/2
+    inScreen = inScreen and planet.position_X[planet.currentStep]*scale+planet.radius*scale > -move_x-WIDTH/2
+    return inScreen and planet.position_X[planet.currentStep]*scale-planet.radius*scale < -move_x+WIDTH/2
 
 
 def ProcessHotKeyEvents(event, dto: DTOProcessEvent, rocket : Rocket, planets : list[Planet]):

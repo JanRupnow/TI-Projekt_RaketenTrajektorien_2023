@@ -1,13 +1,13 @@
 import numpy as np
 
-from Globals.Constants import * 
+from Globals.Constants import *
 
 from ViewController.Rocket.Rocket import Rocket
 from ViewController.Rocket.RocketFlightState import RocketFlightState
 
 from Methods.GameMethods import AddClockTime
 
-def RenderFlightInterface(WINDOW, rocket : Rocket, now, FONT_1, pause, clock, time_passed, timestep, manager):
+def RenderFlightInterface(rocket : Rocket, now, pause, clock, time_passed, timestep):
 
     fps_text = FONT_1.render("FPS: " + str(int(clock.get_fps())), True, COLOR_WHITE)
     ### Menü implementieren zur Übersicht der Tasten
@@ -44,4 +44,23 @@ def RenderFlightInterface(WINDOW, rocket : Rocket, now, FONT_1, pause, clock, ti
     angle_text = FONT_1.render(f'Angle: {rocket.angle}°', True, COLOR_WHITE)
     WINDOW.blit(angle_text, (WIDTH*0.8, HEIGHT*0.85))
 
+    
+    sun_surface = FONT_1.render("- Sun", True, COLOR_SUN)
+    WINDOW.blit(sun_surface, (15, 285))
+    mercury_surface = FONT_1.render("- Mercury", True, COLOR_MERCURY)
+    WINDOW.blit(mercury_surface, (15, 315))
+    venus_surface = FONT_1.render("- Venus", True, COLOR_VENUS)
+    WINDOW.blit(venus_surface, (15, 345))
+    earth_surface = FONT_1.render("- Earth", True, COLOR_EARTH)
+    WINDOW.blit(earth_surface, (15, 375))
+    mars_surface = FONT_1.render("- Mars", True, COLOR_MARS)
+    WINDOW.blit(mars_surface, (15, 405))
+    jupiter_surface = FONT_1.render("- Jupiter", True, COLOR_JUPITER)
+    WINDOW.blit(jupiter_surface, (15, 435))
+    saturn_surface = FONT_1.render("- Saturn", True, COLOR_SATURN)
+    WINDOW.blit(saturn_surface, (15, 465))
+    uranus_surface = FONT_1.render("- Uranus", True, COLOR_URANUS)
+    WINDOW.blit(uranus_surface, (15, 495))
+    neptune_surface = FONT_1.render("- Neptune", True, COLOR_NEPTUNE)
+    WINDOW.blit(neptune_surface, (15, 525))
     return time_passed
