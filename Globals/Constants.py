@@ -1,5 +1,8 @@
 import pygame
+import datetime
 from Globals.FlightData.FlightDataManager import FlightDataManager
+from Globals.FlightData.FlightChangeState import FlightChangeState
+from Globals.FlightData.ZoomGoal import ZoomGoal
 pygame.init()
 DATA = FlightDataManager()
 WIDTH, HEIGHT = pygame.display.Info().current_w, pygame.display.Info().current_h
@@ -35,7 +38,6 @@ EndTime = CalculationSteps*5
 CurrentStep = 0
 CurrentCalculationStep = 0
 AllTimeSteps = [1/60, 5/60, 10/60, 25/60, 100/60, 500/60, 1000/60, 2500/60, 10000/60, 25000/60, 100000/60]
-TimeStep = AllTimeSteps[0]
 
 MoveX = 0
 MoveY = 0
@@ -49,3 +51,17 @@ WINDOW = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
 
 WIDTH, HEIGHT = pygame.display.Info().current_w, pygame.display.Info().current_h
 #WINDOW.set_clip(pygame.Rect(0, 0, WIDTH, HEIGHT))
+def ConfigureStartValues():
+    DATA.setShowDistance(False)
+    DATA.setRun(True)
+    DATA.setDrawOrbit(True)
+    DATA.setTimeStep(AllTimeSteps[0])
+    DATA.setFlightChangeState(FlightChangeState.unchanged)
+    DATA.setScale(STARTSCALE)
+    DATA.setSimulationPause(False)
+    DATA.setZoomGoal(ZoomGoal.rocket)
+    DATA.setTimePassed(datetime.datetime.now()-datetime.datetime.now())
+    DATA.setMouseX(0)
+    DATA.setMouseY(0)
+    DATA.setMoveX(0)
+    DATA.setMoveY(0)

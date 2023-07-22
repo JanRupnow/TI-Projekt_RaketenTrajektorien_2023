@@ -13,7 +13,6 @@ class Planet:
         self.color = color
         self.mass = mass
         self.name = name
-        self.timestep = TimeStep
         self.distanceToRocket = 2* radius
         # drawing radius used only for displaying not calculating!!!
         self.scaleR = radius
@@ -59,7 +58,7 @@ class Planet:
     def SetScale(self, scale):
         self.scaleR *= scale
 
-    def PredictStep(self, i, planets : list[__init__], pause, rocket : Rocket):
+    def PredictStep(self, i, planets : list[__init__], rocket : Rocket):
         self.currentCalculationStep = i
         total_fx = total_fy = 0
         for planet in planets:
@@ -75,7 +74,7 @@ class Planet:
 
         self.UpdateDistanceToRocket(rocket)
 
-        if not pause:
+        if not DATA.getSimulationPause():
             self.currentCalculationStep += 1
 
     def UpdateDistanceToRocket(self, rocket : Rocket):

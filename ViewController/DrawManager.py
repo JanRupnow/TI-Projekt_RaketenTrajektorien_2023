@@ -20,7 +20,7 @@ class DrawManager():
         # Orbit 
         DrawManager.PlanetDrawLineOnly(planet)
         # Planet
-        pygame.draw.circle(WINDOW, planet.color, (planet.position_X[planet.currentStep]*DATA.getScale()+DATA.getMoveX()+WIDTH/2, planet.position_Y[planet.currentStep]*DATA.getScale()+move_y+ HEIGHT/2), max(planet.scaleR * DATA.getScale(), 2))
+        pygame.draw.circle(WINDOW, planet.color, (planet.position_X[planet.currentStep]*DATA.getScale()+DATA.getMoveX()+WIDTH/2, planet.position_Y[planet.currentStep]*DATA.getScale()+DATA.getMoveY()+ HEIGHT/2), max(planet.scaleR * DATA.getScale(), 2))
 
     @staticmethod
     def PlanetDrawLineOnly(planet : Planet):
@@ -29,7 +29,7 @@ class DrawManager():
             DrawManager.PlanetDisplayDistances(planet)
         if not DATA.getDrawOrbit():
             return
-        line = planet.LineIsInScreen(np.array((planet.position_X[planet.currentStep:planet.currentCalculationStep]*DATA.getScale(), planet.position_Y[planet.currentStep:planet.currentCalculationStep]*DATA.getScale())).T, DATA.getMoveX(), DATA.getMoveY(), HEIGHT, WIDTH)
+        line = planet.LineIsInScreen(np.array((planet.position_X[planet.currentStep:planet.currentCalculationStep]*DATA.getScale(), planet.position_Y[planet.currentStep:planet.currentCalculationStep]*DATA.getScale())).T)
         # size > 3 because (2,3) are 2 coordinates for 1 point and you need 2 points to connect a line ((x,y),(x2,y2))
         if line.size > 3:
             pygame.draw.lines(WINDOW, planet.color, False, line, 1)
@@ -69,8 +69,8 @@ class DrawManager():
                 rocket.CalculateOnePrediction(planets)
         if rocket.currentCalculationStep > 2:
             # move_x and move_y verschieben je nach bewegung des Bildschirm
-            move_x, move_y = AutomaticZoomOnRocket(rocket)
-            pygame.draw.lines(WINDOW, rocket.color, False, np.array((rocket.position_X[rocket.currentStep:rocket.currentCalculationStep]*DATA.getScale()+move_x+WIDTH/2, rocket.position_Y[rocket.currentStep:rocket.currentCalculationStep]*DATA.getScale()+move_y+ HEIGHT/2)).T, 1)
+            AutomaticZoomOnRocket(rocket)
+            pygame.draw.lines(WINDOW, rocket.color, False, np.array((rocket.position_X[rocket.currentStep:rocket.currentCalculationStep]*DATA.getScale()+DATA.getMoveX()+WIDTH/2, rocket.position_Y[rocket.currentStep:rocket.currentCalculationStep]*DATA.getScale()+DATA.getMoveY()+ HEIGHT/2)).T, 1)
             
             DrawManager.DrawRocket(rocket)
         if DATA.getSimulationPause:

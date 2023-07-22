@@ -1,114 +1,85 @@
-from abc import ABC, abstractmethod
+from abc import ABC, abstractmethod, ABCMeta
 
 import datetime
 from Globals.FlightData.FlightChangeState import FlightChangeState
 from Globals.FlightData.ZoomGoal import ZoomGoal
 
-class FlightDataManager(ABC):
+class SingletonMeta(type):
+    _instances = {}
 
-    _instance = None
-
-    @classmethod
-    def __new__(cls):
-        if cls._instance is None:
-            cls._instance = super().__new__(cls)
-        return cls._instance
- 
-    @abstractmethod
+    def __call__(cls, *args, **kwargs):
+        if cls not in cls._instances:
+            instance = super().__call__(*args, **kwargs)
+            cls._instances[cls] = instance
+        return cls._instances[cls]
+    
+class FlightDataManager(metaclass=SingletonMeta):
     def setFlightChangeState(self, value: FlightChangeState):
-        self.flightChangeState = value 
-    @abstractmethod 
+        self.flightChangeState = value  
     def getFlightChangeState(self):
         return self.flightChangeState 
 
-    @abstractmethod
-    def setCalculationState(self, value: bool):
-        self.showDistance = value  
-    @abstractmethod    
-    def getCalculationStatehowDistance(self):
+    def setShowDistance(self, value: bool):
+        self.showDistance = value     
+    def getshowDistance(self):
         return self.showDistance 
     
-    @abstractmethod
     def setRun(self, value: bool):
         self.run = value  
-    @abstractmethod
     def getRun(self):
         return self.run  
     
-    @abstractmethod
     def setScale(self, value: float):
         self.scale = value 
-    @abstractmethod 
     def getScale(self):
         return self.scale
        
-    @abstractmethod
     def setMoveX(self, value: int):
-        self.moveX = value  
-    @abstractmethod    
+        self.moveX = value    
     def getMoveX(self):
         return self.moveX 
     
-    @abstractmethod
     def setMoveY(self, value: int):
-        self.moveY = value  
-    @abstractmethod    
+        self.moveY = value   
     def getMoveY(self):
         return self.moveY 
     
-    @abstractmethod
     def setMouseX(self, value: float):
-        self.mouseX = value  
-    @abstractmethod    
+        self.mouseX = value   
     def getMouseX(self):
         return self.mouseX
     
-    @abstractmethod
     def setMouseY(self, value: float):
-        self.mouseY = value  
-    @abstractmethod    
+        self.mouseY = value   
     def getMouseY(self):
         return self.mouseY 
     
-    @abstractmethod
     def setShowDistance(self, value: bool):
-        self.showDistance = value  
-    @abstractmethod    
+        self.showDistance = value
     def getShowDistance(self):
         return self.showDistance 
     
-    @abstractmethod
     def setDrawOrbit(self, value: bool):
-        self.drawOrbit = value  
-    @abstractmethod    
+        self.drawOrbit = value    
     def getDrawOrbit(self):
         return self.drawOrbit 
     
-    @abstractmethod
     def setTimeStep(self, value: float):
-        self.timeStep = value  
-    @abstractmethod    
+        self.timeStep = value   
     def getTimeStep(self):
         return self.timeStep 
     
-    @abstractmethod
     def setSimulationPause(self, value: bool):
-        self.simulationIsPaused = value  
-    @abstractmethod    
+        self.simulationIsPaused = value      
     def getSimulationPause(self):
         return self.simulationIsPaused 
     
-    @abstractmethod
     def setZoomGoal(self, value: ZoomGoal):
-        self.zoomGoal = value  
-    @abstractmethod    
+        self.zoomGoal = value   
     def getZoomGoal(self):
         return self.zoomGoal
     
-    @abstractmethod
     def setTimePassed(self, value: datetime):
-        self.timePassed = value  
-    @abstractmethod    
+        self.timePassed = value      
     def getTimePassed(self):
         return self.timePassed
-    

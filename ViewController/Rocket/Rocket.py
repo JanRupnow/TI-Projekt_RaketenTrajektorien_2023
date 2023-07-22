@@ -12,7 +12,6 @@ class Rocket:
     def __init__(self, startAngle, fuel, mass, startplanet, radius, color, sun, image):
         self.currentStep = CurrentStep
         self.currentCalculationStep = CurrentCalculationStep
-        self.timestep = TimeStep
         self.mass = mass
         self.fuelmass = fuel
         self.startingAngle = startAngle
@@ -135,17 +134,17 @@ class Rocket:
         self.entryAngle =  math.atan2(self.position_Y[self.currentStep] - self.nearestPlanet.position_Y[self.nearestPlanet.currentStep],
                           self.position_X[self.currentStep] - self.nearestPlanet.position_X[self.nearestPlanet.currentStep]) * (180 / np.pi)
         
-    def CalculateNewCalculationOfPredictions(self, firstTime, planets, paused):
+    def CalculateNewCalculationOfPredictions(self, firstTime, planets):
         for i in range(NUM_OF_PREDICTIONS):
             if firstTime or DATA.getFlightChangeState() == FlightChangeState.timeStepChanged:
                 for planet in planets:
-                    planet.PredictStep(self.currentCalculationStep, planets, paused, self)
+                    planet.PredictStep(self.currentCalculationStep, planets, self)
             self.CalculateNextStep(self.currentCalculationStep)
             self.currentCalculationStep += 1
 
-    def CalculateOnePrediction(self, planets, paused):
+    def CalculateOnePrediction(self, planets):
         for planet in planets:
-            planet.PredictStep(self.currentCalculationStep, planets, paused, self)
+            planet.PredictStep(self.currentCalculationStep, planets, self)
         self.CalculateNextStep(self.currentCalculationStep)
         self.currentCalculationStep += 1
         
@@ -164,7 +163,7 @@ class Rocket:
         self.velocity_Y[0] = self.nearestPlanet.position_Y[self.nearestPlanet.currentStep]
 
     def UpdatePlanetsInRangeList(self,planets):
-        if not self.currentStep % math.ceil(100/self.timestep) == 0:
+        if not self.currentStep % math.ceil(100/DATA.getTimeStep()) == 0:
             return
         self.PlanetsInRangeList = []
         for planet in planets:

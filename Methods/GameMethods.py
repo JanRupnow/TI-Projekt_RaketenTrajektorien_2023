@@ -133,9 +133,9 @@ def ProcessHotKeyEvents(event, rocket : Rocket, planets : list[Planet]):
         rocket.SetScale(1.25)
 
     elif CheckKeyDown(event, keys.H_shiftTimeStepUp[0]):
-        ShiftTimeStep(True, rocket, planets)
+        ShiftTimeStep(True)
     elif CheckKeyDown(event, keys.H_shiftTimeStepDown[0]): 
-        ShiftTimeStep(False, rocket, planets)
+        ShiftTimeStep(False)
     elif CheckKeyDown(event, keys.H_openSettings[0]):
         ShowSettingsUI()
-    return event, rocket, planets 
+    return event, rocket

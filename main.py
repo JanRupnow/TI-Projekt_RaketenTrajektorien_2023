@@ -1,10 +1,8 @@
 import pygame
 import datetime
 
-from Globals.FlightData.FlightDataManager import FlightDataManager
 from Globals.FlightData.ZoomGoal import ZoomGoal
-from Globals.FlightData.FlightDataManager import FlightDataManager
-from Globals.FlightData.ZoomGoal import ZoomGoal
+from Globals.Constants import DATA
 
 from Views.MainView import RenderFlightInterface
 from Views.StartView import *
@@ -19,41 +17,32 @@ from Methods.GameMethods import ProcessHotKeyEvents, CenterScreenOnPlanet, Plane
 from Methods.RocketConfig import LoadRocket
 
 
-now = datetime.datetime.now()
+
 
 def main():
+
+    now = datetime.datetime.now()
     global CLOCK
-    # TODO set intial FlightDataManger values in Constants
-    time_passed = datetime.timedelta(seconds=0)
-    run = True
-    zoomReferencePlanet = False
-    pause = False
-    show_distance = False
-    mouse_x = 0
-    mouse_y = 0
-    draw_line = True
-    manager = pg.UIManager((WIDTH,HEIGHT))
+    
+    ConfigureStartValues()
     planets = ConfigurePlanets()
     rocket = LoadRocket(planets)
 
-    while run:
+    while DATA.getRun():
         CLOCK.tick(60)
         
         WINDOW.fill(COLOR_UNIVERSE)
 
         for event in pygame.event.get():
-            event, rocket, planets = ProcessHotKeyEvents(event, rocket, planets)
-        if DATA.getZoomGoal == ZoomGoal.nearestPlanet:
-            CenterScreenOnPlanet(rocket.nearestPlanet)
-        else:
-            if DATA.getZoomGoal() == ZoomGoal.rocket:
-                AutomaticZoomOnRocket(rocket) 
-        for planet in planets:
-            #if not pause:
-            #    planet.update_position(planets, rocket)
-            # Ohne Radius verschwinden die Balken bugs im Screen
+            event, rocket = ProcessHotKeyEvents(event, rocket, planets)
 
-            if PlanetIsInScreen(planet,):
+        if DATA.getZoomGoal() == ZoomGoal.nearestPlanet:
+            CenterScreenOnPlanet(rocket.nearestPlanet)
+        elif DATA.getZoomGoal() == ZoomGoal.rocket:
+                AutomaticZoomOnRocket(rocket) 
+
+        for planet in planets:
+            if PlanetIsInScreen(planet):
                 DrawManager.PlanetDraw(planet)
             else: 
                 DrawManager.PlanetDrawLineOnly(planet)
@@ -62,6 +51,7 @@ def main():
         if rocket.nearestPlanet.CheckCollision():
             if not rocket.flightState == RocketFlightState.landed:
                 rocket.nearestPlanet.CheckLanding(rocket)
+
         DrawManager.RocketDraw(rocket, planets)
         if not rocket.flightState == RocketFlightState.landed:
             rocket.UpdatePlanetsInRangeList(planets)
