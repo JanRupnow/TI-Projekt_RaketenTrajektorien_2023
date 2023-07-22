@@ -178,3 +178,11 @@ class Rocket:
     def GetDistanceToPlanet(self, planet, step):
         return np.sqrt((self.position_X[step] - planet.position_X[step])**2 
                        + (self.position_Y[step] - planet.position_Y[step])**2)
+    
+    def CalculateLandedValues(self):
+        self.planet = self.nearestPlanet if self.flightState == RocketFlightState.landed else self.startplanet
+        self.angle = self.entryAngle if self.flightState == RocketFlightState.landed else self.startingAngle
+        self.position_X[0] = self.position_X[self.currentStep] + self.radius * np.cos(self.angle * np.pi / 180)  
+        self.position_Y[0] = self.position_Y[self.currentStep] + self.radius * np.sin(self.angle * np.pi / 180)
+        self.velocity_X[0] = self.velocity_X[self.currentStep]
+        self.velocity_Y[0] = self.velocity_Y[self.currentStep]

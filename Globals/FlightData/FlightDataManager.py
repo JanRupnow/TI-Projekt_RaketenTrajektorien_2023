@@ -54,11 +54,6 @@ class FlightDataManager(metaclass=SingletonMeta):
     def getMouseY(self):
         return self.mouseY 
     
-    def setShowDistance(self, value: bool):
-        self.showDistance = value
-    def getShowDistance(self):
-        return self.showDistance 
-    
     def setDrawOrbit(self, value: bool):
         self.drawOrbit = value    
     def getDrawOrbit(self):
