@@ -3,7 +3,7 @@ import datetime
 
 from Globals.Constants import DATA
 
-from Views.MainView import RenderFlightInterface
+from Views.FlightView import RenderFlightInterface
 from Views.StartView import *
 
 from ViewController.GameManager import GameManager
