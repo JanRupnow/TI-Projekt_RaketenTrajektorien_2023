@@ -67,6 +67,7 @@ def main():
             rocket.UpdatePlanetsInRangeList(planets)
             rocket.UpdateNearestPlanet(planets)
         pygame.display.update()
+        
     pygame.quit()
 
 
