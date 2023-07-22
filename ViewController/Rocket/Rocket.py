@@ -3,9 +3,9 @@ import pygame
 import math
 
 from Globals.Constants import *
+from Globals.FlightData.FlightChangeState import FlightChangeState
 
 from ViewController.Rocket.RocketFlightState import RocketFlightState
-from ViewController.Rocket.RocketChangeState import RocketChangeState
 
 
 class Rocket:
@@ -25,10 +25,9 @@ class Rocket:
         self.thrust = 0                     # aktuell nicht genutzt     
         self.angle = 0  
         self.flightState = RocketFlightState.notStarted
-        self.changeState = RocketChangeState.unchanged
-        self.color = color
         self.startplanet = startplanet
         self.predictions = []
+        self.color = color
         self.velocity_X[0] = self.startplanet.velocity_X[0]
         self.velocity_Y[0] = self.startplanet.velocity_Y[0]
         ## Berechnung der Startposition der Rakete abhängig vom Startplaneten ohne Skalierung
@@ -37,7 +36,6 @@ class Rocket:
         self.img = image
         self.img0 = image
         self.notRotatedImg = pygame.transform.scale_by(image, min(0.1*self.radius, 1))
-        self.zoomOnRocket = False
         self.sun = sun
         self.entryAngle = 0
 
@@ -81,21 +79,21 @@ class Rocket:
 
         # z-Komponente
         k1 = self.F1(self.velocity_Y[i],i, r0, distanceToSun)
-        k2 = self.F1(self.velocity_Y[i] + k1*self.timestep/2,i, r0, distanceToSun)
-        k3 = self.F1(self.velocity_Y[i] + k2*self.timestep/2,i, r0, distanceToSun)
-        k4 = self.F1(self.velocity_Y[i] + k3*self.timestep/2,i, r0, distanceToSun)
+        k2 = self.F1(self.velocity_Y[i] + k1*DATA.getTimeStep()/2,i, r0, distanceToSun)
+        k3 = self.F1(self.velocity_Y[i] + k2*DATA.getTimeStep()/2,i, r0, distanceToSun)
+        k4 = self.F1(self.velocity_Y[i] + k3*DATA.getTimeStep()/2,i, r0, distanceToSun)
         k = (k1 + 2*k2 + 2*k3 + k4)/6
-        self.velocity_Y[i+1] = self.velocity_Y[i] + k*self.timestep
-        self.position_Y[i+1] = self.position_Y[i] + self.velocity_Y[i]*self.timestep
+        self.velocity_Y[i+1] = self.velocity_Y[i] + k*DATA.getTimeStep()
+        self.position_Y[i+1] = self.position_Y[i] + self.velocity_Y[i]*DATA.getTimeStep()
 
         # x-Komponente
         k1 = self.F2(self.velocity_X[i],i, r0, distanceToSun)
-        k2 = self.F2(self.velocity_X[i] + k1*self.timestep/2,i, r0, distanceToSun)
-        k3 = self.F2(self.velocity_X[i] + k2*self.timestep/2,i, r0, distanceToSun)
-        k4 = self.F2(self.velocity_X[i] + k3*self.timestep/2,i, r0, distanceToSun)
+        k2 = self.F2(self.velocity_X[i] + k1*DATA.getTimeStep()/2,i, r0, distanceToSun)
+        k3 = self.F2(self.velocity_X[i] + k2*DATA.getTimeStep()/2,i, r0, distanceToSun)
+        k4 = self.F2(self.velocity_X[i] + k3*DATA.getTimeStep()/2,i, r0, distanceToSun)
         k = (k1 + 2*k2 + 2*k3 + k4)/6
-        self.velocity_X[i+1] = self.velocity_X[i] + k*self.timestep
-        self.position_X[i+1] = self.position_X[i] + self.velocity_X[i]*self.timestep
+        self.velocity_X[i+1] = self.velocity_X[i] + k*DATA.getTimeStep()
+        self.position_X[i+1] = self.position_X[i] + self.velocity_X[i]*DATA.getTimeStep()
 
 
     def SetScale(self,scale):
@@ -110,17 +108,15 @@ class Rocket:
                            (self.position_Y[self.currentCalculationStep] - self.nearestPlanet.position_Y[self.currentCalculationStep])**2)
 
     def GetRelativeVelocity(self, i):
-        if not self.flightState == RocketFlightState.flying:
-            return 0
-        return np.sqrt( (self.velocity_X[i] - self.nearestPlanet.position_X[i])**2 
+        if self.flightState == RocketFlightState.flying: 
+            return np.sqrt( (self.velocity_X[i] - self.nearestPlanet.position_X[i])**2 
                         + (self.velocity_Y[i] - self.nearestPlanet.position_Y[i])**2)
-        
+        return 0
     def GetCurrentRelativeVelocity(self):
-        if not self.flightState == RocketFlightState.flying:
-            return 0
-        return np.sqrt( (self.velocity_X[self.currentStep] - self.nearestPlanet.position_X[self.nearestPlanet.currentStep])**2 
+        if self.flightState == RocketFlightState.flying:
+            return np.sqrt( (self.velocity_X[self.currentStep] - self.nearestPlanet.position_X[self.nearestPlanet.currentStep])**2 
                         + (self.velocity_Y[self.currentStep] - self.nearestPlanet.position_Y[self.nearestPlanet.currentStep])**2)
-
+        return 0
 
     # in m/s
     def GetAbsoluteVelocity(self):
@@ -141,7 +137,7 @@ class Rocket:
         
     def CalculateNewCalculationOfPredictions(self, firstTime, planets, paused):
         for i in range(NUM_OF_PREDICTIONS):
-            if firstTime or self.changeState == RocketChangeState.timeStepChanged:
+            if firstTime or DATA.getFlightChangeState() == FlightChangeState.timeStepChanged:
                 for planet in planets:
                     planet.PredictStep(self.currentCalculationStep, planets, paused, self)
             self.CalculateNextStep(self.currentCalculationStep)
@@ -176,7 +172,7 @@ class Rocket:
                 self.PlanetsInRangeList.append(planet)
 
     def UpdateNearestPlanet(self,planets):
-        if not self.currentStep % math.ceil(100/self.timestep) == 0:
+        if not self.currentStep % math.ceil(100/DATA.getTimeStep()) == 0:
             return
         self.nearestPlanet = min(planets, key=lambda x: self.GetDistanceToPlanet(x, self.currentStep))
     

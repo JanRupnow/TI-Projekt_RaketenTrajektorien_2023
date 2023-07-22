@@ -68,10 +68,10 @@ class Planet:
             fx, fy = self.Attraction(planet, i)
             total_fx += fx
             total_fy += fy
-        self.velocity_X[i+1] = self.velocity_X[i] + total_fx / self.mass * self.timestep
-        self.velocity_Y[i+1] = self.velocity_Y[i] + total_fy / self.mass * self.timestep
-        self.position_X[i+1] = self.position_X[i] + self.velocity_X[i+1] * self.timestep
-        self.position_Y[i+1] = self.position_Y[i] + self.velocity_Y[i+1] * self.timestep
+        self.velocity_X[i+1] = self.velocity_X[i] + total_fx / self.mass * DATA.getTimeStep()
+        self.velocity_Y[i+1] = self.velocity_Y[i] + total_fy / self.mass * DATA.getTimeStep()
+        self.position_X[i+1] = self.position_X[i] + self.velocity_X[i+1] * DATA.getTimeStep()
+        self.position_Y[i+1] = self.position_Y[i] + self.velocity_Y[i+1] * DATA.getTimeStep()
 
         self.UpdateDistanceToRocket(rocket)
 
@@ -81,7 +81,7 @@ class Planet:
     def UpdateDistanceToRocket(self, rocket : Rocket):
         self.distanceToRocket = math.sqrt((self.position_X[self.currentStep]-rocket.position_X[rocket.currentStep])**2+(self.position_Y[self.currentStep]-rocket.position_Y[rocket.currentStep])**2)
 
-    def PredictNext(self, planets : list[__init__], pause):
+    def PredictNext(self, planets : list[__init__]):
         total_fx = total_fy = 0
         for planet in planets:
             if self == planet:
@@ -89,19 +89,19 @@ class Planet:
             fx, fy = self.Attraction(planet, self.currentCalculationStep)
             total_fx += fx
             total_fy += fy
-        self.velocity_X[self.currentCalculationStep+1] = self.velocity_X[self.currentCalculationStep] + total_fx / self.mass * self.timestep
-        self.velocity_Y[self.currentCalculationStep+1] = self.velocity_Y[self.currentCalculationStep] + total_fy / self.mass * self.timestep
-        self.position_X[self.currentCalculationStep+1] = self.position_X[self.currentCalculationStep] + self.velocity_X[self.currentCalculationStep+1] * self.timestep
-        self.position_Y[self.currentCalculationStep+1] = self.position_Y[self.currentCalculationStep] + self.velocity_Y[self.currentCalculationStep+1] * self.timestep
+        self.velocity_X[self.currentCalculationStep+1] = self.velocity_X[self.currentCalculationStep] + total_fx / self.mass * DATA.getTimeStep()
+        self.velocity_Y[self.currentCalculationStep+1] = self.velocity_Y[self.currentCalculationStep] + total_fy / self.mass * DATA.getTimeStep()
+        self.position_X[self.currentCalculationStep+1] = self.position_X[self.currentCalculationStep] + self.velocity_X[self.currentCalculationStep+1] * DATA.getTimeStep()
+        self.position_Y[self.currentCalculationStep+1] = self.position_Y[self.currentCalculationStep] + self.velocity_Y[self.currentCalculationStep+1] * DATA.getTimeStep()
 
-        if not pause:
+        if not DATA.getSimulationPause():
             self.currentCalculationStep += 1
         
-    def LineIsInScreen(self, line, move_x, move_y, height , width):
-        lineInScreen = line[(line[:,0]< -move_x+width/2) & (line[:,0] > -move_x-width/2)]
-        lineInScreen = lineInScreen[(lineInScreen[:,1] > -move_y-height/2) & (lineInScreen[:,1] < -move_y+height/2)]
-        lineInScreen[:,0] = lineInScreen[:,0]+move_x+width/2
-        lineInScreen[:,1] = lineInScreen[:,1]+move_y+ height/2
+    def LineIsInScreen(self, line):
+        lineInScreen = line[(line[:,0]< -DATA.getMoveX()+WIDTH/2) & (line[:,0] > -DATA.getMoveX()-WIDTH/2)]
+        lineInScreen = lineInScreen[(lineInScreen[:,1] > -DATA.getMoveY()-HEIGHT/2) & (lineInScreen[:,1] < -DATA.getMoveY()+HEIGHT/2)]
+        lineInScreen[:,0] = lineInScreen[:,0]+DATA.getMoveX()+WIDTH/2
+        lineInScreen[:,1] = lineInScreen[:,1]+DATA.getMoveY()+ HEIGHT/2
         return lineInScreen
         
     def CheckCollision(self):
@@ -109,8 +109,8 @@ class Planet:
             return True
         return False
     
-    def CheckLanding(self, rocket : Rocket, run):
-        if not self.currentStep % math.ceil(100/self.timestep) == 0:
+    def CheckLanding(self, rocket : Rocket):
+        if not self.currentStep % math.ceil(100/DATA.getTimeStep()) == 0:
             return
         if self.distanceToRocket <= self.radius *95/100 and rocket.GetCurrentRelativeVelocity() < 1000000000:
             rocket.flightState = RocketFlightState.landed
@@ -118,6 +118,5 @@ class Planet:
             rocket.CalculateEntryAngle()
             rocket.ClearArray()
             self.UpdateDistanceToRocket(rocket)
-            return True
-        run = False
-        return False, run
+            return 
+        DATA.setRun(False)

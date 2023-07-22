@@ -1,5 +1,7 @@
 import pygame
+from Globals.FlightData.FlightDataManager import FlightDataManager
 pygame.init()
+DATA = FlightDataManager()
 WIDTH, HEIGHT = pygame.display.Info().current_w, pygame.display.Info().current_h
 FONT_1 = pygame.font.SysFont("Trebuchet MS", 21)
 FONT_2 = pygame.font.SysFont("Trebuchet MS", 16)
@@ -18,8 +20,7 @@ COLOR_NEPTUNE = (63, 84, 186)
 ### Solarsystem Variablen 
 AU = 149.6e6 * 1000  # Astronomical unit
 G = 6.67428e-11  # Gravitational constant
-Scale = 200 / AU
-STARTSCALE = Scale
+STARTSCALE = 200 / AU
 ### Generelle Variablen
 AirResistance = 0.0162        # Luftwiderstandsbeiwert                     #  - Verwendung zur Einstellung des Schubs
 Gravity = 9.81       # [m/s^2]
@@ -43,7 +44,7 @@ NUM_OF_PREDICTIONS = 1000
 # muss größer als NUM_OF_PREDICTIONS sein
 LEN_OF_PREDICTIONS_ARRAY = NUM_OF_PREDICTIONS*2
 pygame.init()
-Clock = pygame.time.Clock()
+CLOCK = pygame.time.Clock()
 WINDOW = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
 
 WIDTH, HEIGHT = pygame.display.Info().current_w, pygame.display.Info().current_h

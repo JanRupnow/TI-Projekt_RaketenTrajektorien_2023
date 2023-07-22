@@ -7,19 +7,19 @@ from ViewController.Rocket.RocketFlightState import RocketFlightState
 
 from Methods.GameMethods import AddClockTime
 
-def RenderFlightInterface(rocket : Rocket, now, pause, clock, time_passed, timestep):
+def RenderFlightInterface(rocket : Rocket, now):
 
-    fps_text = FONT_1.render("FPS: " + str(int(clock.get_fps())), True, COLOR_WHITE)
+    fps_text = FONT_1.render("FPS: " + str(int(CLOCK.get_fps())), True, COLOR_WHITE)
     ### Menü implementieren zur Übersicht der Tasten
     WINDOW.blit(fps_text, (WIDTH*0.03, HEIGHT*0.03))
-
-    time_passed = AddClockTime(pause, time_passed, timestep)
+    if(DATA.getSimulationPause()):
+        DATA.setTimePassed(AddClockTime())
     #angle_slider = pg.elements.UIHorizontalSlider(pygame.Rect((WIDTH*0.8,HEIGHT*0.6),(WIDTH*0.15,HEIGHT*0.05)),start_value = 0,value_range=[-45,45],manager=manager,visible=1,click_increment=1,object_id="angle_slider")                               
-    text_surface = FONT_1.render(f"Time step: {int(timestep*60)}x", True, COLOR_WHITE)
+    text_surface = FONT_1.render(f"Time step: {int(DATA.getTimeStep()*60)}x", True, COLOR_WHITE)
     WINDOW.blit(text_surface, (WIDTH*0.8, HEIGHT*0.03))
-    text_actual_time = FONT_1.render(f'Current time: {(now+time_passed).strftime("%d/%m/%Y, %H:%M:%S")}', True, COLOR_WHITE)
+    text_actual_time = FONT_1.render(f'Current time: {(now+DATA.getTimePassed()).strftime("%d/%m/%Y, %H:%M:%S")}', True, COLOR_WHITE)
     WINDOW.blit(text_actual_time, (WIDTH*0.8, HEIGHT*0.06))
-    text_time_passed = FONT_1.render(f'Passed time: {time_passed}', True, COLOR_WHITE)
+    text_time_passed = FONT_1.render(f'Passed time: {DATA.getTimePassed()}', True, COLOR_WHITE)
     WINDOW.blit(text_time_passed, (WIDTH*0.8, HEIGHT*0.09))
 
     distance = np.sqrt( (rocket.position_X[rocket.currentStep] - rocket.nearestPlanet.position_X[rocket.nearestPlanet.currentStep])**2 
@@ -63,4 +63,3 @@ def RenderFlightInterface(rocket : Rocket, now, pause, clock, time_passed, times
     WINDOW.blit(uranus_surface, (15, 495))
     neptune_surface = FONT_1.render("- Neptune", True, COLOR_NEPTUNE)
     WINDOW.blit(neptune_surface, (15, 525))
-    return time_passed
