@@ -1,141 +1,154 @@
-
-import datetime
-
-from Globals.Constants import HEIGHT, WIDTH, DATA
-import Globals.Hotkeys as keys
-
-from Views.HotkeyView import *
-
+from ViewController.Planet import Planet
 from ViewController.Rocket.Rocket import Rocket
 from ViewController.Rocket.RocketFlightState import RocketFlightState
-from Globals.FlightData.FlightChangeState import FlightChangeState
-from Globals.FlightData.ZoomGoal import ZoomGoal
-
-from ViewController.Planet import Planet
-
-from Methods.SupportMethods import *
-
-def AddClockTime():
-    DATA.setTimePassed(DATA.getTimePassed()+ datetime.timedelta(seconds=DATA.getTimeStep))
-
-def AutomaticZoomOnRocket(rocket : Rocket):
-    DATA.setMoveX(-rocket.position_X[rocket.currentStep] * DATA.getScale())
-    DATA.setMoveY(-rocket.position_Y[rocket.currentStep] * DATA.getScale())
-
-def AutomaticZoomOnRocketOnce(rocket : Rocket):
-    DATA.setMoveX(-rocket.position_X[rocket.currentStep] * DATA.getScale())
-    DATA.setMoveY(-rocket.position_Y[rocket.currentStep] * DATA.getScale())
-
-def CenterScreenOnPlanet(planet : Planet):
-    DATA.setMoveX(-planet.position_X[planet.currentStep] * DATA.getScale())
-    DATA.setMoveY(-planet.position_Y[planet.currentStep] * DATA.getScale())
-
-def ScaleRelative(factor):
-    DATA.setScale(STARTSCALE* factor)
-
-def MousePositionShiftScreen():
-    DATA.setMoveX(DATA.getMoveX()-(DATA.getMouseX()-WIDTH/2)/2)
-    DATA.setMoveY(DATA.getMoveY()-(DATA.getMouseY()-HEIGHT/2)/2)
-
-def ShiftTimeStep(shiftUp):
-    index = min(AllTimeSteps.index(DATA.getTimeStep()) + 1, len(AllTimeSteps) - 1) if shiftUp else max(AllTimeSteps.index(DATA.getTimeStep()) - 1, 0)
-    DATA.setTimeStep(AllTimeSteps[index])
-    DATA.setFlightChangeState(FlightChangeState.timeStepChanged)
-    
+from Views.HotkeyView import *
 
 
-def PlanetIsInScreen(planet : Planet):
-    inScreen = planet.position_Y[planet.currentStep]*DATA.getScale()+planet.radius*DATA.getScale() > -DATA.getMoveY()-HEIGHT/2
-    inScreen = inScreen and planet.position_Y[planet.currentStep]*DATA.getScale()-planet.radius*DATA.getScale() < -DATA.getMoveY()+HEIGHT/2
-    inScreen = inScreen and planet.position_X[planet.currentStep]*DATA.getScale()+planet.radius*DATA.getScale() > -DATA.getMoveX()-WIDTH/2
-    return inScreen and planet.position_X[planet.currentStep]*DATA.getScale()-planet.radius*DATA.getScale() < -DATA.getMoveX()+WIDTH/2
+def add_clock_time():
+    DATA.set_time_passed(DATA.get_time_passed() + datetime.timedelta(seconds=DATA.get_time_step))
 
 
-def ProcessHotKeyEvents(event, rocket : Rocket, planets : list[Planet]):
-    KeyPressed = pygame.key.get_pressed()
-    #mouse_x, mouse_y = pygame.mouse.get_pos()
-    DATA.setMouseX(pygame.mouse.get_pos()[0])
-    DATA.setMouseY(pygame.mouse.get_pos()[1])
+def automatic_zoom_on_rocket(rocket: Rocket):
+    DATA.set_move_x(-rocket.position_X[rocket.currentStep] * DATA.get_scale())
+    DATA.set_move_y(-rocket.position_Y[rocket.currentStep] * DATA.get_scale())
+
+
+def automatic_zoom_on_rocket_once(rocket: Rocket):
+    DATA.set_move_x(-rocket.position_X[rocket.currentStep] * DATA.get_scale())
+    DATA.set_move_y(-rocket.position_Y[rocket.currentStep] * DATA.get_scale())
+
+
+def center_screen_on_planet(planet: Planet):
+    DATA.set_move_x(-planet.position_X[planet.currentStep] * DATA.get_scale())
+    DATA.set_move_y(-planet.position_Y[planet.currentStep] * DATA.get_scale())
+
+
+def scale_relative(factor):
+    DATA.set_scale(STARTSCALE * factor)
+
+
+def mouse_position_shift_screen():
+    DATA.set_move_x(DATA.get_move_x() - (DATA.get_mouse_x() - WIDTH / 2) / 2)
+    DATA.set_move_y(DATA.get_move_y() - (DATA.get_mouse_y() - HEIGHT / 2) / 2)
+
+
+def shift_time_step(shift_up):
+    index = min(AllTimeSteps.index(DATA.get_time_step()) + 1, len(AllTimeSteps) - 1) if shift_up else max(
+        AllTimeSteps.index(DATA.get_time_step()) - 1, 0)
+    DATA.set_time_step(AllTimeSteps[index])
+    DATA.set_flight_change_state(FlightChangeState.timeStepChanged)
+
+
+def planet_is_in_screen(planet: Planet):
+    in_screen = planet.position_Y[
+                   planet.currentStep] * DATA.get_scale() + planet.radius * DATA.get_scale() > -DATA.get_move_y() - HEIGHT / 2
+    in_screen = in_screen and planet.position_Y[
+        planet.currentStep] * DATA.get_scale() - planet.radius * DATA.get_scale() < -DATA.get_move_y() + HEIGHT / 2
+    in_screen = in_screen and planet.position_X[
+        planet.currentStep] * DATA.get_scale() + planet.radius * DATA.get_scale() > -DATA.get_move_x() - WIDTH / 2
+    return in_screen and planet.position_X[
+        planet.currentStep] * DATA.get_scale() - planet.radius * DATA.get_scale() < -DATA.get_move_x() + WIDTH / 2
+
+
+def process_hot_key_events(event, rocket: Rocket, planets: list[Planet]):
+    key_pressed = pygame.key.get_pressed()
+    # mouse_x, mouse_y = pygame.mouse.get_pos()
+    DATA.set_mouse_x(pygame.mouse.get_pos()[0])
+    DATA.set_mouse_y(pygame.mouse.get_pos()[1])
     distance = 10
 
-    if  KeyPressed[keys.H_moveScreenLeft[0]] or DATA.getMouseX() == 0:
-        DATA.setMoveX(DATA.getMoveX()+distance)
-    elif KeyPressed[keys.H_moveScreenRight[0]] or DATA.getMouseX() == WIDTH - 1:
-        DATA.setMoveX(DATA.getMoveX()-distance)
-    elif KeyPressed[keys.H_moveScreenUp[0]] or DATA.getMouseY() == 0:
-        DATA.setMoveY(DATA.getMoveY()+distance)
-    elif KeyPressed[keys.H_moveScreenDown[0]] or DATA.getMouseY() == HEIGHT - 1:
-        DATA.setMoveY(DATA.getMoveY()-distance)
+    if key_pressed[Keys.H_moveScreenLeft[0]] or DATA.get_mouse_x() == 0:
+        DATA.set_move_x(DATA.get_move_x() + distance)
+    elif key_pressed[Keys.H_moveScreenRight[0]] or DATA.get_mouse_x() == WIDTH - 1:
+        DATA.set_move_x(DATA.get_move_x() - distance)
+    elif key_pressed[Keys.H_moveScreenUp[0]] or DATA.get_mouse_y() == 0:
+        DATA.set_move_y(DATA.get_move_y() + distance)
+    elif key_pressed[Keys.H_moveScreenDown[0]] or DATA.get_mouse_y() == HEIGHT - 1:
+        DATA.set_move_y(DATA.get_move_y() - distance)
 
-    elif ( not event.type == pygame.KEYDOWN ) and KeyPressed[keys.H_rocketBoostForward[0]] and rocket.thrust<10 and (rocket.flightState == RocketFlightState.flying or not DATA.getSimulationPause()):
+    elif (not event.type == pygame.KEYDOWN) and \
+            key_pressed[Keys.h_rocket_boost_forward[0]] and rocket.thrust < 10 \
+            and not DATA.get_flight_change_state() != FlightChangeState.paused:
         rocket.thrust += 1
-        DATA.setFlightChangeState(FlightChangeState.powerChanged)
-        rocket.flightState = RocketFlightState.flying
-    elif ( not event.type == pygame.KEYDOWN ) and KeyPressed[keys.H_rocketBoostLeft[0]] and rocket.angle>-45:
+        DATA.set_flight_change_state(FlightChangeState.powerChanged)
+        if rocket.flightState == RocketFlightState.landed:
+            rocket.flightState = RocketFlightState.flying
+    elif (not event.type == pygame.KEYDOWN) and key_pressed[Keys.h_rocket_boost_left[0]] and rocket.angle > -45:
         rocket.angle -= 1
-        DATA.setFlightChangeState(FlightChangeState.powerChanged)
-    elif ( not event.type == pygame.KEYDOWN ) and KeyPressed[keys.H_rocketBoostRight[0]]  and rocket.angle<45:
+        DATA.set_flight_change_state(FlightChangeState.powerChanged)
+    elif (not event.type == pygame.KEYDOWN) and key_pressed[Keys.h_rocket_boost_right[0]] and rocket.angle < 45:
         rocket.angle += 1
-        DATA.setFlightChangeState(FlightChangeState.powerChanged)
-    elif ( not event.type == pygame.KEYDOWN ) and KeyPressed[keys.H_lowerRocketBoost[0]] and rocket.thrust>0:
+        DATA.set_flight_change_state(FlightChangeState.powerChanged)
+    elif (not event.type == pygame.KEYDOWN) and key_pressed[Keys.h_lower_rocket_boost[0]] and rocket.thrust > 0:
         rocket.thrust -= 1
-        DATA.setFlightChangeState(FlightChangeState.powerChanged)
-        
-    elif event.type == pygame.QUIT or CheckKeyDown(event, keys.H_leaveSimulation[0]) or CheckKeyDown(event, keys.H_closeWindow[0]):
-        DATA.setRun(False)
-    elif CheckKeyDown(event, keys.H_zoomRocketStart[0]):
-        DATA.setScale(ScaleRelative(100000))
-        rocket.SetScale(100000)
-        AutomaticZoomOnRocketOnce(rocket)
-    #Zoom Startorbit
-    elif CheckKeyDown(event, keys.H_zoomRocketPlanet[0]):
-        DATA.setScale(ScaleRelative(10))
-        rocket.SetScale(10)
-        AutomaticZoomOnRocketOnce(rocket)
-    #Zoom Universum
-    elif CheckKeyDown(event, keys.H_zoomRocketPlanetSystem[0]):
-        DATA.setScale(ScaleRelative(1))
-        rocket.SetScale(1)
-        AutomaticZoomOnRocketOnce(rocket)
+        DATA.set_flight_change_state(FlightChangeState.powerChanged)
 
-    elif CheckKeyDown(event, keys.H_zoomAutoOnReferencePlanet[0]) and not DATA.getZoomGoal() == ZoomGoal.rocket:
-        if(DATA.getZoomGoal() == ZoomGoal.nearestPlanet):
-            DATA.setZoomGoal(ZoomGoal.none)
-        elif(DATA.getZoomGoal() == ZoomGoal.none):
-            DATA.setZoomGoal(ZoomGoal.nearestPlanet)
-    elif CheckKeyDown(event, keys.H_zoomAutoOnRocket[0]) and not DATA.getZoomGoal() == ZoomGoal.nearestPlanet:
-        if(DATA.getZoomGoal() == ZoomGoal.rocket):
-            DATA.setZoomGoal(ZoomGoal.none)
-        elif(DATA.getZoomGoal() == ZoomGoal.none):
-            DATA.setZoomGoal(ZoomGoal.rocket)
-    elif CheckKeyDown(event, keys.H_pauseSimulation[0]):
-        if(DATA.getFlightChangeState == FlightChangeState.paused):
-            DATA.setFlightChangeState(FlightChangeState.unchanged)
-        if(DATA.getFlightChangeState == FlightChangeState.unchanged):
-            DATA.setFlightChangeState(FlightChangeState.paused)
-    elif CheckKeyDown(event, keys.H_showDistance[0]):
-        DATA.setShowDistance(not DATA.getShowDistance())
-    elif CheckKeyDown(event, keys.H_centerOnSun[0]):
-        sun = next(filter(lambda x: x.name == "Sun", planets),None)
-        CenterScreenOnPlanet(sun)
-    elif CheckKeyDown(event, keys.H_centerOnRocket[0]):
-        AutomaticZoomOnRocketOnce(rocket)
-    elif CheckKeyDown(event, keys.H_drawLine[0]):
-        DATA.setDrawOrbit(not DATA.getDrawOrbit())
+    elif event.type == pygame.QUIT or check_key_down(event, Keys.h_leave_simulation[0]) or check_key_down(event,
+                                                                                                          Keys.h_close_window[
+                                                                                                             0]):
+        DATA.set_run(False)
+    elif check_key_down(event, Keys.h_zoom_rocket_start[0]):
+        DATA.set_scale(scale_relative(100000))
+        rocket.set_scale(100000)
+        automatic_zoom_on_rocket_once(rocket)
+    # Zoom Startorbit
+    elif check_key_down(event, Keys.h_zoom_rocket_planet[0]):
+        DATA.set_scale(scale_relative(10))
+        rocket.set_scale(10)
+        automatic_zoom_on_rocket_once(rocket)
+    # Zoom Universum
+    elif check_key_down(event, Keys.h_zoom_rocket_planet_system[0]):
+        DATA.set_scale(scale_relative(1))
+        rocket.set_scale(1)
+        automatic_zoom_on_rocket_once(rocket)
+
+    elif check_key_down(event, Keys.H_zoomAutoOnReferencePlanet[0]) and DATA.get_zoom_goal() != ZoomGoal.rocket:
+        if DATA.get_zoom_goal() == ZoomGoal.nearestPlanet:
+            DATA.set_zoom_goal(ZoomGoal.none)
+        elif DATA.get_zoom_goal() == ZoomGoal.none:
+            DATA.set_zoom_goal(ZoomGoal.nearestPlanet)
+    elif check_key_down(event, Keys.h_zoom_auto_on_rocket[0]) and DATA.get_zoom_goal() != ZoomGoal.nearestPlanet:
+        if DATA.get_zoom_goal() == ZoomGoal.rocket:
+            DATA.set_zoom_goal(ZoomGoal.none)
+        elif DATA.get_zoom_goal() == ZoomGoal.none:
+            DATA.set_zoom_goal(ZoomGoal.rocket)
+    elif check_key_down(event, Keys.h_pause_simulation[0]):
+        if DATA.get_flight_change_state == FlightChangeState.paused:
+            DATA.set_flight_change_state(FlightChangeState.unchanged)
+        if DATA.get_flight_change_state == FlightChangeState.unchanged:
+            DATA.set_flight_change_state(FlightChangeState.paused)
+    elif check_key_down(event, Keys.h_show_distance[0]):
+        DATA.set_show_distance(not DATA.getShowDistance())
+    elif check_key_down(event, Keys.h_center_on_sun[0]):
+        sun = next(filter(lambda x: x.name == "Sun", planets), None)
+        center_screen_on_planet(sun)
+    elif check_key_down(event, Keys.h_center_on_rocket[0]):
+        automatic_zoom_on_rocket_once(rocket)
+    elif check_key_down(event, Keys.h_draw_line[0]):
+        DATA.set_draw_orbit(not DATA.get_draw_orbit())
     elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 5:
-        MousePositionShiftScreen()
-        DATA.setScale(DATA.getScale() * 0.75)
-        rocket.SetScale(0.75)
+        mouse_position_shift_screen()
+        DATA.set_scale(DATA.get_scale() * 0.75)
+        rocket.set_scale(0.75)
 
     elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 4:
-        MousePositionShiftScreen()
-        DATA.setScale(DATA.getScale() * 1.25)
-        rocket.SetScale(1.25)
+        mouse_position_shift_screen()
+        DATA.set_scale(DATA.get_scale() * 1.25)
+        rocket.set_scale(1.25)
 
-    elif CheckKeyDown(event, keys.H_shiftTimeStepUp[0]):
-        ShiftTimeStep(True)
-    elif CheckKeyDown(event, keys.H_shiftTimeStepDown[0]): 
-        ShiftTimeStep(False)
-    elif CheckKeyDown(event, keys.H_openSettings[0]):
-        ShowSettingsUI()
+    elif check_key_down(event, Keys.h_shift_time_step_up[0]):
+        shift_time_step(True)
+    elif check_key_down(event, Keys.h_shift_time_step_down[0]):
+        shift_time_step(False)
+    elif check_key_down(event, Keys.h_open_settings[0]):
+        show_settings_ui()
     return event, rocket
+
+
+def line_is_in_screen(line):
+    line_in_screen = line[(line[:, 0] < -DATA.get_move_x() + WIDTH / 2) & (line[:, 0] > -DATA.get_move_x() - WIDTH / 2)]
+    line_in_screen = line_in_screen[
+        (line_in_screen[:, 1] > -DATA.get_move_y() - HEIGHT / 2) & (line_in_screen[:, 1] < -DATA.get_move_y() + HEIGHT / 2)]
+    line_in_screen[:, 0] = line_in_screen[:, 0] + DATA.get_move_x() + WIDTH / 2
+    line_in_screen[:, 1] = line_in_screen[:, 1] + DATA.get_move_y() + HEIGHT / 2
+    return line_in_screen

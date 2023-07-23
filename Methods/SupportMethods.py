@@ -1,18 +1,22 @@
 import pygame
 
-def GetStringOfAscii(input):
-    if input > 32 and input < 127:
-        return chr(input).upper()
+
+def get_string_of_ascii(value):
+    if 32 < value < 127:
+        return chr(value).upper()
     else:
         return "a"
 
-def CheckKeyDown(event, key):
+
+def check_key_down(event, key):
     return event.type == pygame.KEYDOWN and event.key == key
 
-def RemoveSpaces(textHotKey):
-    return textHotKey.replace(" ", "")
 
-def IsConvertibleToInt(string):
+def remove_spaces(text_hot_key):
+    return text_hot_key.replace(" ", "")
+
+
+def is_convertible_to_int(string):
     try:
         int(string)
         return True

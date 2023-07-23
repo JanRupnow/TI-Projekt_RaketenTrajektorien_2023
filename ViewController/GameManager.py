@@ -1,105 +1,65 @@
 
 from Globals.Constants import DATA
 
-from Methods.GameMethods import CenterScreenOnPlanet, PlanetIsInScreen, AutomaticZoomOnRocket
+from Methods.GameMethods import center_screen_on_planet, planet_is_in_screen, automatic_zoom_on_rocket
 
 from Globals.FlightData.FlightChangeState import FlightChangeState
 from Globals.FlightData.ZoomGoal import ZoomGoal
+from Globals.Constants import NUM_OF_PREDICTIONS
 
 from ViewController.Rocket.RocketFlightState import RocketFlightState
 from ViewController.DrawManager import DrawManager 
 from ViewController.Planet import Planet
 from ViewController.Rocket.Rocket import Rocket
 
-class GameManager():
+class GameManager:
     @staticmethod
-    def CalculateNextIteration(rocket : Rocket, planets : list[Planet]):
+    def calculate_next_iteration(rocket : Rocket, planets : list[Planet]):
+        if DATA.get_flight_change_state() == FlightChangeState.paused:
+            return
         
-        if not rocket.flightState == RocketFlightState.flying:
-
-            DrawManager.RocketDrawIfNotStarted(rocket, planets)
-            return
-        if not DATA.getSimulationPause():
-            if DATA.getFlightChangeState() != FlightChangeState.unchanged or rocket.currentStep==0:
-                firstTime = rocket.currentCalculationStep == 0
-
-                if firstTime:
-                    for planet in planets:
-                        planet.ResetPlanetsArrayToSyncWithRocket()
-
-                rocket.currentCalculationStep = rocket.currentStep
-                rocket.CalculateNewCalculationOfPredictions(firstTime, planets)
-
-                if not (firstTime or DATA.getFlightChangeState() == FlightChangeState.timeStepChanged):
-                    for planet in planets:
-                        planet.PredictStep(rocket.currentCalculationStep-1, planets, rocket)
-
-                DATA.setFlightChangeState(FlightChangeState.unchanged)
+        ### Planet
+        
+        if planets[0].currentStep == 0:
+            for planet in planets:
+                    planet.currentCalculationStep = planet.currentStep
+            # calculate whole orbit
+            for i in range(NUM_OF_PREDICTIONS):
+                for planet in planets:
+                    planet.predict_next(planets)
+            # calculate 1 step
             else:
-                rocket.CalculateOnePrediction(planets)
-        if rocket.currentCalculationStep > 2:
-            # move_x and move_y verschieben je nach bewegung des Bildschirm
-            AutomaticZoomOnRocket(rocket)
-            pygame.draw.lines(WINDOW, rocket.color, False, np.array((rocket.position_X[rocket.currentStep:rocket.currentCalculationStep]*DATA.getScale()+DATA.getMoveX()+WIDTH/2, rocket.position_Y[rocket.currentStep:rocket.currentCalculationStep]*DATA.getScale()+DATA.getMoveY()+ HEIGHT/2)).T, 1)
-            
-            DrawManager.DrawRocket(rocket)
-        if DATA.getSimulationPause:
-            return
-        rocket.currentStep += 1
+                for planet in planets:
+                    planet.predict_next(planets)
         for planet in planets:
-            planet.currentStep += 1
-
-        if rocket.currentStep >= (NUM_OF_PREDICTIONS):
-            rocket.ResetArray()
-            for planet in planets:
-                planet.ResetArray()
-
-    @staticmethod
-    def RocketDrawIfNotStarted(rocket : Rocket, planets):
-        if not DATA.getSimulationPause():
-            if planets[0].currentStep == 0 or DATA.getFlightChangeState == FlightChangeState.timeStepChanged:
-                for planet in planets:
-                    planet.aktuellerrechenschritt = planet.currentStep
-                for i in range(NUM_OF_PREDICTIONS):
-                    for planet in planets:
-                        planet.PredictNext(planets)
-
-                if DATA.getFlightChangeState == FlightChangeState.timeStepChanged:
-                    DATA.setFlightChangeState(FlightChangeState.unchanged)
-
-            else:
-                for planet in planets:
-                    planet.PredictNext(planets)
-
-            for planet in planets:
                 planet.currentStep += 1
-
-            if planets[0].currentStep >= NUM_OF_PREDICTIONS:
+        if planets[0].currentStep >= NUM_OF_PREDICTIONS:
                 for planet in planets:
-                    planet.ResetArray()
+                    planet.reset_array()
 
-            if rocket.nearestPlanet.CheckCollision():
-                if not rocket.flightState == RocketFlightState.landed:
-                    rocket.nearestPlanet.CheckLanding(rocket)
-                    rocket.UpdatePlanetsInRangeList(planets)
-                    rocket.UpdateNearestPlanet(planets)
+        if DATA.get_flight_change_state == FlightChangeState.powerChanged:
 
-        rocket.CalculateLandedValues()
+            DATA.set_flight_change_state = FlightChangeState.unchanged
+            return
+        if DATA.get_flight_change_state == FlightChangeState.timeStepChanged:
+            DATA.set_flight_change_state = FlightChangeState.unchanged
+            return
+        if DATA.get_flight_change_state == FlightChangeState.unchanged:
     @staticmethod
-    def DisplayIteration(rocket : Rocket, planets : list[Planet]):
+    def display_iteration(rocket : Rocket, planets : list[Planet]):
 
-        DrawManager.DrawRocket(rocket)
-        DrawManager.DrawRocketPrediction(rocket)
+        DrawManager.draw_rocket(rocket)
+        DrawManager.draw_rocket_prediction(rocket)
 
         for planet in planets:
-            if PlanetIsInScreen(planet):
-                DrawManager.DrawPlanet(planet)
-            if DATA.getDrawOrbit():
-                DrawManager.DrawPlanetOrbit(planet)
+            if planet_is_in_screen(planet):
+                DrawManager.draw_planet(planet)
+            if DATA.get_draw_orbit():
+                DrawManager.draw_planet_orbit(planet)
             if DATA.getShowDistance():
-                DrawManager.DisplayPlanetDistances(planet)
+                DrawManager.display_planet_distances(planet)
 
-        if DATA.getZoomGoal() == ZoomGoal.nearestPlanet:
-            CenterScreenOnPlanet(rocket.nearestPlanet)
-        elif DATA.getZoomGoal() == ZoomGoal.rocket:
-                AutomaticZoomOnRocket(rocket) 
+        if DATA.get_zoom_goal() == ZoomGoal.nearestPlanet:
+            center_screen_on_planet(rocket.nearestPlanet)
+        elif DATA.get_zoom_goal() == ZoomGoal.rocket:
+                automatic_zoom_on_rocket(rocket)

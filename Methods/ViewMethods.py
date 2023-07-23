@@ -1,39 +1,45 @@
 import json
 
-def GetStartMonth():
+
+def get_start_month():
     jsonfile = open("./variables/rocket_config/current_rocket_config.json")
     config = json.load(jsonfile)
     month = config["StartTime"]["Month"]["value"]
     return month
 
-def GetStartDay():
+
+def get_start_day():
     jsonfile = open("./variables/rocket_config/current_rocket_config.json")
     config = json.load(jsonfile)
     day = config["StartTime"]["Day"]["value"]
     return day
 
-def getStartYear():
+
+def get_start_year():
     jsonfile = open("./variables/rocket_config/current_rocket_config.json")
     config = json.load(jsonfile)
     year = config["StartTime"]["Year"]["value"]
     return year
 
-def CheckDateIsLegal(month, day ):
-    if month in [1,3,5,7,8,10,12]:
-         if day > 0 and 31 >= day:
-              return True
-    elif month in [4,6,8,11]:
-         if day > 0 and 30 >= day:
-              return True
+
+def check_date_is_legal(month, day):
+    if month in [1, 3, 5, 7, 8, 10, 12]:
+        if 0 < day <= 31:
+            return True
+    elif month in [4, 6, 8, 11]:
+        if 0 < day <= 30:
+            return True
     else:
-        if getStartYear() % 4 != 0:
-            if day > 0 and 28>= day:
+        if get_start_year() % 4 != 0:
+            if 0 < day <= 28:
                 return True
         else:
-             if day> 0 and 29>= day:
-                  return True
+            if 0 < day <= 29:
+                return True
     return False
-def OverWriteStandardDay():
+
+
+def over_write_standard_day():
     jsonfile = open("./variables/rocket_config/current_rocket_config.json", "r+")
     config = json.load(jsonfile)
     config["StartTime"]["Day"]["value"] = 28
