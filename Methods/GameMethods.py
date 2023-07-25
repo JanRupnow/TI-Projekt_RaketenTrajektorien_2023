@@ -9,7 +9,7 @@ from Globals.FlightData.FlightDataManager import DATA
 
 
 def add_clock_time():
-    DATA.set_time_passed(DATA.get_time_passed() + datetime.timedelta(seconds=DATA.get_time_step))
+    DATA.set_time_passed(DATA.get_time_passed() + datetime.timedelta(seconds=DATA.get_time_step()))
 
 
 def automatic_zoom_on_rocket(rocket: Rocket):

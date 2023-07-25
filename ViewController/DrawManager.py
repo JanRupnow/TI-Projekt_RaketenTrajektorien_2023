@@ -1,7 +1,7 @@
-import pygame
 import numpy as np
 import math
 
+from datetime import datetime, timedelta
 from Globals.Constants import *
 from Globals.FlightData.FlightChangeState import FlightChangeState
 from Globals.FlightData.FlightDataManager import DATA
@@ -85,7 +85,7 @@ class DrawManager:
         # TODO Show current information of zoom
         WINDOW.blit(fps_text, (WIDTH * 0.03, HEIGHT * 0.03))
         if DATA.get_flight_change_state() != FlightChangeState.paused:
-            DATA.set_time_passed(add_clock_time())
+            add_clock_time()
         text_surface = FONT_1.render(f"Time step: {int(DATA.get_time_step() * 60)}x", True, COLOR_WHITE)
         WINDOW.blit(text_surface, (WIDTH * 0.8, HEIGHT * 0.03))
         text_actual_time = FONT_1.render(

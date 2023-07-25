@@ -28,7 +28,7 @@ class FlightDataManager(metaclass=SingletonMeta):
         self.mouseY = 0
         self.timestep = AllTimeSteps[0]
         self.zoom_goal = ZoomGoal.rocket
-        self.time_passed = datetime.datetime.now() - datetime.datetime.now()
+        self.time_passed = datetime.timedelta(seconds=0)
 
     def set_flight_change_state(self, value: FlightChangeState):
         self.flightChangeState = value
