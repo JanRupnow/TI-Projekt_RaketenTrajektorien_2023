@@ -1,5 +1,6 @@
 from Methods.ConfigurePlanets import *
 from ViewController.Planet import *
+from ViewController.Rocket.Rocket import Rocket
 
 
 def load_rocket_from_path(path, planets: list[Planet]):

@@ -3,7 +3,7 @@ import math
 import numpy as np
 
 from Globals.Constants import *
-from Globals.FlightData.FlightChangeState import FlightChangeState
+from Globals.FlightData.FlightDataManager import DATA
 from ViewController.Planet import Planet
 from ViewController.Rocket.RocketFlightState import RocketFlightState
 
@@ -156,13 +156,12 @@ class Rocket:
             self.position_X[self.currentStep] - self.nearestPlanet.position_X[self.nearestPlanet.currentStep]) * (
                                   180 / np.pi)
 
-    def calculate_new_calculation_of_predictions(self, first_time, planets: list[Planet]):
+    def calculate_new_calculation_of_predictions(self, planets: list[Planet]):
         for i in range(NUM_OF_PREDICTIONS):
-            if first_time or DATA.get_flight_change_state() == FlightChangeState.timeStepChanged:
-                for planet in planets:
-                    planet.predict_step(self.currentCalculationStep, planets, self)
-            self.calculate_next_step(self.currentCalculationStep)
-            self.currentCalculationStep += 1
+            for planet in planets:
+                planet.predict_step(self.currentCalculationStep, planets, self)
+        self.calculate_next_step(self.currentCalculationStep)
+        self.currentCalculationStep += 1
 
     def calculate_one_prediction(self, planets: list[Planet]):
         for planet in planets:

@@ -3,7 +3,7 @@ import math
 import numpy as np
 
 from Globals.Constants import *
-from ViewController.Rocket.Rocket import Rocket
+from Globals.FlightData.FlightDataManager import DATA
 from ViewController.Rocket.RocketFlightState import RocketFlightState
 
 
@@ -59,7 +59,7 @@ class Planet:
     def set_scale(self, scale):
         self.scaleR *= scale
 
-    def predict_step(self, i, planets: list[__init__], rocket: Rocket):
+    def predict_step(self, i, planets: list[__init__], rocket):
         self.currentCalculationStep = i
         total_fx = total_fy = 0
         for planet in planets:
@@ -75,15 +75,14 @@ class Planet:
 
         self.update_distance_to_rocket(rocket)
 
-        if DATA.get_flight_change_state() != FlightChangeState.paused:
-            self.currentCalculationStep += 1
+        self.currentCalculationStep += 1
 
-    def update_distance_to_rocket(self, rocket: Rocket):
+    def update_distance_to_rocket(self, rocket):
         self.distanceToRocket = math.sqrt(
             (self.position_X[self.currentStep] - rocket.position_X[rocket.currentStep]) ** 2 + (
                     self.position_Y[self.currentStep] - rocket.position_Y[rocket.currentStep]) ** 2)
 
-    def predict_next(self, planets: list[__init__]):
+    def calculate_next_step(self, planets: list[__init__]):
         total_fx = total_fy = 0
         for planet in planets:
             if self == planet:
@@ -95,16 +94,14 @@ class Planet:
         self.velocity_Y[self.currentCalculationStep + 1] = self.velocity_Y[self.currentCalculationStep] + total_fy / self.mass * DATA.get_time_step()
         self.position_X[self.currentCalculationStep + 1] = self.position_X[self.currentCalculationStep] + self.velocity_X[self.currentCalculationStep + 1] * DATA.get_time_step()
         self.position_Y[self.currentCalculationStep + 1] = self.position_Y[self.currentCalculationStep] + self.velocity_Y[self.currentCalculationStep + 1] * DATA.get_time_step()
-
-        if DATA.get_flight_change_state() != FlightChangeState.paused:
-            self.currentCalculationStep += 1
+        self.currentCalculationStep += 1
 
     def check_collision(self):
         if self.distanceToRocket <= self.radius * 95 / 100:
             return True
         return False
 
-    def check_landing(self, rocket: Rocket):
+    def check_landing(self, rocket):
         if not self.currentStep % math.ceil(100 / DATA.get_time_step()) == 0:
             return
         if self.distanceToRocket <= self.radius * 95 / 100 and rocket.get_current_relative_velocity() < 1000000000:

@@ -101,3 +101,6 @@ class FlightDataManager(metaclass=SingletonMeta):
 
     def get_time_passed(self):
         return self.time_passed
+
+
+DATA = FlightDataManager()

@@ -2,12 +2,7 @@ import datetime
 
 import pygame
 
-from Globals.FlightData.FlightChangeState import FlightChangeState
-from Globals.FlightData.FlightDataManager import FlightDataManager
-from Globals.FlightData.ZoomGoal import ZoomGoal
-
 pygame.init()
-DATA = FlightDataManager()
 WIDTH, HEIGHT = pygame.display.Info().current_w, pygame.display.Info().current_h
 FONT_1 = pygame.font.SysFont("Trebuchet MS", 21)
 FONT_2 = pygame.font.SysFont("Trebuchet MS", 16)
@@ -43,6 +38,7 @@ CurrentCalculationStep = 0
 AllTimeSteps = [1 / 60, 5 / 60, 10 / 60, 25 / 60, 100 / 60, 500 / 60, 1000 / 60, 2500 / 60, 10000 / 60, 25000 / 60,
                 100000 / 60]
 
+Now = datetime.datetime.now()
 MoveX = 0
 MoveY = 0
 MIN_ROCKET_RADIUS = 2

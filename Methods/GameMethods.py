@@ -1,7 +1,11 @@
+from Globals.FlightData.ZoomGoal import ZoomGoal
 from ViewController.Planet import Planet
 from ViewController.Rocket.Rocket import Rocket
 from ViewController.Rocket.RocketFlightState import RocketFlightState
 from Views.HotkeyView import *
+
+from Globals.FlightData.FlightChangeState import FlightChangeState
+from Globals.FlightData.FlightDataManager import DATA
 
 
 def add_clock_time():
@@ -73,13 +77,13 @@ def process_hot_key_events(event, rocket: Rocket, planets: list[Planet]):
         DATA.set_flight_change_state(FlightChangeState.powerChanged)
         if rocket.flightState == RocketFlightState.landed:
             rocket.flightState = RocketFlightState.flying
-    elif (not event.type == pygame.KEYDOWN) and key_pressed[Keys.h_rocket_boost_left[0]] and rocket.angle > -45:
+    elif (not event.type == pygame.KEYDOWN) and key_pressed[Keys.h_rocket_boost_left[0]] and rocket.angle > -45 and rocket.flightState == RocketFlightState.flying:
         rocket.angle -= 1
         DATA.set_flight_change_state(FlightChangeState.powerChanged)
-    elif (not event.type == pygame.KEYDOWN) and key_pressed[Keys.h_rocket_boost_right[0]] and rocket.angle < 45:
+    elif (not event.type == pygame.KEYDOWN) and key_pressed[Keys.h_rocket_boost_right[0]] and rocket.angle < 45 and rocket.flightState == RocketFlightState.flying:
         rocket.angle += 1
         DATA.set_flight_change_state(FlightChangeState.powerChanged)
-    elif (not event.type == pygame.KEYDOWN) and key_pressed[Keys.h_lower_rocket_boost[0]] and rocket.thrust > 0:
+    elif (not event.type == pygame.KEYDOWN) and key_pressed[Keys.h_lower_rocket_boost[0]] and rocket.thrust > 0 and rocket.flightState == RocketFlightState.flying:
         rocket.thrust -= 1
         DATA.set_flight_change_state(FlightChangeState.powerChanged)
 
