@@ -117,11 +117,11 @@ class DrawManager:
         WINDOW.blit(rocket_fuel, (WIDTH * 0.8, HEIGHT * 0.18))
         rocket_max_q = FONT_1.render(f'MaxQ: %', True, COLOR_WHITE)
         WINDOW.blit(rocket_max_q, (WIDTH * 0.8, HEIGHT * 0.21))
+        zoom_text = FONT_1.render(f'Automatic Zoom: {DATA.get_zoom_goal()}', True, COLOR_WHITE)
+        WINDOW.blit(zoom_text, (WIDTH * 0.8, HEIGHT * 0.24))
 
         thrust_text = FONT_1.render(f'Thrust: {rocket.thrust}m/s^2', True, COLOR_WHITE)
         WINDOW.blit(thrust_text, (WIDTH * 0.8, HEIGHT * 0.8))
-        angle_text = FONT_1.render(f'Angle: {rocket.angle}°', True, COLOR_WHITE)
-        WINDOW.blit(angle_text, (WIDTH * 0.8, HEIGHT * 0.85))
 
         sun_surface = FONT_1.render("- Sun", True, COLOR_SUN)
         WINDOW.blit(sun_surface, (15, 285))
