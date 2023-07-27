@@ -48,12 +48,7 @@ class GameManager:
 
             if DATA.get_flight_change_state() == FlightChangeState.timeStepChanged:
 
-                for planet in planets:
-                    planet.currentCalculationStep = planet.currentStep
-                for i in range(NUM_OF_PREDICTIONS):
-                    for planet in planets:
-                        planet.calculate_next_step(planets)
-                        planet.currentStep += 1
+                GameManager.new_calculations_for_planet(planets)
 
             if DATA.get_flight_change_state() == FlightChangeState.unchanged:
 
@@ -67,6 +62,7 @@ class GameManager:
             if DATA.get_flight_change_state() == FlightChangeState.timeStepChanged:
 
                 # Calculate new orbits
+                GameManager.new_calculations_for_planet(planets)
                 rocket.calculate_new_calculation_of_predictions(planets)
                 rocket.currentStep += 1
 
@@ -81,6 +77,7 @@ class GameManager:
 
             if DATA.get_flight_change_state() == FlightChangeState.unchanged:
 
+                GameManager.calculate_next_step_for_planets(planets, rocket)
                 rocket.calculate_one_prediction(planets)
                 rocket.currentStep += 1
 
@@ -96,6 +93,24 @@ class GameManager:
         if planets[0].currentStep >= NUM_OF_PREDICTIONS:
             for planet in planets:
                 planet.reset_array()
+
+        # TODO implement checking crashing
+    @staticmethod
+    def new_calculations_for_planet(planets: list[Planet]):
+        for planet in planets:
+            planet.currentCalculationStep = planet.currentStep
+        for i in range(NUM_OF_PREDICTIONS):
+            for planet in planets:
+                planet.calculate_next_step(planets)
+        if DATA.get_flight_change_state() not in {FlightChangeState.paused, FlightChangeState.pausedAndPowerChanged, FlightChangeState.pausedAndTimeStepChanged}:
+            for planet in planets:
+                planet.currentStep += 1
+
+    @staticmethod
+    def calculate_next_step_for_planets(planets: list[Planet], rocket: Rocket):
+        for planet in planets:
+            planet.predict_step(planet.currentCalculationStep, planets, rocket)
+            planet.currentStep += 1
 
     @staticmethod
     def display_iteration(rocket: Rocket, planets: list[Planet]):
