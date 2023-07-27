@@ -10,9 +10,9 @@ def update_key_in_json(json, hotkey):
 
 
 def update_key_in_json_rocket(json, identifier, value):
-    for category in json.Keys():
+    for category in json.keys():
         try:
-            for key in json[category].Keys():
+            for key in json[category].keys():
                 # didn't need to catch because this method should only update values
                 # which are in the form of the if clause
                 try:

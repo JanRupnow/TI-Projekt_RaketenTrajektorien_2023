@@ -209,9 +209,9 @@ def get_texts_and_values_for_config_ui():
 
     config_pairs = []
 
-    for category in config.Keys():
+    for category in config.keys():
         try:
-            for key in config[category].Keys():
+            for key in config[category].keys():
                 config_pairs.append((config[category][key]["value"], config[category][key]["text"]))
         except:
             pass

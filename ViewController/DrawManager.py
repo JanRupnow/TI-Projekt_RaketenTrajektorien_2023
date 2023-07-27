@@ -48,11 +48,13 @@ class DrawManager:
     @staticmethod
     def draw_rocket_prediction(rocket: Rocket):
 
-        pygame.draw.lines(WINDOW, rocket.color, False, np.array((rocket.position_X[
-                                                                 rocket.currentStep:rocket.currentCalculationStep] * DATA.get_scale() + DATA.get_move_x() + WIDTH / 2,
-                                                                 rocket.position_Y[
-                                                                 rocket.currentStep:rocket.currentCalculationStep] * DATA.get_scale() + DATA.get_move_y() + HEIGHT / 2)).T,
-                          1)
+        line_in_screen = line_is_in_screen(np.array((rocket.position_X[
+                                                     rocket.currentStep:rocket.currentCalculationStep] * DATA.get_scale(),
+                                                     rocket.position_Y[
+                                                     rocket.currentStep:rocket.currentCalculationStep] * DATA.get_scale())).T)
+        # size > 3 because (2,3) are 2 coordinates for 1 point, you need 2 points to connect a line ((x,y),(x2,y2))
+        if line_in_screen.size > 3:
+            pygame.draw.lines(WINDOW, rocket.color, False, line_in_screen, 1)
 
     @staticmethod
     def draw_rocket(rocket: Rocket):
@@ -80,9 +82,8 @@ class DrawManager:
                                      rocket.currentStep] * DATA.get_scale() + DATA.get_move_y() + HEIGHT / 2 - rocket.img.get_height() / 2))
 
     @staticmethod
-    def render_flight_interface(rocket: Rocket, now):
+    def render_flight_interface(rocket: Rocket, now, planets):
         fps_text = FONT_1.render("FPS: " + str(int(CLOCK.get_fps())), True, COLOR_WHITE)
-        # TODO Show current information of zoom
         WINDOW.blit(fps_text, (WIDTH * 0.03, HEIGHT * 0.03))
         if DATA.get_flight_change_state() != FlightChangeState.paused:
             add_clock_time()
@@ -119,6 +120,18 @@ class DrawManager:
         WINDOW.blit(rocket_max_q, (WIDTH * 0.8, HEIGHT * 0.21))
         zoom_text = FONT_1.render(f'Automatic Zoom: {DATA.get_zoom_goal()}', True, COLOR_WHITE)
         WINDOW.blit(zoom_text, (WIDTH * 0.8, HEIGHT * 0.24))
+        rocket_state = FONT_1.render(f'Rocket: {rocket.flightState}', True, COLOR_WHITE)
+        WINDOW.blit(rocket_state, (WIDTH * 0.8, HEIGHT * 0.27))
+        rocket_state = FONT_1.render(f'Rocket current: {rocket.currentStep}', True, COLOR_WHITE)
+        WINDOW.blit(rocket_state, (WIDTH * 0.8, HEIGHT * 0.30))
+        rocket_state = FONT_1.render(f'Rocket calculation: {rocket.currentCalculationStep}', True, COLOR_WHITE)
+        WINDOW.blit(rocket_state, (WIDTH * 0.8, HEIGHT * 0.33))
+        rocket_state = FONT_1.render(f'Planet current: {planets[0].currentStep}', True, COLOR_WHITE)
+        WINDOW.blit(rocket_state, (WIDTH * 0.8, HEIGHT * 0.36))
+        rocket_state = FONT_1.render(f'Planet calculation: {planets[0].currentCalculationStep}', True, COLOR_WHITE)
+        WINDOW.blit(rocket_state, (WIDTH * 0.8, HEIGHT * 0.39))
+        rocket_state = FONT_1.render(f'Flight State: {DATA.get_flight_change_state()}', True, COLOR_WHITE)
+        WINDOW.blit(rocket_state, (WIDTH * 0.8, HEIGHT * 0.42))
 
         thrust_text = FONT_1.render(f'Thrust: {rocket.thrust}m/s^2', True, COLOR_WHITE)
         WINDOW.blit(thrust_text, (WIDTH * 0.8, HEIGHT * 0.8))

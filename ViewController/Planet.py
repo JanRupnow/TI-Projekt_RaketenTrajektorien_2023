@@ -111,4 +111,4 @@ class Planet:
             rocket.clear_array()
             self.update_distance_to_rocket(rocket)
             return
-        DATA.set_run(False)
+        # TODO implemented crashing
