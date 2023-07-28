@@ -92,22 +92,22 @@ class Rocket:
 
         # z-Komponente
         k1 = self.f1(self.velocity_Y[i], i, distance_to_sun)
-        k2 = self.f1(self.velocity_Y[i] + k1 * DATA.get_time_step() / 2, i, distance_to_sun)
-        k3 = self.f1(self.velocity_Y[i] + k2 * DATA.get_time_step() / 2, i, distance_to_sun)
-        k4 = self.f1(self.velocity_Y[i] + k3 * DATA.get_time_step() / 2, i, distance_to_sun)
+        k2 = self.f1(self.velocity_Y[i] + k1 * DATA.time_step / 2, i, distance_to_sun)
+        k3 = self.f1(self.velocity_Y[i] + k2 * DATA.time_step / 2, i, distance_to_sun)
+        k4 = self.f1(self.velocity_Y[i] + k3 * DATA.time_step / 2, i, distance_to_sun)
         k = (k1 + 2 * k2 + 2 * k3 + k4) / 6
-        self.velocity_Y[i + 1] = self.velocity_Y[i] + k * DATA.get_time_step()
-        self.position_Y[i + 1] = self.position_Y[i] + self.velocity_Y[i] * DATA.get_time_step()
+        self.velocity_Y[i + 1] = self.velocity_Y[i] + k * DATA.time_step
+        self.position_Y[i + 1] = self.position_Y[i] + self.velocity_Y[i] * DATA.time_step
 
         # x-Komponente
         k1 = self.f2(self.velocity_X[i], i, distance_to_sun)
-        k2 = self.f2(self.velocity_X[i] + k1 * DATA.get_time_step() / 2, i, distance_to_sun)
-        k3 = self.f2(self.velocity_X[i] + k2 * DATA.get_time_step() / 2, i, distance_to_sun)
-        k4 = self.f2(self.velocity_X[i] + k3 * DATA.get_time_step() / 2, i, distance_to_sun)
+        k2 = self.f2(self.velocity_X[i] + k1 * DATA.time_step / 2, i, distance_to_sun)
+        k3 = self.f2(self.velocity_X[i] + k2 * DATA.time_step / 2, i, distance_to_sun)
+        k4 = self.f2(self.velocity_X[i] + k3 * DATA.time_step / 2, i, distance_to_sun)
         k = (k1 + 2 * k2 + 2 * k3 + k4) / 6
 
-        self.velocity_X[i + 1] = self.velocity_X[i] + k * DATA.get_time_step()
-        self.position_X[i + 1] = self.position_X[i] + self.velocity_X[i] * DATA.get_time_step()
+        self.velocity_X[i + 1] = self.velocity_X[i] + k * DATA.time_step
+        self.position_X[i + 1] = self.position_X[i] + self.velocity_X[i] * DATA.time_step
 
     def set_scale(self, scale):
         self.radius *= scale
@@ -154,7 +154,7 @@ class Rocket:
             self.position_X[self.currentStep] - self.nearestPlanet.position_X[self.nearestPlanet.currentStep]) * (
                                   180 / np.pi)
 
-    def calculate_new_calculation_of_predictions(self, planets: list[Planet]):
+    def calculate_new_calculation_of_predictions(self):
         self.currentCalculationStep = self.currentStep
         for i in range(NUM_OF_PREDICTIONS):
             # for planet in planets:
@@ -162,7 +162,7 @@ class Rocket:
             self.calculate_next_step(self.currentCalculationStep)
             self.currentCalculationStep += 1
 
-    def calculate_one_prediction(self, planets: list[Planet]):
+    def calculate_one_prediction(self):
         # for planet in planets:
         #    planet.predict_step(self.currentCalculationStep, planets, self)
         self.calculate_next_step(self.currentCalculationStep)
@@ -187,7 +187,7 @@ class Rocket:
         self.velocity_Y[0] = self.nearestPlanet.position_Y[self.nearestPlanet.currentStep]
 
     def update_planets_in_range_list(self, planets: list[Planet]):
-        if not self.currentStep % math.ceil(100 / DATA.get_time_step()) == 0:
+        if not self.currentStep % math.ceil(100 / DATA.time_step) == 0:
             return
         self.PlanetsInRangeList = []
         for planet in planets:
@@ -196,7 +196,7 @@ class Rocket:
                 self.PlanetsInRangeList.append(planet)
 
     def update_nearest_planet(self, planets: list[Planet]):
-        if not self.currentStep % math.ceil(100 / DATA.get_time_step()) == 0:
+        if not self.currentStep % math.ceil(100 / DATA.time_step) == 0:
             return
         self.nearestPlanet = min(planets, key=lambda x: self.get_distance_to_planet(x, self.currentStep))
 

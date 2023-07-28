@@ -28,29 +28,29 @@ class GameManager:
             for planet in planets:
                 planet.reset_planets_array_to_sync_with_rocket()
             GameManager.new_calculations_for_planet(planets)
-            rocket.calculate_new_calculation_of_predictions(planets)
+            rocket.calculate_new_calculation_of_predictions()
             rocket.currentStep += 1
 
-        if DATA.get_flight_change_state() == FlightChangeState.pausedAndPowerChanged:
-            rocket.calculate_new_calculation_of_predictions(planets)
-            DATA.set_flight_change_state(FlightChangeState.paused)
+        if DATA.flight_change_state == FlightChangeState.pausedAndPowerChanged:
+            rocket.calculate_new_calculation_of_predictions()
+            DATA.flight_change_state = FlightChangeState.paused
             return
-        if DATA.get_flight_change_state() == FlightChangeState.pausedAndTimeStepChanged:
+        if DATA.flight_change_state == FlightChangeState.pausedAndTimeStepChanged:
             GameManager.new_calculations_for_planet(planets)
-            rocket.calculate_new_calculation_of_predictions(planets)
-            DATA.set_flight_change_state(FlightChangeState.paused)
+            rocket.calculate_new_calculation_of_predictions()
+            DATA.flight_change_state = FlightChangeState.paused
             return
-        if DATA.get_flight_change_state() == FlightChangeState.paused:
+        if DATA.flight_change_state == FlightChangeState.paused:
             return
 
         # Landed Rocket
         if rocket.flightState == RocketFlightState.landed:
 
-            if DATA.get_flight_change_state() == FlightChangeState.timeStepChanged:
+            if DATA.flight_change_state == FlightChangeState.timeStepChanged:
 
                 GameManager.new_calculations_for_planet(planets)
 
-            if DATA.get_flight_change_state() == FlightChangeState.unchanged:
+            if DATA.flight_change_state == FlightChangeState.unchanged:
 
                 GameManager.calculate_next_step_for_planets(planets, rocket)
 
@@ -59,26 +59,26 @@ class GameManager:
         # Flying Rocket
         if rocket.flightState == RocketFlightState.flying:
 
-            if DATA.get_flight_change_state() == FlightChangeState.timeStepChanged:
+            if DATA.flight_change_state == FlightChangeState.timeStepChanged:
 
                 # Calculate new orbits
                 GameManager.new_calculations_for_planet(planets)
-                rocket.calculate_new_calculation_of_predictions(planets)
+                rocket.calculate_new_calculation_of_predictions()
                 rocket.currentStep += 1
 
-            if DATA.get_flight_change_state() == FlightChangeState.powerChanged:
+            if DATA.flight_change_state == FlightChangeState.powerChanged:
 
                 for planet in planets:
                     planet.calculate_next_step(planets)
                     planet.currentStep += 1
                 # If only power changed adjust the rocket prediction
-                rocket.calculate_new_calculation_of_predictions(planets)
+                rocket.calculate_new_calculation_of_predictions()
                 rocket.currentStep += 1
 
-            if DATA.get_flight_change_state() == FlightChangeState.unchanged:
+            if DATA.flight_change_state == FlightChangeState.unchanged:
 
                 GameManager.calculate_next_step_for_planets(planets, rocket)
-                rocket.calculate_one_prediction(planets)
+                rocket.calculate_one_prediction()
                 rocket.currentStep += 1
 
         # Only One condition since current steps should be synced after every calculation step
@@ -87,7 +87,7 @@ class GameManager:
             for planet in planets:
                 planet.reset_array()
 
-        DATA.set_flight_change_state(FlightChangeState.unchanged)
+        DATA.flight_change_state = FlightChangeState.unchanged
 
         # Reset Planets arrays if rocket didnt start
         if planets[0].currentStep >= NUM_OF_PREDICTIONS:
@@ -102,7 +102,7 @@ class GameManager:
         for i in range(NUM_OF_PREDICTIONS):
             for planet in planets:
                 planet.calculate_next_step(planets)
-        if DATA.get_flight_change_state() not in {FlightChangeState.paused, FlightChangeState.pausedAndPowerChanged, FlightChangeState.pausedAndTimeStepChanged}:
+        if DATA.flight_change_state not in {FlightChangeState.paused, FlightChangeState.pausedAndPowerChanged, FlightChangeState.pausedAndTimeStepChanged}:
             for planet in planets:
                 planet.currentStep += 1
 
@@ -115,9 +115,9 @@ class GameManager:
     @staticmethod
     def display_iteration(rocket: Rocket, planets: list[Planet]):
 
-        if DATA.get_zoom_goal() == ZoomGoal.nearestPlanet:
+        if DATA.zoom_goal == ZoomGoal.nearestPlanet:
             center_screen_on_planet(rocket.nearestPlanet)
-        elif DATA.get_zoom_goal() == ZoomGoal.rocket:
+        elif DATA.zoom_goal == ZoomGoal.rocket:
             automatic_zoom_on_rocket(rocket)
 
         if rocket.flightState == RocketFlightState.flying:
@@ -128,9 +128,9 @@ class GameManager:
         for planet in planets:
             if planet_is_in_screen(planet):
                 DrawManager.draw_planet(planet)
-            if DATA.get_draw_orbit():
+            if DATA.draw_orbit:
                 DrawManager.draw_planet_orbit(planet)
-            if DATA.get_show_distance():
+            if DATA.show_distance:
                 DrawManager.display_planet_distances(planet)
 
         DrawManager.render_flight_interface(rocket, Now, planets)

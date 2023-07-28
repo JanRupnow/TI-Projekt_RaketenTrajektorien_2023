@@ -17,7 +17,7 @@ def main():
     planets = configure_planets()
     rocket = load_rocket(planets)
 
-    while DATA.get_run():
+    while DATA.run:
         CLOCK.tick(60)
 
         WINDOW.fill(COLOR_UNIVERSE)

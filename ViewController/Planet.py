@@ -68,10 +68,10 @@ class Planet:
             fx, fy = self.attraction(planet, i)
             total_fx += fx
             total_fy += fy
-        self.velocity_X[i + 1] = self.velocity_X[i] + total_fx / self.mass * DATA.get_time_step()
-        self.velocity_Y[i + 1] = self.velocity_Y[i] + total_fy / self.mass * DATA.get_time_step()
-        self.position_X[i + 1] = self.position_X[i] + self.velocity_X[i + 1] * DATA.get_time_step()
-        self.position_Y[i + 1] = self.position_Y[i] + self.velocity_Y[i + 1] * DATA.get_time_step()
+        self.velocity_X[i + 1] = self.velocity_X[i] + total_fx / self.mass * DATA.time_step
+        self.velocity_Y[i + 1] = self.velocity_Y[i] + total_fy / self.mass * DATA.time_step
+        self.position_X[i + 1] = self.position_X[i] + self.velocity_X[i + 1] * DATA.time_step
+        self.position_Y[i + 1] = self.position_Y[i] + self.velocity_Y[i + 1] * DATA.time_step
 
         self.update_distance_to_rocket(rocket)
 
@@ -90,10 +90,10 @@ class Planet:
             fx, fy = self.attraction(planet, self.currentCalculationStep)
             total_fx += fx
             total_fy += fy
-        self.velocity_X[self.currentCalculationStep + 1] = self.velocity_X[self.currentCalculationStep] + total_fx / self.mass * DATA.get_time_step()
-        self.velocity_Y[self.currentCalculationStep + 1] = self.velocity_Y[self.currentCalculationStep] + total_fy / self.mass * DATA.get_time_step()
-        self.position_X[self.currentCalculationStep + 1] = self.position_X[self.currentCalculationStep] + self.velocity_X[self.currentCalculationStep + 1] * DATA.get_time_step()
-        self.position_Y[self.currentCalculationStep + 1] = self.position_Y[self.currentCalculationStep] + self.velocity_Y[self.currentCalculationStep + 1] * DATA.get_time_step()
+        self.velocity_X[self.currentCalculationStep + 1] = self.velocity_X[self.currentCalculationStep] + total_fx / self.mass * DATA.time_step
+        self.velocity_Y[self.currentCalculationStep + 1] = self.velocity_Y[self.currentCalculationStep] + total_fy / self.mass * DATA.time_step
+        self.position_X[self.currentCalculationStep + 1] = self.position_X[self.currentCalculationStep] + self.velocity_X[self.currentCalculationStep + 1] * DATA.time_step
+        self.position_Y[self.currentCalculationStep + 1] = self.position_Y[self.currentCalculationStep] + self.velocity_Y[self.currentCalculationStep + 1] * DATA.time_step
         self.currentCalculationStep += 1
 
     def check_collision(self):
@@ -102,7 +102,7 @@ class Planet:
         return False
 
     def check_landing(self, rocket):
-        if not self.currentStep % math.ceil(100 / DATA.get_time_step()) == 0:
+        if not self.currentStep % math.ceil(100 / DATA.time_step) == 0:
             return
         # Safe landing
         if self.distanceToRocket <= self.radius * 95 / 100 and rocket.get_current_relative_velocity() < 1000000000:
