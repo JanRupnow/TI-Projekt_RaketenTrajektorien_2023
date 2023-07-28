@@ -148,13 +148,6 @@ def get_h_pause_simulation(hotkeys_json):
 
 
 # Navigation
-def get_h_display_hot_keys(hotkeys_json):
-    return [
-        hotkeys_json["Navigation"]["H_displayHotKeys"]["key"],
-        hotkeys_json["Navigation"]["H_displayHotKeys"]["text"]
-    ]
-
-
 def get_h_leave_simulation(hotkeys_json):
     return [
         hotkeys_json["Navigation"]["H_leaveSimulation"]["key"],

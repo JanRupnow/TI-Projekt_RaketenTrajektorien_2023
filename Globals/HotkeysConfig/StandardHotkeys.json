@@ -28,7 +28,7 @@
         },
         "H_zoomRocketPlanetSystem": {
             "key": 51,
-            "text": "Zoom (Solarsystem)"
+            "text": "Zoom (Solar)"
         },
         "H_zoomAutoOnRocket": {
             "key": 102,
@@ -36,7 +36,7 @@
         },
         "H_zoomAutoOnReferencePlanet": {
             "key": 103,
-            "text": "Auto Zoom Reference Planet"
+            "text": "Auto Zoom Planet"
         }
     },
     "Centering": {
@@ -74,10 +74,6 @@
         }
     },
     "Navigation": {
-        "H_displayHotKeys": {
-            "key": 57,
-            "text": "Hotkey settings"
-        },
         "H_leaveSimulation": {
             "key": 120,
             "text": "Exit Pygame"

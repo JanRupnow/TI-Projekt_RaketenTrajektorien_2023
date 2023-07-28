@@ -52,8 +52,6 @@ try:
     list_hot_keys.append(h_pause_simulation)
 
     # Navigation
-    h_display_hot_keys = get_h_display_hot_keys(hotkeysJson)
-    list_hot_keys.append(h_display_hot_keys)
     h_leave_simulation = get_h_leave_simulation(hotkeysJson)
     list_hot_keys.append(h_leave_simulation)
     h_open_settings = get_h_open_settings(hotkeysJson)
@@ -124,8 +122,6 @@ except:
     list_hot_keys.append(h_pause_simulation)
 
     # Navigation
-    h_display_hot_keys = get_h_display_hot_keys(hotkeysJson)
-    list_hot_keys.append(h_display_hot_keys)
     h_leave_simulation = get_h_leave_simulation(hotkeysJson)
     list_hot_keys.append(h_leave_simulation)
     h_open_settings = get_h_open_settings(hotkeysJson)
@@ -199,8 +195,6 @@ def reset_overwrite_current():
     list_hot_keys.append(h_pause_simulation)
 
     # Navigation
-    h_display_hot_keys = get_h_display_hot_keys(hotkeys_json)
-    list_hot_keys.append(h_display_hot_keys)
     h_leave_simulation = get_h_leave_simulation(hotkeys_json)
     list_hot_keys.append(h_leave_simulation)
     h_open_settings = get_h_open_settings(hotkeys_json)

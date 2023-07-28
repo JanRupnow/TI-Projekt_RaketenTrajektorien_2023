@@ -2,7 +2,7 @@
     "Start": {
         "AngleOnPlanet": {
             "value": 30,
-            "text": "angle on planet"
+            "text": "start angle"
         },
         "Startplanet": {
             "value": "Earth",
@@ -10,7 +10,7 @@
         },
         "Angle": {
             "value": 0,
-            "text": "start angle"
+            "text": "flight angle"
         },
         "Thrust": {
             "value": 0,
@@ -20,22 +20,22 @@
     "Mass": {
         "StructMass": {
             "value": 10000,
-            "text": "mass of the rocket structure"
+            "text": "rocket mass(t)"
         },
         "PropellantMass":{
             "value": 2000,
-            "text": "mass of the propellant"
+            "text": "fuel mass(t)"
         }
     }, "StartTime":{
         "Year":{
             "value":2023,
-            "text": "year of rocketstart"},
+            "text": "year"},
         "Month":{
             "value":5,
-            "text": "month of rocketstart"},
+            "text": "month"},
         "Day":{
             "value":24,
-            "text": "day of rocketstart"}
+            "text": "day"}
     },
     "Color": {
         "red": 255, 

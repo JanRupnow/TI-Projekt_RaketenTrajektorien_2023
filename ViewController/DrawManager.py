@@ -88,14 +88,15 @@ class DrawManager:
         if DATA.get_flight_change_state() != FlightChangeState.paused:
             add_clock_time()
         text_surface = FONT_1.render(f"Time step: {int(DATA.get_time_step() * 60)}x", True, COLOR_WHITE)
-        WINDOW.blit(text_surface, (WIDTH * 0.8, HEIGHT * 0.03))
+        WINDOW.blit(text_surface, (WIDTH * 0.75, HEIGHT * 0.04))
         text_actual_time = FONT_1.render(
             f'Current time: {(now + DATA.get_time_passed()).strftime("%d/%m/%Y, %H:%M:%S")}',
             True, COLOR_WHITE)
-        WINDOW.blit(text_actual_time, (WIDTH * 0.8, HEIGHT * 0.06))
+        WINDOW.blit(text_actual_time, (WIDTH * 0.75, HEIGHT * 0.08))
         text_time_passed = FONT_1.render(f'Passed time: {DATA.get_time_passed()}', True, COLOR_WHITE)
-        WINDOW.blit(text_time_passed, (WIDTH * 0.8, HEIGHT * 0.09))
+        WINDOW.blit(text_time_passed, (WIDTH * 0.75, HEIGHT * 0.12))
 
+        # TODO hotkey to set detailed interface or basic interface
         distance = np.sqrt(
             (rocket.position_X[rocket.currentStep] - rocket.nearestPlanet.position_X[
                 rocket.nearestPlanet.currentStep]) ** 2
@@ -104,7 +105,7 @@ class DrawManager:
         speed = round(rocket.get_current_relative_velocity()) if distance < rocket.nearestPlanet.radius * 5 else round(
             rocket.get_absolute_velocity())
         rocket_velocity = FONT_1.render(f'Rocket Speed: {speed}km/h', True, COLOR_WHITE)
-        WINDOW.blit(rocket_velocity, (WIDTH * 0.8, HEIGHT * 0.12))
+        WINDOW.blit(rocket_velocity, (WIDTH * 0.75, HEIGHT * 0.16))
         if not rocket.flightState == RocketFlightState.flying:
             rocket_velocity = FONT_1.render(f'Altitude: {0} km (Rocket has not started)', True, COLOR_WHITE)
         elif rocket.nearestPlanet.distanceToRocket - rocket.nearestPlanet.radius < 3 / 2 * rocket.nearestPlanet.radius:
@@ -113,28 +114,28 @@ class DrawManager:
                 True, COLOR_WHITE)
         else:
             rocket_velocity = FONT_1.render(f'Altitude: not available in space', True, COLOR_WHITE)
-        WINDOW.blit(rocket_velocity, (WIDTH * 0.8, HEIGHT * 0.15))
+        WINDOW.blit(rocket_velocity, (WIDTH * 0.75, HEIGHT * 0.20))
         rocket_fuel = FONT_1.render(f'Rocket Fuel: %', True, COLOR_WHITE)
-        WINDOW.blit(rocket_fuel, (WIDTH * 0.8, HEIGHT * 0.18))
+        WINDOW.blit(rocket_fuel, (WIDTH * 0.75, HEIGHT * 0.24))
         rocket_max_q = FONT_1.render(f'MaxQ: %', True, COLOR_WHITE)
-        WINDOW.blit(rocket_max_q, (WIDTH * 0.8, HEIGHT * 0.21))
+        WINDOW.blit(rocket_max_q, (WIDTH * 0.75, HEIGHT * 0.28))
         zoom_text = FONT_1.render(f'Automatic Zoom: {DATA.get_zoom_goal()}', True, COLOR_WHITE)
-        WINDOW.blit(zoom_text, (WIDTH * 0.8, HEIGHT * 0.24))
+        WINDOW.blit(zoom_text, (WIDTH * 0.75, HEIGHT * 0.32))
         rocket_state = FONT_1.render(f'Rocket: {rocket.flightState}', True, COLOR_WHITE)
-        WINDOW.blit(rocket_state, (WIDTH * 0.8, HEIGHT * 0.27))
+        WINDOW.blit(rocket_state, (WIDTH * 0.75, HEIGHT * 0.36))
         rocket_state = FONT_1.render(f'Rocket current: {rocket.currentStep}', True, COLOR_WHITE)
-        WINDOW.blit(rocket_state, (WIDTH * 0.8, HEIGHT * 0.30))
+        WINDOW.blit(rocket_state, (WIDTH * 0.75, HEIGHT * 0.40))
         rocket_state = FONT_1.render(f'Rocket calculation: {rocket.currentCalculationStep}', True, COLOR_WHITE)
-        WINDOW.blit(rocket_state, (WIDTH * 0.8, HEIGHT * 0.33))
+        WINDOW.blit(rocket_state, (WIDTH * 0.75, HEIGHT * 0.44))
         rocket_state = FONT_1.render(f'Planet current: {planets[0].currentStep}', True, COLOR_WHITE)
-        WINDOW.blit(rocket_state, (WIDTH * 0.8, HEIGHT * 0.36))
+        WINDOW.blit(rocket_state, (WIDTH * 0.75, HEIGHT * 0.48))
         rocket_state = FONT_1.render(f'Planet calculation: {planets[0].currentCalculationStep}', True, COLOR_WHITE)
-        WINDOW.blit(rocket_state, (WIDTH * 0.8, HEIGHT * 0.39))
+        WINDOW.blit(rocket_state, (WIDTH * 0.75, HEIGHT * 0.52))
         rocket_state = FONT_1.render(f'Flight State: {DATA.get_flight_change_state()}', True, COLOR_WHITE)
-        WINDOW.blit(rocket_state, (WIDTH * 0.8, HEIGHT * 0.42))
+        WINDOW.blit(rocket_state, (WIDTH * 0.75, HEIGHT * 0.56))
 
         thrust_text = FONT_1.render(f'Thrust: {rocket.thrust}m/s^2', True, COLOR_WHITE)
-        WINDOW.blit(thrust_text, (WIDTH * 0.8, HEIGHT * 0.8))
+        WINDOW.blit(thrust_text, (WIDTH * 0.75, HEIGHT * 0.8))
 
         sun_surface = FONT_1.render("- Sun", True, COLOR_SUN)
         WINDOW.blit(sun_surface, (15, 285))

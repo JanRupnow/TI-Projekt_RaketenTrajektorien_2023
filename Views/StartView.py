@@ -19,13 +19,13 @@ def show_start_ui():
         initialize_start_ui(selected_number)
     while show_gui:
         for event in pygame.event.get():
-            if event.type == pg.UI_BUTTON_PRESSED and event.ui_object_id == "StarttheGame_button":
+            if event.type == pg.UI_BUTTON_PRESSED and event.ui_object_id == "Start_button":
                 show_gui = False
-            if event.type == pg.UI_BUTTON_PRESSED and event.ui_object_id == "ConfiguretheRocket_button" \
+            if event.type == pg.UI_BUTTON_PRESSED and event.ui_object_id == "Configuration_button" \
                     and not show_configuration:
                 initialize_rocket_configuration_ui()
                 show_configuration = True
-            if event.type == pg.UI_BUTTON_PRESSED and event.ui_object_id == "ResetConfiguration_button":
+            if event.type == pg.UI_BUTTON_PRESSED and event.ui_object_id == "Reset_button":
                 reset_current_rocket_config()
                 reset_and_show_ui(selected_number)
             if event.type == pg.UI_BUTTON_PRESSED and event.ui_object_id == "Previous_button" and selected_number > 0:
@@ -81,7 +81,7 @@ def show_start_ui():
 
             if event.type == pg.UI_TEXT_ENTRY_FINISHED and event.ui_object_id == "yearofrocketstart_input":
                 if is_convertible_to_int(event.text):
-                    if 10000 >= int(event.text) >= 0:
+                    if 3000 >= int(event.text) >= 0:
                         update_rocket_configs(event)
                         if check_date_is_legal(get_start_month(), get_start_day()):
                             update_rocket_configs(event)
@@ -125,15 +125,15 @@ def show_start_ui():
 
 
 def initialize_start_ui(selected_number=0):
-    create_ui_game_title_label("Spaceflight Simulator", WIDTH * 0.45, HEIGHT * 0.05, manager)
-    create_ui_button("Start the Game", WIDTH * 0.465, HEIGHT * 0.8, manager)
-    create_ui_button("Configure the Rocket", WIDTH * 0.45, HEIGHT * 0.7, manager, WIDTH * 0.1)
+    create_ui_game_title_label("Spaceflight Simulator", WIDTH * 0.425, HEIGHT * 0.05, manager)
+    create_ui_button("Start", WIDTH * 0.465, HEIGHT * 0.8, manager)
+    create_ui_button("Configuration", WIDTH * 0.45, HEIGHT * 0.7, manager, WIDTH * 0.1)
     create_rocket_image(selected_number, manager)
 
 
 def initialize_rocket_configuration_ui():
     create_ui_label("Rocket Configuration", WIDTH * 0.7, HEIGHT * 0.2, manager)
-    create_ui_button("Reset Configuration", WIDTH * 0.8, HEIGHT * 0.8, manager, length_x=WIDTH * 0.1)
+    create_ui_button("Reset", WIDTH * 0.8, HEIGHT * 0.8, manager, length_x=WIDTH * 0.1)
     create_ui_button("Previous", WIDTH * 0.38, HEIGHT * 0.7, manager)
     create_ui_button("Next", WIDTH * 0.55, HEIGHT * 0.7, manager)
     config_pairs = get_texts_and_values_for_config_ui()
@@ -144,8 +144,7 @@ def initialize_rocket_configuration_ui():
                      WIDTH * 0.8, HEIGHT * 0.35, manager)
     create_ui_text_box_and_text_entry(config_pairs[2][1], config_pairs[2][0], WIDTH * 0.7, HEIGHT * 0.4, manager)
     create_ui_text_box_and_text_entry(config_pairs[3][1], config_pairs[3][0], WIDTH * 0.7, HEIGHT * 0.45, manager)
-    create_ui_text_box_and_text_entry(config_pairs[4][1], config_pairs[4][0], WIDTH * 0.7, HEIGHT * 0.5, manager,
-                                      size_x=WIDTH * 0.03)
+    create_ui_text_box_and_text_entry(config_pairs[4][1], config_pairs[4][0], WIDTH * 0.7, HEIGHT * 0.5, manager)
     create_ui_text_box_and_text_entry(config_pairs[5][1], config_pairs[5][0], WIDTH * 0.7, HEIGHT * 0.55, manager)
     create_ui_text_box_and_text_entry(config_pairs[6][1], config_pairs[6][0], WIDTH * 0.2, HEIGHT * 0.3, manager)
     create_ui_text_box_and_text_entry(config_pairs[7][1], config_pairs[7][0], WIDTH * 0.2, HEIGHT * 0.35, manager)

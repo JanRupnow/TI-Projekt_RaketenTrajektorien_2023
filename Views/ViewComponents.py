@@ -6,8 +6,8 @@ from Globals.Constants import *
 from Methods.SupportMethods import *
 
 
-def create_ui_label(text, position_x, position_y, manager, size_x=WIDTH * 0.1):
-    return pg.elements.UILabel(relative_rect=pygame.Rect((position_x, position_y), (size_x, HEIGHT * 0.05)),
+def create_ui_label(text, position_x, position_y, manager, size_x=WIDTH * 0.15, size_y= HEIGHT*0.1):
+    return pg.elements.UILabel(relative_rect=pygame.Rect((position_x, position_y), (size_x, size_y)),
                                text=text,
                                manager=manager,
                                object_id=remove_spaces(text + "_label"))
@@ -20,7 +20,7 @@ def create_ui_text_box_and_text_entry_hotkey(hotkey, position_x, position_y, man
                                      object_id=remove_spaces(hotkey[1] + "_text"))
 
     text_input = pg.elements.UITextEntryLine(relative_rect=pygame.Rect((position_x + WIDTH * 0.1, position_y),
-                                                                       (WIDTH * 0.03, HEIGHT * 0.05)),
+                                                                       (WIDTH * 0.04, HEIGHT * 0.05)),
                                              manager=manager,
                                              object_id=remove_spaces(hotkey[1] + "_text") if mutable else remove_spaces(
                                                  hotkey[1] + "_notMutable"))
@@ -59,7 +59,7 @@ def create_ui_text_box_and_text_entry(text, value, position_x, position_y, manag
                                      object_id=remove_spaces(text + "_text"))
 
     text_input = pg.elements.UITextEntryLine(relative_rect=pygame.Rect((position_x + WIDTH * 0.1 + size_x, position_y),
-                                                                       (WIDTH * 0.03 + size_x, HEIGHT * 0.05 + size_y)),
+                                                                       (WIDTH * 0.04 + size_x, HEIGHT * 0.05 + size_y)),
                                              manager=manager,
                                              object_id=remove_spaces(text + "_input"))
 

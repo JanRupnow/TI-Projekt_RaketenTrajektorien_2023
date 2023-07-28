@@ -104,6 +104,7 @@ class Planet:
     def check_landing(self, rocket):
         if not self.currentStep % math.ceil(100 / DATA.get_time_step()) == 0:
             return
+        # Safe landing
         if self.distanceToRocket <= self.radius * 95 / 100 and rocket.get_current_relative_velocity() < 1000000000:
             rocket.flightState = RocketFlightState.landed
             rocket.thrust = 0
@@ -111,4 +112,7 @@ class Planet:
             rocket.clear_array()
             self.update_distance_to_rocket(rocket)
             return
-        # TODO implemented crashing
+        # Crashing
+        if self.distanceToRocket >= self.radius * 95 / 100 and rocket.get_current_relative_velocity() > 1000000000:
+            rocket.flightState = RocketFlightState.landed
+            rocket.clear_array()
