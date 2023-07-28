@@ -111,7 +111,10 @@ class FlightDataManager(metaclass=SingletonMeta):
     
     @time_step.setter
     def time_step(self, value: float):
-        self._time_step = value
+        if min(AllTimeSteps) < value < max(AllTimeSteps):
+            self._time_step = value
+        else:
+            raise ValueError("Invalid time step value. The value should be within the range of AllTimeSteps.")
 
     @property
     def zoom_goal(self):
