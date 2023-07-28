@@ -68,6 +68,10 @@
             "key": 112,
             "text": "Display Distance"
         },
+        "H_interfaceMode": {
+            "key": 113,
+            "text": "Switch Interface"
+        },
         "H_pauseSimulation": {
             "key": 32,
             "text": "Pause Simulation"

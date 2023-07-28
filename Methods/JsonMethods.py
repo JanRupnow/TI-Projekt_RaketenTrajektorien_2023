@@ -18,7 +18,7 @@ def update_key_in_json_rocket(json, identifier, value):
                 try:
                     if identifier == remove_spaces(
                             json[category][key]["text"] + "_input") or identifier == remove_spaces(
-                            json[category][key]["text"] + "_dropdown"):
+                        json[category][key]["text"] + "_dropdown"):
                         if value.isdigit():
                             json[category][key]["value"] = int(value)
                         else:
@@ -144,6 +144,13 @@ def get_h_pause_simulation(hotkeys_json):
     return [
         hotkeys_json["Generals"]["H_pauseSimulation"]["key"],
         hotkeys_json["Generals"]["H_pauseSimulation"]["text"]
+    ]
+
+
+def get_h_switch_interface(hotkeys_json):
+    return [
+        hotkeys_json["Generals"]["H_interfaceMode"]["key"],
+        hotkeys_json["Generals"]["H_interfaceMode"]["text"]
     ]
 
 

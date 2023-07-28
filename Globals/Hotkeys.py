@@ -48,6 +48,8 @@ try:
     list_hot_keys.append(h_draw_line)
     h_show_distance = get_h_show_distance(hotkeysJson)
     list_hot_keys.append(h_show_distance)
+    h_switch_interface = get_h_switch_interface(hotkeysJson)
+    list_hot_keys.append(h_switch_interface)
     h_pause_simulation = get_h_pause_simulation(hotkeysJson)
     list_hot_keys.append(h_pause_simulation)
 
@@ -118,6 +120,8 @@ except:
     list_hot_keys.append(h_draw_line)
     h_show_distance = get_h_show_distance(hotkeysJson)
     list_hot_keys.append(h_show_distance)
+    h_switch_interface = get_h_switch_interface(hotkeysJson)
+    list_hot_keys.append(h_switch_interface)
     h_pause_simulation = get_h_pause_simulation(hotkeysJson)
     list_hot_keys.append(h_pause_simulation)
 
@@ -141,7 +145,7 @@ jsonFile.close()
 
 
 def reset_overwrite_current():
-    global list_hot_keys, h_rocket_boost_forward, h_rocket_boost_left, h_rocket_boost_right, h_lower_rocket_boost, h_zoom_rocket_start, h_zoom_rocket_planet, h_zoom_rocket_planet_system, h_zoom_auto_on_rocket, h_center_on_sun, h_center_on_rocket, h_shift_time_step_up, h_center_on_rocket, h_shift_time_step_up, h_shift_time_step_down, h_draw_line, h_show_distance, h_pause_simulation, h_display_hot_keys, h_leave_simulation, h_open_settings, h_close_window
+    global list_hot_keys, h_rocket_boost_forward, h_rocket_boost_left, h_rocket_boost_right, h_lower_rocket_boost, h_zoom_rocket_start, h_zoom_rocket_planet, h_zoom_rocket_planet_system, h_zoom_auto_on_rocket, h_center_on_sun, h_center_on_rocket, h_shift_time_step_up, h_center_on_rocket, h_shift_time_step_up, h_shift_time_step_down, h_draw_line, h_show_distance, h_pause_simulation, h_switch_interface, h_leave_simulation, h_open_settings, h_close_window
     json_file = open("./Globals/HotkeysConfig/StandardHotkeys.json")
     hotkeys_json = json.load(json_file)
 
@@ -191,6 +195,8 @@ def reset_overwrite_current():
     list_hot_keys.append(h_draw_line)
     h_show_distance = get_h_show_distance(hotkeys_json)
     list_hot_keys.append(h_show_distance)
+    h_switch_interface = get_h_switch_interface(hotkeysJson)
+    list_hot_keys.append(h_switch_interface)
     h_pause_simulation = get_h_pause_simulation(hotkeys_json)
     list_hot_keys.append(h_pause_simulation)
 

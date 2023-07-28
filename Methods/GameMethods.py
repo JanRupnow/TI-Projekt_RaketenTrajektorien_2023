@@ -167,6 +167,9 @@ def process_hot_key_events(event, rocket: Rocket, planets: list[Planet]):
         shift_time_step(False)
     elif check_key_down(event, Keys.h_open_settings[0]):
         show_settings_ui()
+
+    elif check_key_down(event, Keys.h_switch_interface[0]):
+        DATA.set_advanced_interface(not DATA.get_advanced_interface())
     return event, rocket
 
 

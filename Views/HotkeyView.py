@@ -46,7 +46,7 @@ def initialize_settings_ui():
     create_ui_button("Reset Controls", WIDTH * 0.85, HEIGHT * 0.88, manager, length_x=WIDTH * 0.12, length_y=HEIGHT * 0.08)
     create_ui_game_title_label("Spaceflight Simulator", WIDTH * 0.4, HEIGHT * 0.05, manager)
     create_ui_settings_topic_label("General Controls (not mutable)", WIDTH * 0.1, HEIGHT * 0.125, manager, WIDTH * 0.18)
-    # TODO Empty should be hud mode
+    create_ui_text_box_and_text_entry_hotkey(Keys.h_switch_interface, WIDTH * 0.1, HEIGHT * 0.2, manager, False, "Q")
     create_ui_text_box_and_text_entry_hotkey(Keys.h_leave_simulation, WIDTH * 0.1, HEIGHT * 0.25, manager, False, "X")
     create_ui_text_box_and_text_entry_hotkey(Keys.h_open_settings, WIDTH * 0.1, HEIGHT * 0.3, manager, False, "F1")
     create_ui_settings_topic_label("Rocket Controls", WIDTH * 0.1, HEIGHT * 0.325, manager)

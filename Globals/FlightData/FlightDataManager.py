@@ -29,6 +29,7 @@ class FlightDataManager(metaclass=SingletonMeta):
         self.timestep = AllTimeSteps[0]
         self.zoom_goal = ZoomGoal.rocket
         self.time_passed = datetime.timedelta(seconds=0)
+        self.advanced_interface = True
 
     def set_flight_change_state(self, value: FlightChangeState):
         self.flightChangeState = value
@@ -101,6 +102,12 @@ class FlightDataManager(metaclass=SingletonMeta):
 
     def get_time_passed(self):
         return self.time_passed
+
+    def set_advanced_interface(self, value: bool):
+        self.advanced_interface = value
+
+    def get_advanced_interface(self):
+        return self.advanced_interface
 
 
 DATA = FlightDataManager()
