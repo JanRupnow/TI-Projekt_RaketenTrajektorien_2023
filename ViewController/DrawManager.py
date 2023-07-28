@@ -211,9 +211,9 @@ def display_bar(rocket: Rocket, now):
 
     pygame.draw.rect(WINDOW, (20, 20, 20), (WIDTH * 0.8, HEIGHT * 0.05, WIDTH * 0.19, HEIGHT * 0.04))
 
-    text_actual_time = FONT_1.render(
-        f'{int(years)} years, {int(days)} days, {int(hours):02}:{int(minutes):02}:{int(seconds):02}' if years > 0 else
-        f'{int(days)} days, {int(hours):02}:{int(minutes):02}:{int(seconds):02}',
+    text_actual_time=FONT_1.render(
+        f'{int(years)} {"year" if int(years) <= 1 else "years"}, {int(days)} {"day" if int(days) <= 1 else "days"}, {int(hours):02}:{int(minutes):02}:{int(seconds):02}' if years > 0 else
+        f'{int(days)} {"day" if int(days) <= 1 else "days"}, {int(hours):02}:{int(minutes):02}:{int(seconds):02}',
         True, COLOR_WHITE)
     WINDOW.blit(text_actual_time, (WIDTH * 0.81, HEIGHT * 0.055))
 
