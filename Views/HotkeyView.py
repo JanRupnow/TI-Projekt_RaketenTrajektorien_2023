@@ -1,116 +1,108 @@
-import pygame
-import pygame_gui as pg
 import sys
-import json
 
-import Globals.Hotkeys as keys
-from Globals.Constants import *
+import Globals.Hotkeys as Keys
 
 from Views.ViewComponents import *
 
-from Methods.SupportMethods import *
 from Methods.JsonMethods import *
 from Methods.ViewMethods import *
 
+manager = pg.UIManager((WIDTH, HEIGHT))
+UI_REFRESH_RATE = CLOCK.tick(60) / 1000
 
-manager = pg.UIManager((WIDTH,HEIGHT))
-UI_REFRESH_RATE = Clock.tick(60)/1000
 
-
-def ChangeHotKeyFromInput(event,hotkey):
-    if event.type == pg.UI_TEXT_ENTRY_FINISHED and event.ui_object_id == RemoveSpaces(hotkey[1]+"_input") and event.text != "":
+def change_hot_key_from_input(event, hotkey):
+    if event.type == pg.UI_TEXT_ENTRY_FINISHED and event.ui_object_id == remove_spaces(hotkey[1] + "_input") \
+            and event.text != "":
         jsonfile = open("./variables/hotkeys_config/current_hotkeys.json", "r+")
         hotkey[0] = ord(event.text)
-        newJson = keys.UpdateKeyInJson(json.load(jsonfile),hotkey)
+        new_json = Keys.update_key_in_json(json.load(jsonfile), hotkey)
 
         jsonfile.seek(0)
         jsonfile.truncate()
-        json.dump(newJson, jsonfile, indent=4, ensure_ascii=False)
+        json.dump(new_json, jsonfile, indent=4, ensure_ascii=False)
     return hotkey[0]
 
-def ChangeAllHotKeysFromInput(event,hotkeys):
+
+def change_all_hot_keys_from_input(event, hotkeys):
     for hotkey in hotkeys:
-        hotkey[0] = ChangeHotKeyFromInput(event, hotkey)
+        hotkey[0] = change_hot_key_from_input(event, hotkey)
 
-def CreateUiCloseButton():
-    label = CreateUiButton("Close Settings", 0,0, manager)
-    return label
 
-def CreateUiSettingsTitleLabel():
-    title_label = CreateUiLabel("Settings", WIDTH*0.45, 0.15*HEIGHT, manager)
+def create_ui_settings_title_label():
+    title_label = create_ui_label("Settings", WIDTH * 0.425, 0.15 * HEIGHT, manager, size_x=WIDTH * 0.1)
     title_label.text_horiz_alignment = "center"
     title_label.rebuild()
     return title_label
 
 
+def clear_settings_ui():
+    manager.clear_and_reset()
 
 
-# removes all ui elements => no used object_ids
-def ClearSettingsUI():
-    manager.clear_and_reset() 
+def initialize_settings_ui():
+    create_ui_settings_title_label()
+    create_ui_button("Close Settings", 0, 0, manager, length_x=WIDTH * 0.12, length_y=0.08 * HEIGHT)
+    create_ui_button("Reset Controls", WIDTH * 0.85, HEIGHT * 0.88, manager, length_x=WIDTH * 0.12, length_y=HEIGHT * 0.08)
+    create_ui_game_title_label("Spaceflight Simulator", WIDTH * 0.4, HEIGHT * 0.05, manager)
+    create_ui_settings_topic_label("General Controls (not mutable)", WIDTH * 0.1, HEIGHT * 0.125, manager, WIDTH * 0.18)
+    create_ui_text_box_and_text_entry_hotkey(Keys.h_switch_interface, WIDTH * 0.1, HEIGHT * 0.2, manager, False, "Q")
+    create_ui_text_box_and_text_entry_hotkey(Keys.h_leave_simulation, WIDTH * 0.1, HEIGHT * 0.25, manager, False, "X")
+    create_ui_text_box_and_text_entry_hotkey(Keys.h_open_settings, WIDTH * 0.1, HEIGHT * 0.3, manager, False, "F1")
+    create_ui_settings_topic_label("Rocket Controls", WIDTH * 0.1, HEIGHT * 0.325, manager)
+    create_ui_text_box_and_text_entry_hotkey(Keys.h_rocket_boost_forward, WIDTH * 0.1, HEIGHT * 0.4, manager)
+    create_ui_text_box_and_text_entry_hotkey(Keys.h_rocket_boost_left, WIDTH * 0.1, HEIGHT * 0.45, manager)
+    create_ui_text_box_and_text_entry_hotkey(Keys.h_lower_rocket_boost, WIDTH * 0.1, HEIGHT * 0.5, manager)
+    create_ui_text_box_and_text_entry_hotkey(Keys.h_rocket_boost_right, WIDTH * 0.1, HEIGHT * 0.55, manager)
+    create_ui_settings_topic_label("Zoom Controls", WIDTH * 0.1, HEIGHT * 0.575, manager)
+    create_ui_text_box_and_text_entry_hotkey(Keys.h_zoom_auto_on_rocket, WIDTH * 0.1, HEIGHT * 0.65, manager)
+    create_ui_text_box_and_text_entry_hotkey(Keys.H_zoomAutoOnReferencePlanet, WIDTH * 0.1, HEIGHT * 0.7, manager)
+    create_ui_text_box_and_text_entry_hotkey(Keys.h_zoom_rocket_start, WIDTH * 0.1, HEIGHT * 0.75, manager)
+    create_ui_text_box_and_text_entry_hotkey(Keys.h_zoom_rocket_planet, WIDTH * 0.1, HEIGHT * 0.8, manager)
+    create_ui_text_box_and_text_entry_hotkey(Keys.h_zoom_rocket_planet_system, WIDTH * 0.1, HEIGHT * 0.85, manager)
+    create_ui_settings_topic_label("Navigation Controls (not mutable)", WIDTH * 0.7, HEIGHT * 0.125, manager,size_x=WIDTH* 0.2)
+    create_ui_text_box_and_text_entry_hotkey(Keys.H_moveScreenUp, WIDTH * 0.7, HEIGHT * 0.2, manager, False, "UP")
+    create_ui_text_box_and_text_entry_hotkey(Keys.H_moveScreenLeft, WIDTH * 0.7, HEIGHT * 0.25, manager, False, "LEFT")
+    create_ui_text_box_and_text_entry_hotkey(Keys.H_moveScreenRight, WIDTH * 0.7, HEIGHT * 0.3, manager, False, "RIGHT")
+    create_ui_text_box_and_text_entry_hotkey(Keys.H_moveScreenDown, WIDTH * 0.7, HEIGHT * 0.35, manager, False, "DOWN")
+    create_ui_settings_topic_label("Display Controls", WIDTH * 0.7, HEIGHT * 0.375, manager)
+    create_ui_text_box_and_text_entry_hotkey(Keys.h_pause_simulation, WIDTH * 0.7, HEIGHT * 0.45, manager, False, "SPACE")
+    create_ui_text_box_and_text_entry_hotkey(Keys.h_draw_line, WIDTH * 0.7, HEIGHT * 0.5, manager)
+    create_ui_text_box_and_text_entry_hotkey(Keys.h_show_distance, WIDTH * 0.7, HEIGHT * 0.55, manager)
+    create_ui_settings_topic_label("Time Controls", WIDTH * 0.7, HEIGHT * 0.575, manager)
+    create_ui_text_box_and_text_entry_hotkey(Keys.h_shift_time_step_down, WIDTH * 0.7, HEIGHT * 0.65, manager)
+    create_ui_text_box_and_text_entry_hotkey(Keys.h_shift_time_step_up, WIDTH * 0.7, HEIGHT * 0.7, manager)
+    create_ui_settings_topic_label("Center Controls", WIDTH * 0.7, HEIGHT * 0.725, manager)
+    create_ui_text_box_and_text_entry_hotkey(Keys.h_center_on_rocket, WIDTH * 0.7, HEIGHT * 0.8, manager)
+    create_ui_text_box_and_text_entry_hotkey(Keys.h_center_on_sun, WIDTH * 0.7, HEIGHT * 0.85, manager)
 
-def InitializeSettingsUI():
-    CreateUiSettingsTitleLabel()
-    CreateUiCloseButton()
-    CreateUiButton("Reset Controls", WIDTH*0.9, HEIGHT*0.9, manager)
-    CreateUiGameTitleLabel("Spaceflight Simulator", WIDTH*0.45, HEIGHT*0.05, manager)
-    CreateUiSettingsTopicLabel("General Controls (not mutable)", WIDTH*0.1, HEIGHT*0.15, manager, WIDTH*0.12)
-    CreateUiTextBoxAndTextEntryHotkey(keys.H_displayHotKeys, WIDTH*0.1, HEIGHT*0.2, manager, False, "6")
-    CreateUiTextBoxAndTextEntryHotkey(keys.H_leaveSimulation, WIDTH*0.1, HEIGHT*0.25, manager, False, "X")
-    CreateUiTextBoxAndTextEntryHotkey(keys.H_openSettings, WIDTH*0.1, HEIGHT*0.3, manager, False, "F1")
-    CreateUiSettingsTopicLabel("Rocket Controls", WIDTH*0.1, HEIGHT*0.35, manager)
-    CreateUiTextBoxAndTextEntryHotkey(keys.H_rocketBoostForward, WIDTH*0.1, HEIGHT*0.4, manager)
-    CreateUiTextBoxAndTextEntryHotkey(keys.H_rocketBoostLeft, WIDTH*0.1, HEIGHT*0.45, manager)
-    CreateUiTextBoxAndTextEntryHotkey(keys.H_rocketBoostRight, WIDTH*0.1, HEIGHT*0.5, manager)
-    CreateUiTextBoxAndTextEntryHotkey(keys.H_lowerRocketBoost, WIDTH*0.1, HEIGHT*0.55, manager)
-    CreateUiSettingsTopicLabel("Zoom Controls", WIDTH*0.1, HEIGHT*0.6, manager)
-    CreateUiTextBoxAndTextEntryHotkey(keys.H_zoomAutoOnReferencePlanet, WIDTH*0.1, HEIGHT*0.65, manager)
-    CreateUiTextBoxAndTextEntryHotkey(keys.H_zoomRocketStart, WIDTH*0.1, HEIGHT*0.7, manager)
-    CreateUiTextBoxAndTextEntryHotkey(keys.H_zoomRocketPlanet, WIDTH*0.1, HEIGHT*0.75, manager)
-    CreateUiTextBoxAndTextEntryHotkey(keys.H_zoomRocketPlanetSystem, WIDTH*0.1, HEIGHT*0.8, manager)
-    CreateUiTextBoxAndTextEntryHotkey(keys.H_zoomAutoOnRocket, WIDTH*0.1, HEIGHT*0.85, manager)
-    CreateUiSettingsTopicLabel("Navigation Controls (not mutable)", WIDTH*0.7, HEIGHT*0.15, manager, WIDTH*0.15)
-    CreateUiTextBoxAndTextEntryHotkey(keys.H_moveScreenUp, WIDTH*0.7, HEIGHT*0.2, manager, False, "UP")
-    CreateUiTextBoxAndTextEntryHotkey(keys.H_moveScreenLeft, WIDTH*0.7, HEIGHT*0.25, manager, False, "LEFT")
-    CreateUiTextBoxAndTextEntryHotkey(keys.H_moveScreenRight, WIDTH*0.7, HEIGHT*0.3, manager, False, "RIGHT")
-    CreateUiTextBoxAndTextEntryHotkey(keys.H_moveScreenDown, WIDTH*0.7, HEIGHT*0.35, manager, False, "DOWN")
-    CreateUiSettingsTopicLabel("Display Controls", WIDTH*0.7, HEIGHT*0.4, manager)
-    CreateUiTextBoxAndTextEntryHotkey(keys.H_pauseSimulation, WIDTH*0.7, HEIGHT*0.45, manager, False, "SPACE")
-    CreateUiTextBoxAndTextEntryHotkey(keys.H_drawLine, WIDTH*0.7, HEIGHT*0.5, manager)
-    CreateUiTextBoxAndTextEntryHotkey(keys.H_showDistance, WIDTH*0.7, HEIGHT*0.55, manager)
-    CreateUiSettingsTopicLabel("Time Controls", WIDTH*0.7, HEIGHT*0.6, manager)
-    CreateUiTextBoxAndTextEntryHotkey(keys.H_shiftTimeStepUp, WIDTH*0.7, HEIGHT*0.65, manager)
-    CreateUiTextBoxAndTextEntryHotkey(keys.H_shiftTimeStepDown, WIDTH*0.7, HEIGHT*0.7, manager)
-    CreateUiSettingsTopicLabel("Center Controls", WIDTH*0.7, HEIGHT*0.75, manager)
-    CreateUiTextBoxAndTextEntryHotkey(keys.H_centerOnRocket, WIDTH*0.7, HEIGHT*0.8, manager)
-    CreateUiTextBoxAndTextEntryHotkey(keys.H_centerOnSun, WIDTH*0.7, HEIGHT*0.85, manager)
 
-def ShowSettingsUI():
-    if len(manager.get_sprite_group())<4:
-        InitializeSettingsUI()
+def show_settings_ui():
+    if len(manager.get_sprite_group()) < 4:
+        initialize_settings_ui()
 
-    showGUI = True
+    show_gui = True
 
-    while showGUI:
+    while show_gui:
         for event in pygame.event.get():
             if event.type == pg.UI_BUTTON_PRESSED and event.ui_object_id == "CloseSettings_button":
-                showGUI = False
+                show_gui = False
             if event.type == pg.UI_BUTTON_PRESSED and event.ui_object_id == "ResetControls_button":
-                keys.resetOverwriteCurrent()
-                manager.clear_and_reset()     
-                InitializeSettingsUI()
-            if CheckKeyDown(event, keys.H_closeWindow[0]):
-                showGUI = False
-            if event.type == pg.UI_TEXT_ENTRY_FINISHED and event.ui_object_id.endswith("_notMutable"):    
+                Keys.reset_overwrite_current()
                 manager.clear_and_reset()
-                InitializeSettingsUI()
+                initialize_settings_ui()
+            if check_key_down(event, Keys.h_close_window[0]):
+                show_gui = False
+            if event.type == pg.UI_TEXT_ENTRY_FINISHED and event.ui_object_id.endswith("_notMutable"):
+                manager.clear_and_reset()
+                initialize_settings_ui()
             if event.type == pg.UI_TEXT_ENTRY_FINISHED and event.ui_object_id.endswith("_input"):
                 if event.text != "":
-                    if ord(event.text) > 32 and ord(event.text) < 127:
-                        ChangeAllHotKeysFromInput(event, keys.listHotKeys)
+                    if 32 < ord(event.text) < 127:
+                        change_all_hot_keys_from_input(event, Keys.list_hot_keys)
                 manager.clear_and_reset()
-                InitializeSettingsUI()
-            if CheckKeyDown(event, keys.H_leaveSimulation[0]):
+                initialize_settings_ui()
+            if check_key_down(event, Keys.h_leave_simulation[0]):
                 pygame.quit()
                 sys.exit()
             manager.process_events(event)
@@ -118,4 +110,4 @@ def ShowSettingsUI():
         manager.draw_ui(WINDOW)
         pygame.display.update()
 
-    ClearSettingsUI()
+    clear_settings_ui()

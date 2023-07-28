@@ -1,4 +1,7 @@
+import datetime
+
 import pygame
+
 pygame.init()
 WIDTH, HEIGHT = pygame.display.Info().current_w, pygame.display.Info().current_h
 FONT_1 = pygame.font.SysFont("Trebuchet MS", 21)
@@ -15,36 +18,37 @@ COLOR_JUPITER = (216, 202, 157)
 COLOR_SATURN = (191, 189, 175)
 COLOR_URANUS = (209, 231, 231)
 COLOR_NEPTUNE = (63, 84, 186)
-### Solarsystem Variablen 
+# Solarsystem Variablen
 AU = 149.6e6 * 1000  # Astronomical unit
 G = 6.67428e-11  # Gravitational constant
-Scale = 200 / AU
-STARTSCALE = Scale
-### Generelle Variablen
-AirResistance = 0.0162        # Luftwiderstandsbeiwert                     #  - Verwendung zur Einstellung des Schubs
-Gravity = 9.81       # [m/s^2]
-p_0 = 1.225 # Luftdichte auf Meereshöhe [kg/m^3]
+STARTSCALE = 200 / AU
+# Generelle Variablen
+AirResistance = 0.0162  # Luftwiderstandsbeiwert                     #  - Verwendung zur Einstellung des Schubs
+Gravity = 9.81  # [m/s^2]
+p_0 = 1.225  # Luftdichte auf Meereshöhe [kg/m^3]
 h_s = 8400  # Skalenhöhe [m]
-planetNameArray = ["Sun","Mercury","Venus","Earth","Moon","Mars","Jupiter","Saturn","Uranus","Neptune"]
-### Zeit-Variablen
-StartTime = 0                   # [s]                # [s]
+planetNameArray = ["Sun", "Mercury", "Venus", "Earth", "Moon", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune"]
+# Zeit-Variablen
+StartTime = 0  # [s]                # [s]
 CalculationSteps = 100000
-EndTime = CalculationSteps*5
-#dt=(Endzeit-Startzeit)/Rechenschritte
+EndTime = CalculationSteps * 5
+# dt=(Endzeit-Startzeit)/Rechenschritte
 CurrentStep = 0
 CurrentCalculationStep = 0
-AllTimeSteps = [1/60, 5/60, 10/60, 25/60, 100/60, 500/60, 1000/60, 2500/60, 10000/60, 25000/60, 100000/60]
-TimeStep = AllTimeSteps[0]
+AllTimeSteps = [1 / 60, 5 / 60, 10 / 60, 25 / 60, 100 / 60, 500 / 60, 1000 / 60, 2500 / 60, 10000 / 60, 25000 / 60,
+                100000 / 60]
 
+Now = datetime.datetime.now()
 MoveX = 0
 MoveY = 0
 MIN_ROCKET_RADIUS = 2
 NUM_OF_PREDICTIONS = 1000
 # muss größer als NUM_OF_PREDICTIONS sein
-LEN_OF_PREDICTIONS_ARRAY = NUM_OF_PREDICTIONS*2
+LEN_OF_PREDICTIONS_ARRAY = NUM_OF_PREDICTIONS * 2
 pygame.init()
-Clock = pygame.time.Clock()
+CLOCK = pygame.time.Clock()
 WINDOW = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
 
 WIDTH, HEIGHT = pygame.display.Info().current_w, pygame.display.Info().current_h
-#WINDOW.set_clip(pygame.Rect(0, 0, WIDTH, HEIGHT))
+
+
