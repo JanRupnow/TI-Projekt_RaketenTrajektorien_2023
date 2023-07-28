@@ -10,7 +10,7 @@ class RocketFlightState(Enum):
         if self == RocketFlightState.landed:
             return "landed"
         elif self == RocketFlightState.flying:
-            return "currently flying"
+            return "flying"
         elif self == RocketFlightState.crashed:
             return "crashed"
         else:

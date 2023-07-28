@@ -83,47 +83,31 @@ class DrawManager:
 
     @staticmethod
     def render_flight_interface(rocket: Rocket, now, planets):
-        fps_text = FONT_1.render("FPS: " + str(int(CLOCK.get_fps())), True, COLOR_WHITE)
-        WINDOW.blit(fps_text, (WIDTH * 0.03, HEIGHT * 0.03))
+
         if DATA.get_flight_change_state() != FlightChangeState.paused:
             add_clock_time()
-        text_actual_time = FONT_1.render(
-            f'Current time: {(now + DATA.get_time_passed()).strftime("%d/%m/%Y, %H:%M:%S")}',
-            True, COLOR_WHITE)
-        WINDOW.blit(text_actual_time, (WIDTH * 0.75, HEIGHT * 0.04))
-        text_time_passed = FONT_1.render(f'Passed time: {DATA.get_time_passed()}', True, COLOR_WHITE)
-        WINDOW.blit(text_time_passed, (WIDTH * 0.75, HEIGHT * 0.08))
-        rocket_state = FONT_1.render(f'Rocket: {rocket.flightState}', True, COLOR_WHITE)
-        WINDOW.blit(rocket_state, (WIDTH * 0.75, HEIGHT * 0.12))
-        zoom_text = FONT_1.render(f'Automatic Zoom: {DATA.get_zoom_goal()}', True, COLOR_WHITE)
-        WINDOW.blit(zoom_text, (WIDTH * 0.75, HEIGHT * 0.16))
+
+        display_bar(rocket, now)
 
         if DATA.get_advanced_interface():
             # Advanced flight details
-            text_surface = FONT_1.render(f"Time step: {int(DATA.get_time_step() * 60)}x", True, COLOR_WHITE)
-            WINDOW.blit(text_surface, (WIDTH * 0.75, HEIGHT * 0.20))
+            fps_text = FONT_1.render("FPS: " + str(int(CLOCK.get_fps())), True, COLOR_WHITE)
+            WINDOW.blit(fps_text, (WIDTH * 0.025, HEIGHT * 0.13))
 
-            if not rocket.flightState == RocketFlightState.flying:
-                rocket_velocity = FONT_1.render(f'Altitude: {0} km (Rocket has not started)', True, COLOR_WHITE)
-            elif rocket.nearestPlanet.distanceToRocket - rocket.nearestPlanet.radius < 3 / 2 * rocket.nearestPlanet.radius:
-                rocket_velocity = FONT_1.render(
-                    f'Altitude: {round((rocket.nearestPlanet.distanceToRocket - rocket.nearestPlanet.radius) / 1000, 0)} km',
-                    True, COLOR_WHITE)
-            else:
-                rocket_velocity = FONT_1.render(f'Altitude: not available in space', True, COLOR_WHITE)
-            WINDOW.blit(rocket_velocity, (WIDTH * 0.75, HEIGHT * 0.24))
+            # TODO implement Pressure
+            # TODO implement Current Weight
+
             rocket_max_q = FONT_1.render(f'MaxQ: %', True, COLOR_WHITE)
-            WINDOW.blit(rocket_max_q, (WIDTH * 0.75, HEIGHT * 0.28))
+            WINDOW.blit(rocket_max_q, (WIDTH * 0.75, HEIGHT * 0.12))
             rocket_state = FONT_1.render(f'Rocket current: {rocket.currentStep}', True, COLOR_WHITE)
-            WINDOW.blit(rocket_state, (WIDTH * 0.75, HEIGHT * 0.32))
+            WINDOW.blit(rocket_state, (WIDTH * 0.75, HEIGHT * 0.16))
             rocket_state = FONT_1.render(f'Rocket calculation: {rocket.currentCalculationStep}', True, COLOR_WHITE)
-            WINDOW.blit(rocket_state, (WIDTH * 0.75, HEIGHT * 0.36))
+            WINDOW.blit(rocket_state, (WIDTH * 0.75, HEIGHT * 0.20))
             rocket_state = FONT_1.render(f'Planet current: {planets[0].currentStep}', True, COLOR_WHITE)
-            WINDOW.blit(rocket_state, (WIDTH * 0.75, HEIGHT * 0.40))
+            WINDOW.blit(rocket_state, (WIDTH * 0.75, HEIGHT * 0.24))
             rocket_state = FONT_1.render(f'Planet calculation: {planets[0].currentCalculationStep}', True, COLOR_WHITE)
-            WINDOW.blit(rocket_state, (WIDTH * 0.75, HEIGHT * 0.44))
-            rocket_state = FONT_1.render(f'Flight State: {DATA.get_flight_change_state()}', True, COLOR_WHITE)
-            WINDOW.blit(rocket_state, (WIDTH * 0.75, HEIGHT * 0.48))
+            WINDOW.blit(rocket_state, (WIDTH * 0.75, HEIGHT * 0.28))
+
 
             # Planet colors and names
             sun_surface = FONT_1.render("- Sun", True, COLOR_SUN)
@@ -160,11 +144,98 @@ class DrawManager:
         WINDOW.blit(thrust_text, (WIDTH * 0.75, HEIGHT * 0.84))
         fuel_bar()
 
+def display_bar(rocket: Rocket, now):
+    # Complete bar
+    pygame.draw.rect(WINDOW, (50, 50, 50),(0, 0, WIDTH * 1, HEIGHT * 0.1))
+
+    # Current Time
+
+
+
+    pygame.draw.rect(WINDOW, (100, 100, 100), (WIDTH * 0.03, HEIGHT * 0.015, WIDTH * 0.15, HEIGHT * 0.04))
+
+    year_text = FONT_1.render("Simulation Time:", True, COLOR_WHITE)
+    WINDOW.blit(year_text, (WIDTH * 0.04, HEIGHT * 0.02))
+
+    pygame.draw.rect(WINDOW, (20, 20, 20), (WIDTH * 0.03, HEIGHT * 0.05, WIDTH * 0.15, HEIGHT * 0.04))
+
+    text_actual_time = FONT_1.render(
+        f'{(now + DATA.get_time_passed()).strftime("%d/%m/%Y, %H:%M:%S")}',
+        True, COLOR_WHITE)
+    WINDOW.blit(text_actual_time, (WIDTH * 0.04, HEIGHT * 0.055))
+
+    # Generals
+    # State
+    pygame.draw.rect(WINDOW, (100, 100, 100), (WIDTH * 0.37, HEIGHT * 0.015, WIDTH * 0.07, HEIGHT * 0.04))
+
+    year_text = FONT_1.render("State", True, COLOR_WHITE)
+    WINDOW.blit(year_text, (WIDTH * 0.39, HEIGHT * 0.02))
+
+    pygame.draw.rect(WINDOW, (20, 20, 20), (WIDTH * 0.37, HEIGHT * 0.05, WIDTH * 0.07, HEIGHT * 0.04))
+
+    rocket_state = FONT_1.render(f'{rocket.flightState}', True, COLOR_WHITE)
+    WINDOW.blit(rocket_state, (WIDTH * 0.385, HEIGHT * 0.055))
+    # Timestep
+    pygame.draw.rect(WINDOW, (100, 100, 100), (WIDTH * 0.45, HEIGHT * 0.015, WIDTH * 0.07, HEIGHT * 0.04))
+
+    year_text = FONT_1.render("Step >>", True, COLOR_WHITE)
+    WINDOW.blit(year_text, (WIDTH * 0.465, HEIGHT * 0.02))
+
+    pygame.draw.rect(WINDOW, (20, 20, 20), (WIDTH * 0.45, HEIGHT * 0.05, WIDTH * 0.07, HEIGHT * 0.04))
+
+    rocket_state = FONT_1.render(f'{int(DATA.get_time_step()*60)}x', True, COLOR_WHITE)
+    WINDOW.blit(rocket_state, (WIDTH * 0.465, HEIGHT * 0.055))
+
+    # Zoom
+    pygame.draw.rect(WINDOW, (100, 100, 100), (WIDTH * 0.53, HEIGHT * 0.015, WIDTH * 0.07, HEIGHT * 0.04))
+
+    year_text = FONT_1.render("Zoom", True, COLOR_WHITE)
+    WINDOW.blit(year_text, (WIDTH * 0.55, HEIGHT * 0.02))
+
+    pygame.draw.rect(WINDOW, (20, 20, 20), (WIDTH * 0.53, HEIGHT * 0.05, WIDTH * 0.07, HEIGHT * 0.04))
+
+    rocket_state = FONT_1.render(f'{DATA.get_zoom_goal()}', True, COLOR_WHITE)
+    WINDOW.blit(rocket_state, (WIDTH * 0.545, HEIGHT * 0.055))
+
+    # Time Passed
+    total_seconds = DATA.get_time_passed().total_seconds()
+    years, remainder = divmod(total_seconds, 31_536_000)  # 31,536,000 seconds in a year (approximate)
+    days, remainder = divmod(remainder, 86_400)  # 86,400 seconds in a day
+    hours, remainder = divmod(remainder, 3_600)  # 3,600 seconds in an hour
+    minutes, seconds = divmod(remainder, 60)  # 60 seconds in a minute
+
+    pygame.draw.rect(WINDOW, (100, 100, 100), (WIDTH * 0.8, HEIGHT * 0.015, WIDTH * 0.19, HEIGHT * 0.04))
+
+    year_text = FONT_1.render("Time passed (Simulation):", True, COLOR_WHITE)
+    WINDOW.blit(year_text, (WIDTH * 0.81, HEIGHT * 0.02))
+
+    pygame.draw.rect(WINDOW, (20, 20, 20), (WIDTH * 0.8, HEIGHT * 0.05, WIDTH * 0.19, HEIGHT * 0.04))
+
+    text_actual_time = FONT_1.render(
+        f'{int(years)} years, {int(days)} days, {int(hours):02}:{int(minutes):02}:{int(seconds):02}' if years > 0 else
+        f'{int(days)} days, {int(hours):02}:{int(minutes):02}:{int(seconds):02}',
+        True, COLOR_WHITE)
+    WINDOW.blit(text_actual_time, (WIDTH * 0.81, HEIGHT * 0.055))
+
+
+    if rocket.flightState == RocketFlightState.flying and\
+            rocket.nearestPlanet.distanceToRocket - rocket.nearestPlanet.radius < 3 / 2 * rocket.nearestPlanet.radius:
+        pygame.draw.rect(WINDOW, (100, 100, 100), (WIDTH * 0.915, HEIGHT * 0.015, WIDTH * 0.07, HEIGHT * 0.04))
+
+        year_text = FONT_1.render("Altitude", True, COLOR_WHITE)
+        WINDOW.blit(year_text, (WIDTH * 0.93, HEIGHT * 0.02))
+
+        pygame.draw.rect(WINDOW, (20, 20, 20), (WIDTH * 0.915, HEIGHT * 0.05, WIDTH * 0.07, HEIGHT * 0.04))
+
+        rocket_velocity = FONT_1.render(
+            f'{round((rocket.nearestPlanet.distanceToRocket - rocket.nearestPlanet.radius) / 1000, 0)} km',
+            True, COLOR_WHITE)
+        WINDOW.blit(rocket_velocity, (WIDTH * 0.93, HEIGHT * 0.055))
 
 def fuel_bar():
     #percentage = rocket.fuelmass / rocket.startfuelmass
     percentage = 0.75
-    pygame.draw.rect(WINDOW, (255 * (1 - percentage), 255 * percentage, 0), (WIDTH * 0.875, HEIGHT * 0.8, WIDTH * 0.05, HEIGHT * 0.15))
-    pygame.draw.rect(WINDOW, (150, 150, 150), (WIDTH * 0.875, HEIGHT * 0.8, WIDTH * 0.05, HEIGHT * 0.15 * (1-percentage)))
+    pygame.draw.rect(WINDOW, (255 * (1 - percentage), 255 * percentage, 0), (WIDTH * 0.925, HEIGHT * 0.8, WIDTH * 0.05, HEIGHT * 0.15))
+    pygame.draw.rect(WINDOW, (150, 150, 150), (WIDTH * 0.925, HEIGHT * 0.8, WIDTH * 0.05, HEIGHT * 0.15 * (1-percentage)))
     rocket_fuel = FONT_1.render(f'{int(percentage*100)} %', True, COLOR_WHITE)
-    WINDOW.blit(rocket_fuel, (WIDTH * 0.895, HEIGHT * 0.95))
+    WINDOW.blit(rocket_fuel, (WIDTH * 0.94, HEIGHT * 0.95))

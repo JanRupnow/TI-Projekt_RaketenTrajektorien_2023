@@ -2,21 +2,21 @@ import json
 
 
 def get_start_month():
-    jsonfile = open("./variables/rocket_config/current_rocket_config.json")
+    jsonfile = open("./Globals/RocketConfig/CurrentRocketConfig.json")
     config = json.load(jsonfile)
     month = config["StartTime"]["Month"]["value"]
     return month
 
 
 def get_start_day():
-    jsonfile = open("./variables/rocket_config/current_rocket_config.json")
+    jsonfile = open("./Globals/RocketConfig/CurrentRocketConfig.json")
     config = json.load(jsonfile)
     day = config["StartTime"]["Day"]["value"]
     return day
 
 
 def get_start_year():
-    jsonfile = open("./variables/rocket_config/current_rocket_config.json")
+    jsonfile = open("./Globals/RocketConfig/CurrentRocketConfig.json")
     config = json.load(jsonfile)
     year = config["StartTime"]["Year"]["value"]
     return year
@@ -40,7 +40,7 @@ def check_date_is_legal(month, day):
 
 
 def over_write_standard_day():
-    jsonfile = open("./variables/rocket_config/current_rocket_config.json", "r+")
+    jsonfile = open("./Globals/RocketConfig/CurrentRocketConfig.json", "r+")
     config = json.load(jsonfile)
     config["StartTime"]["Day"]["value"] = 28
     jsonfile.seek(0)

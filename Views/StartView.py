@@ -49,13 +49,13 @@ def show_start_ui():
             if check_key_down(event, Keys.h_leave_simulation[0]):
                 pygame.quit()
                 sys.exit()
-            if event.type == pg.UI_TEXT_ENTRY_FINISHED and event.ui_object_id == "angleonplanet_input":
+            if event.type == pg.UI_TEXT_ENTRY_FINISHED and event.ui_object_id == "startangle_input":
                 if is_convertible_to_int(event.text):
                     if 360 > int(event.text) >= 0:
                         update_rocket_configs(event)
                 reset_and_show_ui(selected_number)
 
-            if event.type == pg.UI_TEXT_ENTRY_FINISHED and event.ui_object_id == "startangle_input":
+            if event.type == pg.UI_TEXT_ENTRY_FINISHED and event.ui_object_id == "flightangle_input":
                 if is_convertible_to_int(event.text):
                     if 45 >= int(event.text) >= 0:
                         update_rocket_configs(event)
@@ -67,19 +67,19 @@ def show_start_ui():
                         update_rocket_configs(event)
                 reset_and_show_ui(selected_number)
 
-            if event.type == pg.UI_TEXT_ENTRY_FINISHED and event.ui_object_id == "massoftherocketstructure_input":
+            if event.type == pg.UI_TEXT_ENTRY_FINISHED and event.ui_object_id == "rocketmass(t)_input":
                 if is_convertible_to_int(event.text):
                     if int(event.text) >= 0:
                         update_rocket_configs(event)
                 reset_and_show_ui(selected_number)
 
-            if event.type == pg.UI_TEXT_ENTRY_FINISHED and event.ui_object_id == "massofthepropellant_input":
+            if event.type == pg.UI_TEXT_ENTRY_FINISHED and event.ui_object_id == "fuelmass(t)_input":
                 if is_convertible_to_int(event.text):
                     if int(event.text) >= 0:
                         update_rocket_configs(event)
                 reset_and_show_ui(selected_number)
 
-            if event.type == pg.UI_TEXT_ENTRY_FINISHED and event.ui_object_id == "yearofrocketstart_input":
+            if event.type == pg.UI_TEXT_ENTRY_FINISHED and event.ui_object_id == "year_input":
                 if is_convertible_to_int(event.text):
                     if 3000 >= int(event.text) >= 0:
                         update_rocket_configs(event)
@@ -89,7 +89,7 @@ def show_start_ui():
                             update_rocket_configs(event)
                             over_write_standard_day()
                 reset_and_show_ui(selected_number)
-            if event.type == pg.UI_TEXT_ENTRY_FINISHED and event.ui_object_id == "monthofrocketstart_input":
+            if event.type == pg.UI_TEXT_ENTRY_FINISHED and event.ui_object_id == "month_input":
                 if is_convertible_to_int(event.text):
                     if 12 >= int(event.text) > 0:
                         if check_date_is_legal(event.text, get_start_day()):
@@ -99,7 +99,7 @@ def show_start_ui():
                             over_write_standard_day()
                 reset_and_show_ui(selected_number)
 
-            if event.type == pg.UI_TEXT_ENTRY_FINISHED and event.ui_object_id == "dayofrocketstart_input":
+            if event.type == pg.UI_TEXT_ENTRY_FINISHED and event.ui_object_id == "day_input":
                 if is_convertible_to_int(event.text):
                     if get_start_month() in [1, 3, 5, 7, 8, 10, 12]:
                         if 31 >= int(event.text) > 0:

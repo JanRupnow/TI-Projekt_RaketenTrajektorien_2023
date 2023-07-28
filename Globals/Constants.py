@@ -1,5 +1,5 @@
 import datetime
-
+import json
 import pygame
 
 pygame.init()
@@ -37,8 +37,12 @@ CurrentStep = 0
 CurrentCalculationStep = 0
 AllTimeSteps = [1 / 60, 5 / 60, 10 / 60, 25 / 60, 100 / 60, 500 / 60, 1000 / 60, 2500 / 60, 10000 / 60, 25000 / 60,
                 100000 / 60]
-
-Now = datetime.datetime.now()
+jsonfile = open("./Globals/RocketConfig/CurrentRocketConfig.json")
+config = json.load(jsonfile)
+time_year = config["StartTime"]["Year"]["value"]
+time_month = config["StartTime"]["Month"]["value"]
+time_day = config["StartTime"]["Day"]["value"]
+Now = datetime.datetime(time_year, time_month, time_day, 0, 0, 0)
 MoveX = 0
 MoveY = 0
 MIN_ROCKET_RADIUS = 2
