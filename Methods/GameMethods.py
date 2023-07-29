@@ -36,10 +36,12 @@ def mouse_position_shift_screen():
     DATA.move_y(DATA.move_y - (DATA.mouse_y - HEIGHT / 2) / 2)
 
 
-def shift_time_step(shift_up):
+def shift_time_step(shift_up, planets: list[Planet]):
     index = min(AllTimeSteps.index(DATA.time_step) + 1, len(AllTimeSteps) - 1) if shift_up else max(
         AllTimeSteps.index(DATA.time_step) - 1, 0)
     DATA.time_step = AllTimeSteps[index]
+    for planet in planets:
+        planet.time_step = AllTimeSteps[index]
     if DATA.flight_change_state == FlightChangeState.paused:
         DATA.flight_change_state = FlightChangeState.pausedAndTimeStepChanged
     else:
@@ -161,15 +163,15 @@ def process_hot_key_events(event, rocket: Rocket, planets: list[Planet]):
         rocket.set_scale(1.25)
 
     elif check_key_down(event, Keys.h_shift_time_step_up[0]) and not DATA.flight_change_state == FlightChangeState.pausedAndTimeStepChanged:
-        shift_time_step(True)
+        shift_time_step(True, planets)
     elif check_key_down(event, Keys.h_shift_time_step_down[0]) and not DATA.flight_change_state == FlightChangeState.pausedAndTimeStepChanged:
-        shift_time_step(False)
+        shift_time_step(False, planets)
     elif check_key_down(event, Keys.h_open_settings[0]):
         show_settings_ui()
 
     elif check_key_down(event, Keys.h_switch_interface[0]):
         DATA.advanced_interface(not DATA.advanced_interface)
-    return event, rocket
+    return event, rocket, planets
 
 
 def line_is_in_screen(line):

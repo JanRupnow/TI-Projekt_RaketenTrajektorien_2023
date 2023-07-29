@@ -4,6 +4,9 @@ from Globals.Constants import STARTSCALE, AllTimeSteps
 from Globals.FlightData.FlightChangeState import FlightChangeState
 from Globals.FlightData.ZoomGoal import ZoomGoal
 
+from numba.experimental import jitclass
+from numba import int32, float32, int64, float64, uint64, boolean
+from numba import typeof
 
 class SingletonMeta(type):
     _instances = {}

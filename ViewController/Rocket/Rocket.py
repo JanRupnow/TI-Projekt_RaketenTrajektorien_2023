@@ -7,7 +7,32 @@ from Globals.FlightData.FlightDataManager import DATA
 from ViewController.Planet import Planet
 from ViewController.Rocket.RocketFlightState import RocketFlightState
 
+from numba.experimental import jitclass
+from numba import int32, float32, float64, uint64, typeof, types
 
+@jitclass([
+    ("currentStep", int32),
+    ("currentCalculationStep", int32),
+    ("mass", float32),
+    ("fuelmass", float64),
+    ("PlanetsInRangeList", types.List(Planet)),
+    ("nearestPlanet", typeof(Planet(-5.204 * AU, 0, 71492 * 10 ** 3, COLOR_JUPITER, 1.898 * 10 ** 21, planetNameArray[6], 13.06 * 1000))),
+    ("planetAngle", float32),
+    ("position_X", float64[:]),
+    ("position_Y", float64[:]),
+    ("velocity_X", float64[:]),
+    ("velocity_Y", float64[:]),
+    ("c", float64),
+    ("radius", float64),
+    ("thrust", float64),
+    ("angle", float32),
+    ("flightState", typeof(RocketFlightState.flying)),
+    ("color", typeof((1, 1, 1))),
+    ("img", int32), # type?
+    ("img0", float64), # type?
+    ("notRotatedImg", float32), # type?
+    ("sun", typeof(Planet(-5.204 * AU, 0, 71492 * 10 ** 3, COLOR_JUPITER, 1.898 * 10 ** 21, planetNameArray[6], 13.06 * 1000))),
+    ("entryAngle", float32)])
 class Rocket:
     def __init__(self, start_angle, fuel, mass, startplanet: Planet, radius, color, sun, image):
         self.currentStep = CurrentStep
@@ -27,7 +52,6 @@ class Rocket:
         self.thrust = 0  # aktuell nicht genutzt
         self.angle = 0
         self.flightState = RocketFlightState.landed
-        self.predictions = []
         self.color = color
         self.velocity_X[0] = self.nearestPlanet.velocity_X[0]
         self.velocity_Y[0] = self.nearestPlanet.velocity_Y[0]

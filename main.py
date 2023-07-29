@@ -23,7 +23,7 @@ def main():
         WINDOW.fill(COLOR_UNIVERSE)
 
         for event in pygame.event.get():
-            event, rocket = process_hot_key_events(event, rocket, planets)
+            event, rocket, planets = process_hot_key_events(event, rocket, planets)
 
         GameManager.calculate_next_iteration(rocket, planets)
         GameManager.display_iteration(rocket, planets)
