@@ -3,13 +3,35 @@ import math
 import numpy as np
 
 from Globals.Constants import *
-from Globals.FlightData.FlightDataManager import DATA
 from ViewController.Planet import Planet
 from ViewController.Rocket.RocketFlightState import RocketFlightState
 
+from numba.experimental import jitclass
+from numba import int32, float32, float64, typeof, types
 
+@jitclass([
+    ("currentStep", int32),
+    ("currentCalculationStep", int32),
+    ("mass", float32),
+    ("fuelmass", float64),
+    ("PlanetsInRangeList", types.List(typeof(Planet(-5.204 * AU, 0, 71492 * 10 ** 3, COLOR_JUPITER, 1.898 * 10 ** 21, planetNameArray[6], 13.06 * 1000)))),
+    ("nearestPlanet", typeof(Planet(-5.204 * AU, 0, 71492 * 10 ** 3, COLOR_JUPITER, 1.898 * 10 ** 21, planetNameArray[6], 13.06 * 1000))),
+    ("planetAngle", float32),
+    ("position_X", float64[:]),
+    ("position_Y", float64[:]),
+    ("velocity_X", float64[:]),
+    ("velocity_Y", float64[:]),
+    ("time_step", float64),
+    ("c", float64),
+    ("radius", float64),
+    ("thrust", float64),
+    ("angle", float32),
+    ("flightState", typeof(RocketFlightState.flying)),
+    ("color", typeof((1, 1, 1))),
+    ("sun", typeof(Planet(-5.204 * AU, 0, 71492 * 10 ** 3, COLOR_JUPITER, 1.898 * 10 ** 21, planetNameArray[6], 13.06 * 1000))),
+    ("entryAngle", float32)])
 class Rocket:
-    def __init__(self, start_angle, fuel, mass, startplanet: Planet, radius, color, sun, image):
+    def __init__(self, start_angle, fuel, mass, startplanet: Planet, radius, color, sun: Planet):
         self.currentStep = CurrentStep
         self.currentCalculationStep = CurrentCalculationStep
         self.mass = mass
@@ -22,12 +44,12 @@ class Rocket:
         self.position_Y = np.zeros(LEN_OF_PREDICTIONS_ARRAY)  # z-Position [m]
         self.velocity_X = np.zeros(LEN_OF_PREDICTIONS_ARRAY)  # x-Velocity [m/s]
         self.velocity_Y = np.zeros(LEN_OF_PREDICTIONS_ARRAY)  # z-Velocity [m/s]
+        self.time_step = 1 / 60
         self.c = AirResistance / self.mass
         self.radius = radius
         self.thrust = 0  # aktuell nicht genutzt
         self.angle = 0
         self.flightState = RocketFlightState.landed
-        self.predictions = []
         self.color = color
         self.velocity_X[0] = self.nearestPlanet.velocity_X[0]
         self.velocity_Y[0] = self.nearestPlanet.velocity_Y[0]
@@ -36,12 +58,8 @@ class Rocket:
             self.planetAngle * np.pi / 180)
         self.position_Y[0] = startplanet.position_Y[self.currentStep] + startplanet.radius * np.sin(
             self.planetAngle * np.pi / 180)
-        self.img = image
-        self.img0 = image
-        self.notRotatedImg = pygame.transform.scale_by(image, min(0.1 * self.radius, 1))
         self.sun = sun
         self.entryAngle = 0
-        # self.imgage = img0
 
     # Methode für die x-Komponente
     def f2(self, v, i: int, distance_to_sun):
@@ -92,27 +110,25 @@ class Rocket:
 
         # z-Komponente
         k1 = self.f1(self.velocity_Y[i], i, distance_to_sun)
-        k2 = self.f1(self.velocity_Y[i] + k1 * DATA.time_step / 2, i, distance_to_sun)
-        k3 = self.f1(self.velocity_Y[i] + k2 * DATA.time_step / 2, i, distance_to_sun)
-        k4 = self.f1(self.velocity_Y[i] + k3 * DATA.time_step / 2, i, distance_to_sun)
+        k2 = self.f1(self.velocity_Y[i] + k1 * self.time_step / 2, i, distance_to_sun)
+        k3 = self.f1(self.velocity_Y[i] + k2 * self.time_step / 2, i, distance_to_sun)
+        k4 = self.f1(self.velocity_Y[i] + k3 * self.time_step / 2, i, distance_to_sun)
         k = (k1 + 2 * k2 + 2 * k3 + k4) / 6
-        self.velocity_Y[i + 1] = self.velocity_Y[i] + k * DATA.time_step
-        self.position_Y[i + 1] = self.position_Y[i] + self.velocity_Y[i] * DATA.time_step
+        self.velocity_Y[i + 1] = self.velocity_Y[i] + k * self.time_step
+        self.position_Y[i + 1] = self.position_Y[i] + self.velocity_Y[i] * self.time_step
 
         # x-Komponente
         k1 = self.f2(self.velocity_X[i], i, distance_to_sun)
-        k2 = self.f2(self.velocity_X[i] + k1 * DATA.time_step / 2, i, distance_to_sun)
-        k3 = self.f2(self.velocity_X[i] + k2 * DATA.time_step / 2, i, distance_to_sun)
-        k4 = self.f2(self.velocity_X[i] + k3 * DATA.time_step / 2, i, distance_to_sun)
+        k2 = self.f2(self.velocity_X[i] + k1 * self.time_step / 2, i, distance_to_sun)
+        k3 = self.f2(self.velocity_X[i] + k2 * self.time_step / 2, i, distance_to_sun)
+        k4 = self.f2(self.velocity_X[i] + k3 * self.time_step / 2, i, distance_to_sun)
         k = (k1 + 2 * k2 + 2 * k3 + k4) / 6
 
-        self.velocity_X[i + 1] = self.velocity_X[i] + k * DATA.time_step
-        self.position_X[i + 1] = self.position_X[i] + self.velocity_X[i] * DATA.time_step
+        self.velocity_X[i + 1] = self.velocity_X[i] + k * self.time_step
+        self.position_X[i + 1] = self.position_X[i] + self.velocity_X[i] * self.time_step
 
     def set_scale(self, scale):
         self.radius *= scale
-        if MIN_ROCKET_RADIUS < self.radius < 0.1:
-            self.notRotatedImg = pygame.transform.scale_by(self.img0, max(min(0.1 * self.radius, 1), 0.1))
 
     def get_current_distance_to_next_planet(self):
         return np.sqrt((self.position_X[self.currentCalculationStep] - self.nearestPlanet.position_X[
@@ -187,7 +203,7 @@ class Rocket:
         self.velocity_Y[0] = self.nearestPlanet.position_Y[self.nearestPlanet.currentStep]
 
     def update_planets_in_range_list(self, planets: list[Planet]):
-        if not self.currentStep % math.ceil(100 / DATA.time_step) == 0:
+        if not self.currentStep % math.ceil(100 / self.time_step) == 0:
             return
         self.PlanetsInRangeList = []
         for planet in planets:
@@ -196,7 +212,7 @@ class Rocket:
                 self.PlanetsInRangeList.append(planet)
 
     def update_nearest_planet(self, planets: list[Planet]):
-        if not self.currentStep % math.ceil(100 / DATA.time_step) == 0:
+        if not self.currentStep % math.ceil(100 / self.time_step) == 0:
             return
         self.nearestPlanet = min(planets, key=lambda x: self.get_distance_to_planet(x, self.currentStep))
 

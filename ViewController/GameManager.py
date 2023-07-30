@@ -1,3 +1,5 @@
+from numba.experimental import jitclass
+
 from Globals.Constants import Now
 
 from Methods.GameMethods import center_screen_on_planet, planet_is_in_screen, automatic_zoom_on_rocket
@@ -12,6 +14,7 @@ from ViewController.DrawManager import DrawManager
 from ViewController.Planet import Planet
 from ViewController.Rocket.Rocket import Rocket
 
+import time
 
 class GameManager:
     @staticmethod
@@ -119,12 +122,16 @@ class GameManager:
             center_screen_on_planet(rocket.nearestPlanet)
         elif DATA.zoom_goal == ZoomGoal.rocket:
             automatic_zoom_on_rocket(rocket)
+        start_time = time.time()
 
         if rocket.flightState == RocketFlightState.flying:
             DrawManager.draw_rocket(rocket)
             DrawManager.draw_rocket_prediction(rocket)
         else:
             DrawManager.draw_rocket(rocket)
+        end_time = time.time()
+        print(f"Rocket Time: {end_time - start_time}")
+        start_time = time.time()
         for planet in planets:
             if planet_is_in_screen(planet):
                 DrawManager.draw_planet(planet)
@@ -132,5 +139,9 @@ class GameManager:
                 DrawManager.draw_planet_orbit(planet)
             if DATA.show_distance:
                 DrawManager.display_planet_distances(planet)
-
+        end_time = time.time()
+        print(f"Planet Time: {end_time - start_time}")
+        start_time = time.time()
         DrawManager.render_flight_interface(rocket, Now, planets)
+        end_time = time.time()
+        print(f"Interface Time: {end_time - start_time}")

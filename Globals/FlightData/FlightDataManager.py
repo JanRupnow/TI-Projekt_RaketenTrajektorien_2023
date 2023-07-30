@@ -4,7 +4,6 @@ from Globals.Constants import STARTSCALE, AllTimeSteps
 from Globals.FlightData.FlightChangeState import FlightChangeState
 from Globals.FlightData.ZoomGoal import ZoomGoal
 
-
 class SingletonMeta(type):
     _instances = {}
 

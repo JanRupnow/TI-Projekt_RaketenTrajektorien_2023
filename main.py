@@ -9,21 +9,19 @@ from Methods.ConfigurePlanets import configure_planets
 from Methods.GameMethods import process_hot_key_events
 from Methods.RocketConfig import load_rocket
 
-
+import time
 def main():
     install_all_packages()
     show_start_ui()
-
     planets = configure_planets()
     rocket = load_rocket(planets)
 
     while DATA.run:
         CLOCK.tick(60)
-
         WINDOW.fill(COLOR_UNIVERSE)
 
         for event in pygame.event.get():
-            event, rocket = process_hot_key_events(event, rocket, planets)
+            event, rocket, planets = process_hot_key_events(event, rocket, planets)
 
         GameManager.calculate_next_iteration(rocket, planets)
         GameManager.display_iteration(rocket, planets)

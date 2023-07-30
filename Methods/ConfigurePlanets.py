@@ -1,10 +1,8 @@
-import json
 import math
 
 import numpy as np
 from astropy.time import Time
 from sunpy.coordinates import get_body_heliographic_stonyhurst
-
 from Globals.Constants import *
 from ViewController.Planet import Planet
 
@@ -30,7 +28,7 @@ def configure_planets():
 
     earth = Planet(-1 * AU, 0, 6378 * 10 ** 3, COLOR_EARTH, 5.9722 * 10 ** 24, planetNameArray[3], 29.783 * 1000)
 
-    moon = Planet(-1 * AU - 378_000_000, 0, 1750 * 10 ** 3, COLOR_MOON, 73 * 10 ** 21, planetNameArray[4], 1.022 * 1000)
+    moon = Planet(-1 * AU - 378_000_000, 0, 1750 * 10 ** 3, COLOR_MOON, 73.0 * 10 ** 21, planetNameArray[4], 1.022 * 1000)
 
     mars = Planet(-1.524 * AU, 0, 3394 * 10 ** 3, COLOR_MARS, 6.39 * 10 ** 23, planetNameArray[5], 24.077 * 1000)
 
