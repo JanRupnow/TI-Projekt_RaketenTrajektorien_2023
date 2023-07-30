@@ -44,7 +44,6 @@ def configure_planets():
 
     planetlist = [neptune, uranus, saturn, jupiter, mars, moon, earth, venus, mercury, sun]
     for planet_name, this_coord in zip(planetNameArray, planet_coord):
-        print(planetlist[0].name)
         planet = next(filter(lambda x: x.name == planet_name, planetlist), None)
         # Set Start Coordinates 
         planet.position_X[0] = this_coord.radius.value * (np.cos(this_coord.lon.to("rad"))) * AU

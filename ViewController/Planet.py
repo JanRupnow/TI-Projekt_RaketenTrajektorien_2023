@@ -52,7 +52,11 @@ class Planet:
         distance_x = otherposition_x - self.position_X[i]
         distance_y = other_y - self.position_Y[i]
         distance = math.sqrt(distance_x ** 2 + distance_y ** 2)
-        force = G * self.mass * self.mass_factor * other.mass * self.mass_factor / distance ** 2
+        print(distance**2)
+        print((self.mass * self.mass_factor) * (other.mass * other.mass_factor))
+        force = G * (self.mass * self.mass_factor) * (other.mass * other.mass_factor) / distance ** 2
+        if other.name in ["Sun", "Earth"]:
+            print(f"{other.name} has force of {force} on {self.name}")
         theta = math.atan2(distance_y, distance_x)
         force_x = math.cos(theta) * force
         force_y = math.sin(theta) * force
@@ -86,8 +90,8 @@ class Planet:
             fx, fy = self.attraction(planet, i)
             total_fx += fx
             total_fy += fy
-        self.velocity_X[i + 1] = self.velocity_X[i] + total_fx / self.mass * self.mass_factor * self.time_step
-        self.velocity_Y[i + 1] = self.velocity_Y[i] + total_fy / self.mass * self.mass_factor * self.time_step
+        self.velocity_X[i + 1] = self.velocity_X[i] + total_fx / (self.mass * self.mass_factor) * self.time_step
+        self.velocity_Y[i + 1] = self.velocity_Y[i] + total_fy / (self.mass * self.mass_factor) * self.time_step
         self.position_X[i + 1] = self.position_X[i] + self.velocity_X[i + 1] * self.time_step
         self.position_Y[i + 1] = self.position_Y[i] + self.velocity_Y[i + 1] * self.time_step
 
@@ -109,9 +113,9 @@ class Planet:
             total_fx += fx
             total_fy += fy
         self.velocity_X[self.currentCalculationStep + 1] = self.velocity_X[
-                                                               self.currentCalculationStep] + total_fx / self.mass * self.mass_factor * self.time_step
+                                                               self.currentCalculationStep] + total_fx / (self.mass * self.mass_factor) * self.time_step
         self.velocity_Y[self.currentCalculationStep + 1] = self.velocity_Y[
-                                                               self.currentCalculationStep] + total_fy / self.mass * self.mass_factor * self.time_step
+                                                               self.currentCalculationStep] + total_fy / (self.mass * self.mass_factor) * self.time_step
         self.position_X[self.currentCalculationStep + 1] = self.position_X[self.currentCalculationStep] + \
                                                            self.velocity_X[
                                                                self.currentCalculationStep + 1] * self.time_step

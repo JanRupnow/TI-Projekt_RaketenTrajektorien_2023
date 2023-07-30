@@ -35,12 +35,13 @@ def mouse_position_shift_screen():
     DATA.move_y -= (DATA.mouse_y - HEIGHT / 2) / 2
 
 
-def shift_time_step(shift_up, planets: list[Planet]):
+def shift_time_step(shift_up, planets: list[Planet], rocket: Rocket):
     index = min(AllTimeSteps.index(DATA.time_step) + 1, len(AllTimeSteps) - 1) if shift_up else max(
         AllTimeSteps.index(DATA.time_step) - 1, 0)
     DATA.time_step = AllTimeSteps[index]
     for planet in planets:
         planet.time_step = AllTimeSteps[index]
+    rocket.time_step = AllTimeSteps[index]
     if DATA.flight_change_state == FlightChangeState.paused:
         DATA.flight_change_state = FlightChangeState.pausedAndTimeStepChanged
     else:
@@ -164,9 +165,9 @@ def process_hot_key_events(event, rocket: Rocket, planets: list[Planet]):
         DrawManager.set_rocket_scale(rocket, 1.25)
 
     elif check_key_down(event, Keys.h_shift_time_step_up[0]) and not DATA.flight_change_state == FlightChangeState.pausedAndTimeStepChanged:
-        shift_time_step(True, planets)
+        shift_time_step(True, planets, rocket)
     elif check_key_down(event, Keys.h_shift_time_step_down[0]) and not DATA.flight_change_state == FlightChangeState.pausedAndTimeStepChanged:
-        shift_time_step(False, planets)
+        shift_time_step(False, planets, rocket)
     elif check_key_down(event, Keys.h_open_settings[0]):
         show_settings_ui()
 

@@ -3,12 +3,11 @@ import math
 import numpy as np
 
 from Globals.Constants import *
-from Globals.FlightData.FlightDataManager import DATA
 from ViewController.Planet import Planet
 from ViewController.Rocket.RocketFlightState import RocketFlightState
 
 from numba.experimental import jitclass
-from numba import int32, float32, float64, uint64, typeof, types
+from numba import int32, float32, float64, typeof, types
 
 @jitclass([
     ("currentStep", int32),
@@ -22,6 +21,7 @@ from numba import int32, float32, float64, uint64, typeof, types
     ("position_Y", float64[:]),
     ("velocity_X", float64[:]),
     ("velocity_Y", float64[:]),
+    ("time_step", float64),
     ("c", float64),
     ("radius", float64),
     ("thrust", float64),
@@ -44,6 +44,7 @@ class Rocket:
         self.position_Y = np.zeros(LEN_OF_PREDICTIONS_ARRAY)  # z-Position [m]
         self.velocity_X = np.zeros(LEN_OF_PREDICTIONS_ARRAY)  # x-Velocity [m/s]
         self.velocity_Y = np.zeros(LEN_OF_PREDICTIONS_ARRAY)  # z-Velocity [m/s]
+        self.time_step = 1 / 60
         self.c = AirResistance / self.mass
         self.radius = radius
         self.thrust = 0  # aktuell nicht genutzt
@@ -109,22 +110,22 @@ class Rocket:
 
         # z-Komponente
         k1 = self.f1(self.velocity_Y[i], i, distance_to_sun)
-        k2 = self.f1(self.velocity_Y[i] + k1 * DATA.time_step / 2, i, distance_to_sun)
-        k3 = self.f1(self.velocity_Y[i] + k2 * DATA.time_step / 2, i, distance_to_sun)
-        k4 = self.f1(self.velocity_Y[i] + k3 * DATA.time_step / 2, i, distance_to_sun)
+        k2 = self.f1(self.velocity_Y[i] + k1 * self.time_step / 2, i, distance_to_sun)
+        k3 = self.f1(self.velocity_Y[i] + k2 * self.time_step / 2, i, distance_to_sun)
+        k4 = self.f1(self.velocity_Y[i] + k3 * self.time_step / 2, i, distance_to_sun)
         k = (k1 + 2 * k2 + 2 * k3 + k4) / 6
-        self.velocity_Y[i + 1] = self.velocity_Y[i] + k * DATA.time_step
-        self.position_Y[i + 1] = self.position_Y[i] + self.velocity_Y[i] * DATA.time_step
+        self.velocity_Y[i + 1] = self.velocity_Y[i] + k * self.time_step
+        self.position_Y[i + 1] = self.position_Y[i] + self.velocity_Y[i] * self.time_step
 
         # x-Komponente
         k1 = self.f2(self.velocity_X[i], i, distance_to_sun)
-        k2 = self.f2(self.velocity_X[i] + k1 * DATA.time_step / 2, i, distance_to_sun)
-        k3 = self.f2(self.velocity_X[i] + k2 * DATA.time_step / 2, i, distance_to_sun)
-        k4 = self.f2(self.velocity_X[i] + k3 * DATA.time_step / 2, i, distance_to_sun)
+        k2 = self.f2(self.velocity_X[i] + k1 * self.time_step / 2, i, distance_to_sun)
+        k3 = self.f2(self.velocity_X[i] + k2 * self.time_step / 2, i, distance_to_sun)
+        k4 = self.f2(self.velocity_X[i] + k3 * self.time_step / 2, i, distance_to_sun)
         k = (k1 + 2 * k2 + 2 * k3 + k4) / 6
 
-        self.velocity_X[i + 1] = self.velocity_X[i] + k * DATA.time_step
-        self.position_X[i + 1] = self.position_X[i] + self.velocity_X[i] * DATA.time_step
+        self.velocity_X[i + 1] = self.velocity_X[i] + k * self.time_step
+        self.position_X[i + 1] = self.position_X[i] + self.velocity_X[i] * self.time_step
 
     def set_scale(self, scale):
         self.radius *= scale
@@ -202,7 +203,7 @@ class Rocket:
         self.velocity_Y[0] = self.nearestPlanet.position_Y[self.nearestPlanet.currentStep]
 
     def update_planets_in_range_list(self, planets: list[Planet]):
-        if not self.currentStep % math.ceil(100 / DATA.time_step) == 0:
+        if not self.currentStep % math.ceil(100 / self.time_step) == 0:
             return
         self.PlanetsInRangeList = []
         for planet in planets:
@@ -211,7 +212,7 @@ class Rocket:
                 self.PlanetsInRangeList.append(planet)
 
     def update_nearest_planet(self, planets: list[Planet]):
-        if not self.currentStep % math.ceil(100 / DATA.time_step) == 0:
+        if not self.currentStep % math.ceil(100 / self.time_step) == 0:
             return
         self.nearestPlanet = min(planets, key=lambda x: self.get_distance_to_planet(x, self.currentStep))
 
