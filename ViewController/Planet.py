@@ -81,7 +81,7 @@ class Planet:
         self.currentCalculationStep = i
         total_fx = total_fy = 0
         for planet in planets:
-            if self == planet:
+            if self.name == planet.name:
                 continue
             fx, fy = self.attraction(planet, i)
             total_fx += fx

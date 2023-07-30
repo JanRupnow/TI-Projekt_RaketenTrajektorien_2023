@@ -46,6 +46,7 @@ Now = datetime.datetime(time_year, time_month, time_day, 0, 0, 0)
 MoveX = 0
 MoveY = 0
 MIN_ROCKET_RADIUS = 2
+MAX_ROCKET_RADIUS = 0.1
 NUM_OF_PREDICTIONS = 1000
 # muss größer als NUM_OF_PREDICTIONS sein
 LEN_OF_PREDICTIONS_ARRAY = NUM_OF_PREDICTIONS * 2

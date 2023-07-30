@@ -1,7 +1,7 @@
 from Methods.ConfigurePlanets import *
 from ViewController.Planet import *
 from ViewController.Rocket.Rocket import Rocket
-
+from ViewController.DrawManager import DrawManager
 
 def load_rocket_from_path(path, planets: list[Planet]):
     jsonfile = open(path)
@@ -23,8 +23,7 @@ def load_rocket_from_path(path, planets: list[Planet]):
             config["Color"]["green"],
             config["Color"]["blue"]
         ),
-        next(filter(lambda x: x.name == "Sun", planets), None),
-        img
+        next(filter(lambda x: x.name == "Sun", planets), None)
     )
 
     if config["Start"]["Thrust"]["value"] > 0:
@@ -32,6 +31,8 @@ def load_rocket_from_path(path, planets: list[Planet]):
         rocket.powerchanged = True
         rocket.flightState = RocketFlightState.flying
     rocket.angle = config["Start"]["Angle"]["value"]
+
+    DrawManager.set_rocket_image(img, rocket.radius)
 
     jsonfile.close()
     return rocket

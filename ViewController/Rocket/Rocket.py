@@ -15,7 +15,7 @@ from numba import int32, float32, float64, uint64, typeof, types
     ("currentCalculationStep", int32),
     ("mass", float32),
     ("fuelmass", float64),
-    ("PlanetsInRangeList", types.List(Planet)),
+    ("PlanetsInRangeList", types.List(typeof(Planet(-5.204 * AU, 0, 71492 * 10 ** 3, COLOR_JUPITER, 1.898 * 10 ** 21, planetNameArray[6], 13.06 * 1000)))),
     ("nearestPlanet", typeof(Planet(-5.204 * AU, 0, 71492 * 10 ** 3, COLOR_JUPITER, 1.898 * 10 ** 21, planetNameArray[6], 13.06 * 1000))),
     ("planetAngle", float32),
     ("position_X", float64[:]),
@@ -28,13 +28,10 @@ from numba import int32, float32, float64, uint64, typeof, types
     ("angle", float32),
     ("flightState", typeof(RocketFlightState.flying)),
     ("color", typeof((1, 1, 1))),
-    ("img", int32), # type?
-    ("img0", float64), # type?
-    ("notRotatedImg", float32), # type?
     ("sun", typeof(Planet(-5.204 * AU, 0, 71492 * 10 ** 3, COLOR_JUPITER, 1.898 * 10 ** 21, planetNameArray[6], 13.06 * 1000))),
     ("entryAngle", float32)])
 class Rocket:
-    def __init__(self, start_angle, fuel, mass, startplanet: Planet, radius, color, sun, image):
+    def __init__(self, start_angle, fuel, mass, startplanet: Planet, radius, color, sun: Planet):
         self.currentStep = CurrentStep
         self.currentCalculationStep = CurrentCalculationStep
         self.mass = mass
@@ -60,12 +57,8 @@ class Rocket:
             self.planetAngle * np.pi / 180)
         self.position_Y[0] = startplanet.position_Y[self.currentStep] + startplanet.radius * np.sin(
             self.planetAngle * np.pi / 180)
-        self.img = image
-        self.img0 = image
-        self.notRotatedImg = pygame.transform.scale_by(image, min(0.1 * self.radius, 1))
         self.sun = sun
         self.entryAngle = 0
-        # self.imgage = img0
 
     # Methode für die x-Komponente
     def f2(self, v, i: int, distance_to_sun):
@@ -135,8 +128,6 @@ class Rocket:
 
     def set_scale(self, scale):
         self.radius *= scale
-        if MIN_ROCKET_RADIUS < self.radius < 0.1:
-            self.notRotatedImg = pygame.transform.scale_by(self.img0, max(min(0.1 * self.radius, 1), 0.1))
 
     def get_current_distance_to_next_planet(self):
         return np.sqrt((self.position_X[self.currentCalculationStep] - self.nearestPlanet.position_X[

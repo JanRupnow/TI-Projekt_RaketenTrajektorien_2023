@@ -7,7 +7,6 @@ from Views.HotkeyView import *
 from Globals.FlightData.FlightChangeState import FlightChangeState
 from Globals.FlightData.FlightDataManager import DATA
 
-
 def add_clock_time():
     DATA.time_passed = DATA.time_passed + datetime.timedelta(seconds=DATA.time_step)
 
@@ -28,12 +27,12 @@ def center_screen_on_planet(planet: Planet):
 
 
 def scale_relative(factor):
-    DATA.scale(STARTSCALE * factor)
+    DATA.scale = STARTSCALE * factor
 
 
 def mouse_position_shift_screen():
-    DATA.move_x(DATA.move_x - (DATA.mouse_x - WIDTH / 2) / 2)
-    DATA.move_y(DATA.move_y - (DATA.mouse_y - HEIGHT / 2) / 2)
+    DATA.move_x -= (DATA.mouse_x - WIDTH / 2) / 2
+    DATA.move_y -= (DATA.mouse_y - HEIGHT / 2) / 2
 
 
 def shift_time_step(shift_up, planets: list[Planet]):
@@ -60,6 +59,8 @@ def planet_is_in_screen(planet: Planet):
 
 
 def process_hot_key_events(event, rocket: Rocket, planets: list[Planet]):
+    from ViewController.DrawManager import DrawManager
+
     key_pressed = pygame.key.get_pressed()
     # mouse_x, mouse_y = pygame.mouse.get_pos()
     DATA.mouse_x = pygame.mouse.get_pos()[0]
@@ -112,20 +113,20 @@ def process_hot_key_events(event, rocket: Rocket, planets: list[Planet]):
     elif event.type == pygame.QUIT or check_key_down(event, Keys.h_leave_simulation[0]) or check_key_down(event,
                                                                                                           Keys.h_close_window[
                                                                                                              0]):
-        DATA.run(False)
+        DATA.run = False
     elif check_key_down(event, Keys.h_zoom_rocket_start[0]):
         scale_relative(100000)
-        rocket.set_scale(100000)
+        DrawManager.set_rocket_scale(rocket, 100000)
         automatic_zoom_on_rocket_once(rocket)
     # Zoom Startorbit
     elif check_key_down(event, Keys.h_zoom_rocket_planet[0]):
         scale_relative(10)
-        rocket.set_scale(10)
+        DrawManager.set_rocket_scale(rocket, 10)
         automatic_zoom_on_rocket_once(rocket)
     # Zoom Universum
     elif check_key_down(event, Keys.h_zoom_rocket_planet_system[0]):
         scale_relative(1)
-        rocket.set_scale(1)
+        DrawManager.set_rocket_scale(rocket, 1)
         automatic_zoom_on_rocket_once(rocket)
 
     elif check_key_down(event, Keys.H_zoomAutoOnReferencePlanet[0]) and DATA.zoom_goal != ZoomGoal.rocket:
@@ -154,13 +155,13 @@ def process_hot_key_events(event, rocket: Rocket, planets: list[Planet]):
         DATA.draw_orbit = not DATA.draw_orbit
     elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 5:
         mouse_position_shift_screen()
-        DATA.scale(DATA.scale * 0.75)
-        rocket.set_scale(0.75)
+        DATA.scale *= 0.75
+        DrawManager.set_rocket_scale(rocket, 0.75)
 
     elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 4:
         mouse_position_shift_screen()
-        DATA.scale(DATA.scale * 1.25)
-        rocket.set_scale(1.25)
+        DATA.scale *= 1.25
+        DrawManager.set_rocket_scale(rocket, 1.25)
 
     elif check_key_down(event, Keys.h_shift_time_step_up[0]) and not DATA.flight_change_state == FlightChangeState.pausedAndTimeStepChanged:
         shift_time_step(True, planets)
@@ -170,7 +171,7 @@ def process_hot_key_events(event, rocket: Rocket, planets: list[Planet]):
         show_settings_ui()
 
     elif check_key_down(event, Keys.h_switch_interface[0]):
-        DATA.advanced_interface(not DATA.advanced_interface)
+        DATA.advanced_interface = not DATA.advanced_interface
     return event, rocket, planets
 
 
