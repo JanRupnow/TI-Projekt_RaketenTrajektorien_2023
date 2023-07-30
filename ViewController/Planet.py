@@ -5,14 +5,12 @@ import numpy as np
 from Globals.Constants import *
 from ViewController.Rocket.RocketFlightState import RocketFlightState
 from numba.experimental import jitclass
-from numba import int32, float32, float64, uint64, typeof
-
+from numba import int32, float32, float64, typeof
 
 @jitclass([
     ("radius", float64),
     ("color", typeof((1, 1, 1))),
-    ("mass", uint64),
-    ("mass_factor", int32),
+    ("mass", float64),
     ("name", typeof("test")),
     ("distanceToRocket", float64),
     ("scaleR", float32),
@@ -30,7 +28,6 @@ class Planet:
         self.radius = radius
         self.color = color
         self.mass = mass
-        self.mass_factor = 1_000_000
         self.name = name
         self.distanceToRocket = 2 * radius
         # drawing radius used only for displaying not calculating!!!
@@ -48,15 +45,12 @@ class Planet:
         self.position_Y[0] = y
 
     def attraction(self, other, i):
-        otherposition_x, other_y = other.position_X[i], other.position_Y[i]
-        distance_x = otherposition_x - self.position_X[i]
-        distance_y = other_y - self.position_Y[i]
-        distance = math.sqrt(distance_x ** 2 + distance_y ** 2)
-        print(distance**2)
-        print((self.mass * self.mass_factor) * (other.mass * other.mass_factor))
-        force = G * (self.mass * self.mass_factor) * (other.mass * other.mass_factor) / distance ** 2
-        if other.name in ["Sun", "Earth"]:
-            print(f"{other.name} has force of {force} on {self.name}")
+        otherposition_x, other_y = other.position_X[i], other.position_Y[i] #double
+        distance_x = otherposition_x - self.position_X[i] #double
+        distance_y = other_y - self.position_Y[i] #double
+        distance = math.sqrt(distance_x ** 2 + distance_y ** 2) #double
+        force = G * self.mass * other.mass / distance**2 #double
+        #force = G * (self.mass * self.mass_factor) * (other.mass * other.mass_factor) / distance ** 2
         theta = math.atan2(distance_y, distance_x)
         force_x = math.cos(theta) * force
         force_y = math.sin(theta) * force
@@ -90,8 +84,8 @@ class Planet:
             fx, fy = self.attraction(planet, i)
             total_fx += fx
             total_fy += fy
-        self.velocity_X[i + 1] = self.velocity_X[i] + total_fx / (self.mass * self.mass_factor) * self.time_step
-        self.velocity_Y[i + 1] = self.velocity_Y[i] + total_fy / (self.mass * self.mass_factor) * self.time_step
+        self.velocity_X[i + 1] = self.velocity_X[i] + total_fx / self.mass * self.time_step
+        self.velocity_Y[i + 1] = self.velocity_Y[i] + total_fy / self.mass * self.time_step
         self.position_X[i + 1] = self.position_X[i] + self.velocity_X[i + 1] * self.time_step
         self.position_Y[i + 1] = self.position_Y[i] + self.velocity_Y[i + 1] * self.time_step
 
@@ -113,9 +107,9 @@ class Planet:
             total_fx += fx
             total_fy += fy
         self.velocity_X[self.currentCalculationStep + 1] = self.velocity_X[
-                                                               self.currentCalculationStep] + total_fx / (self.mass * self.mass_factor) * self.time_step
+                                                               self.currentCalculationStep] + total_fx / self.mass * self.time_step
         self.velocity_Y[self.currentCalculationStep + 1] = self.velocity_Y[
-                                                               self.currentCalculationStep] + total_fy / (self.mass * self.mass_factor) * self.time_step
+                                                               self.currentCalculationStep] + total_fy / self.mass * self.time_step
         self.position_X[self.currentCalculationStep + 1] = self.position_X[self.currentCalculationStep] + \
                                                            self.velocity_X[
                                                                self.currentCalculationStep + 1] * self.time_step

@@ -259,5 +259,5 @@ def fuel_bar():
                      (WIDTH * 0.925, HEIGHT * 0.8, WIDTH * 0.05, HEIGHT * 0.15))
     pygame.draw.rect(WINDOW, (150, 150, 150),
                      (WIDTH * 0.925, HEIGHT * 0.8, WIDTH * 0.05, HEIGHT * 0.15 * (1 - percentage)))
-    rocket_fuel = FONT_1.render(f'{int(percentage * 100)} %', True, COLOR_WHITE)
+    rocket_fuel = FONT_1.render(f'Fuel: {int(percentage * 100)}%', True, COLOR_WHITE)
     WINDOW.blit(rocket_fuel, (WIDTH * 0.94, HEIGHT * 0.95))
