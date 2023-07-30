@@ -9,7 +9,7 @@ from Globals.FlightData.FlightDataManager import DATA
 
 
 def add_clock_time():
-    DATA.time_passed = DATA.time_passed + datetime.timedelta(seconds=DATA.time_step)
+    DATA.time_passed += datetime.timedelta(seconds=DATA.time_step)
 
 
 def automatic_zoom_on_rocket(rocket: Rocket):
@@ -32,8 +32,8 @@ def scale_relative(factor):
 
 
 def mouse_position_shift_screen():
-    DATA.move_x = DATA.move_x - (DATA.mouse_x - WIDTH / 2) / 2
-    DATA.move_y = DATA.move_y - (DATA.mouse_y - HEIGHT / 2) / 2
+    DATA.move_x -= (DATA.mouse_x - WIDTH / 2) / 2
+    DATA.move_y -= (DATA.mouse_y - HEIGHT / 2) / 2
 
 
 def shift_time_step(shift_up, planets: list[Planet], rocket: Rocket):
@@ -70,13 +70,13 @@ def process_hot_key_events(event, rocket: Rocket, planets: list[Planet]):
     distance = 10
 
     if key_pressed[Keys.H_moveScreenLeft[0]] or DATA.mouse_x == 0:
-        DATA.move_x = DATA.move_x + distance
+        DATA.move_x += distance
     elif key_pressed[Keys.H_moveScreenRight[0]] or DATA.mouse_x == WIDTH - 1:
-        DATA.move_x = DATA.move_x - distance
+        DATA.move_x -= distance
     elif key_pressed[Keys.H_moveScreenUp[0]] or DATA.mouse_y == 0:
-        DATA.move_y = DATA.move_y + distance
+        DATA.move_y += distance
     elif key_pressed[Keys.H_moveScreenDown[0]] or DATA.mouse_y == HEIGHT - 1:
-        DATA.move_y = DATA.move_y - distance
+        DATA.move_y -= distance
 
     elif (not event.type == pygame.KEYDOWN) and \
             key_pressed[Keys.h_rocket_boost_forward[0]] and rocket.thrust < 10:
