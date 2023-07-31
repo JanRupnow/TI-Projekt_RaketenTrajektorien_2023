@@ -4,6 +4,7 @@ from Globals.Constants import STARTSCALE, AllTimeSteps
 from Globals.FlightData.FlightChangeState import FlightChangeState
 from Globals.FlightData.ZoomGoal import ZoomGoal
 
+
 class SingletonMeta(type):
     _instances = {}
 
@@ -30,8 +31,6 @@ class FlightDataManager(metaclass=SingletonMeta):
         self._time_passed = datetime.timedelta(seconds=0)
         self._advanced_interface = True
 
-    
-
     @property
     def flight_change_state(self):
         return self._flight_change_state
@@ -43,7 +42,7 @@ class FlightDataManager(metaclass=SingletonMeta):
     @property
     def show_distance(self):
         return self._show_distance
-    
+
     @show_distance.setter
     def show_distance(self, value: bool):
         self._show_distance = value
@@ -51,7 +50,7 @@ class FlightDataManager(metaclass=SingletonMeta):
     @property
     def run(self):
         return self._run
-    
+
     @run.setter
     def run(self, value: bool):
         self._run = value
@@ -75,7 +74,7 @@ class FlightDataManager(metaclass=SingletonMeta):
     @property
     def move_y(self):
         return self._move_y
-        
+
     @move_y.setter
     def move_y(self, value: int):
         self._move_y = value
@@ -91,7 +90,7 @@ class FlightDataManager(metaclass=SingletonMeta):
     @property
     def mouse_y(self):
         return self._mouse_y
-    
+
     @mouse_y.setter
     def mouse_y(self, value: float):
         self._mouse_y = value
@@ -99,7 +98,7 @@ class FlightDataManager(metaclass=SingletonMeta):
     @property
     def draw_orbit(self):
         return self._draw_orbit
-    
+
     @draw_orbit.setter
     def draw_orbit(self, value: bool):
         self._draw_orbit = value
@@ -107,7 +106,7 @@ class FlightDataManager(metaclass=SingletonMeta):
     @property
     def time_step(self):
         return self._time_step
-    
+
     @time_step.setter
     def time_step(self, value: float):
         if min(AllTimeSteps) <= value <= max(AllTimeSteps):
@@ -118,7 +117,7 @@ class FlightDataManager(metaclass=SingletonMeta):
     @property
     def zoom_goal(self):
         return self._zoom_goal
-    
+
     @zoom_goal.setter
     def zoom_goal(self, value: ZoomGoal):
         self._zoom_goal = value

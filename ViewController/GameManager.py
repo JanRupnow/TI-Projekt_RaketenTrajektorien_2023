@@ -1,6 +1,5 @@
-from numba.experimental import jitclass
 
-from Globals.Constants import Now
+from Globals.Constants import simulation_start_time
 
 from Methods.GameMethods import center_screen_on_planet, planet_is_in_screen, automatic_zoom_on_rocket
 
@@ -142,6 +141,6 @@ class GameManager:
         end_time = time.time()
         print(f"Planet Time: {end_time - start_time}")
         start_time = time.time()
-        DrawManager.render_flight_interface(rocket, Now, planets)
+        DrawManager.render_flight_interface(rocket, simulation_start_time, planets)
         end_time = time.time()
         print(f"Interface Time: {end_time - start_time}")

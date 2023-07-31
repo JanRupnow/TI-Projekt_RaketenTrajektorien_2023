@@ -15,9 +15,9 @@ def configure_planets():
     time_year = config["StartTime"]["Year"]["value"]
     time_month = config["StartTime"]["Month"]["value"]
     time_day = config["StartTime"]["Day"]["value"]
-    obstime = Time(f"{time_year}-{time_month}-{time_day}")
+    simulation_time = Time(f"{time_year}-{time_month}-{time_day}")
     planet_coord = [get_body_heliographic_stonyhurst(
-        this_planet, time=obstime, include_velocity=True) for this_planet in planetNameArray]
+        this_planet, time=simulation_time, include_velocity=True) for this_planet in planetNameArray]
 
     sun = Planet(0, 0, 695 * 10 ** 6, COLOR_SUN, 1.98892 * 10 ** 30, planetNameArray[0], 0)
     # sun.sun = True

@@ -4,8 +4,9 @@ import pygame
 
 pygame.init()
 WIDTH, HEIGHT = pygame.display.Info().current_w, pygame.display.Info().current_h
-FONT_1 = pygame.font.SysFont("Trebuchet MS", 21)
-FONT_2 = pygame.font.SysFont("Trebuchet MS", 16)
+
+FONT_1 = pygame.font.SysFont("Arial", 21)
+
 COLOR_WHITE = (255, 255, 255)
 COLOR_UNIVERSE = (36, 36, 36)
 COLOR_SUN = (252, 150, 1)
@@ -21,35 +22,35 @@ COLOR_NEPTUNE = (63, 84, 186)
 # Solarsystem Variablen
 AU = 149.6e6 * 1000  # Astronomical unit
 G = 6.67428e-11  # Gravitational constant
+# Start zoom depth
 STARTSCALE = 200 / AU
-# Generelle Variablen
-AirResistance = 0.0162  # Luftwiderstandsbeiwert                     #  - Verwendung zur Einstellung des Schubs
-Gravity = 9.81  # [m/s^2]
+
+AirResistance = 0.0162  # Luftwiderstandsbeiwert
 p_0 = 1.225  # Luftdichte auf Meereshöhe [kg/m^3]
 h_s = 8400  # Skalenhöhe [m]
+
 planetNameArray = ["Sun", "Mercury", "Venus", "Earth", "Moon", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune"]
-# Zeit-Variablen
-StartTime = 0  # [s]                # [s]
-CalculationSteps = 100000
-EndTime = CalculationSteps * 5
-# dt=(Endzeit-Startzeit)/Rechenschritte
+
+
+# Should start with initialized 0
 CurrentStep = 0
 CurrentCalculationStep = 0
-AllTimeSteps = [1 / 60, 5 / 60, 10 / 60, 25 / 60, 100 / 60, 500 / 60, 1000 / 60, 2500 / 60, 10000 / 60, 25000 / 60,
-                100000 / 60]
+
 jsonfile = open("./Globals/RocketConfig/CurrentRocketConfig.json")
 config = json.load(jsonfile)
 time_year = config["StartTime"]["Year"]["value"]
 time_month = config["StartTime"]["Month"]["value"]
 time_day = config["StartTime"]["Day"]["value"]
-Now = datetime.datetime(time_year, time_month, time_day, 0, 0, 0)
-MoveX = 0
-MoveY = 0
+simulation_start_time = datetime.datetime(time_year, time_month, time_day, 0, 0, 0)
+
 MIN_ROCKET_RADIUS = 2
 MAX_ROCKET_RADIUS = 0.1
 NUM_OF_PREDICTIONS = 1000
-# muss größer als NUM_OF_PREDICTIONS sein
+AllTimeSteps = [1 / 60, 5 / 60, 10 / 60, 25 / 60, 100 / 60, 500 / 60, 1000 / 60, 2500 / 60, 10000 / 60, 25000 / 60,
+                100000 / 60]
+# must be twice the size so the array has room for calculations before resetting to 0:NUM_OF_PREDICTIONS
 LEN_OF_PREDICTIONS_ARRAY = NUM_OF_PREDICTIONS * 2
+
 pygame.init()
 CLOCK = pygame.time.Clock()
 WINDOW = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)

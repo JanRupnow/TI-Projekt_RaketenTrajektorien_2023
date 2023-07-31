@@ -1,9 +1,10 @@
-from Globals.FlightData.ZoomGoal import ZoomGoal
+from Views.HotkeyView import *
+
 from ViewController.Planet import Planet
 from ViewController.Rocket.Rocket import Rocket
 from ViewController.Rocket.RocketFlightState import RocketFlightState
-from Views.HotkeyView import *
 
+from Globals.FlightData.ZoomGoal import ZoomGoal
 from Globals.FlightData.FlightChangeState import FlightChangeState
 from Globals.FlightData.FlightDataManager import DATA
 

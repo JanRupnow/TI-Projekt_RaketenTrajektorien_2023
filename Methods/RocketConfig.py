@@ -1,7 +1,7 @@
-from Methods.ConfigurePlanets import *
 from ViewController.Planet import *
 from ViewController.Rocket.Rocket import Rocket
 from ViewController.DrawManager import DrawManager
+
 
 def load_rocket_from_path(path, planets: list[Planet]):
     jsonfile = open(path)

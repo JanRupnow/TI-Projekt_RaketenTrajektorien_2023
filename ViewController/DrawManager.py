@@ -1,7 +1,6 @@
 import numpy as np
 import math
 from pygame import Surface
-from datetime import datetime, timedelta
 from Globals.Constants import *
 from Globals.FlightData.FlightChangeState import FlightChangeState
 from Globals.FlightData.FlightDataManager import DATA

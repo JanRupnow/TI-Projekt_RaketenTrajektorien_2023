@@ -9,13 +9,16 @@ from ViewController.Rocket.RocketFlightState import RocketFlightState
 from numba.experimental import jitclass
 from numba import int32, float32, float64, typeof, types
 
+
 @jitclass([
     ("currentStep", int32),
     ("currentCalculationStep", int32),
     ("mass", float32),
     ("fuelmass", float64),
-    ("PlanetsInRangeList", types.List(typeof(Planet(-5.204 * AU, 0, 71492 * 10 ** 3, COLOR_JUPITER, 1.898 * 10 ** 21, planetNameArray[6], 13.06 * 1000)))),
-    ("nearestPlanet", typeof(Planet(-5.204 * AU, 0, 71492 * 10 ** 3, COLOR_JUPITER, 1.898 * 10 ** 21, planetNameArray[6], 13.06 * 1000))),
+    ("PlanetsInRangeList", types.List(typeof(
+        Planet(-5.204 * AU, 0, 71492 * 10 ** 3, COLOR_JUPITER, 1.898 * 10 ** 21, planetNameArray[6], 13.06 * 1000)))),
+    ("nearestPlanet", typeof(
+        Planet(-5.204 * AU, 0, 71492 * 10 ** 3, COLOR_JUPITER, 1.898 * 10 ** 21, planetNameArray[6], 13.06 * 1000))),
     ("planetAngle", float32),
     ("position_X", float64[:]),
     ("position_Y", float64[:]),
@@ -28,7 +31,8 @@ from numba import int32, float32, float64, typeof, types
     ("angle", float32),
     ("flightState", typeof(RocketFlightState.flying)),
     ("color", typeof((1, 1, 1))),
-    ("sun", typeof(Planet(-5.204 * AU, 0, 71492 * 10 ** 3, COLOR_JUPITER, 1.898 * 10 ** 21, planetNameArray[6], 13.06 * 1000))),
+    ("sun", typeof(
+        Planet(-5.204 * AU, 0, 71492 * 10 ** 3, COLOR_JUPITER, 1.898 * 10 ** 21, planetNameArray[6], 13.06 * 1000))),
     ("entryAngle", float32)])
 class Rocket:
     def __init__(self, start_angle, fuel, mass, startplanet: Planet, radius, color, sun: Planet):
@@ -69,11 +73,12 @@ class Rocket:
             # r0 = np.sqrt( (self.position_X[i] - self.nearestPlanet.position_X[i])**2 + (self.position_Y[i] - self.nearestPlanet.position_Y[i])**2)
             x += (-(G * planet.mass / r ** 2) - (
                     AirResistance * self.get_relative_velocity(i) ** 2 * np.sign(self.velocity_X[i]) * p_0 * np.exp(
-                            -abs((r - planet.radius)) / h_s)) / (2 * self.mass)) * (
-                    (self.position_X[i] - planet.position_X[i]) / r)  # Extrakraft x einbauen
+                -abs((r - planet.radius)) / h_s)) / (2 * self.mass)) * (
+                         (self.position_X[i] - planet.position_X[i]) / r)  # Extrakraft x einbauen
 
         # distanceToSun = np.sqrt( (self.position_X[i] - self.sun.position_X[i])**2 + (self.position_Y[i] - self.sun.position_Y[i])**2)
-        x -= (G * self.sun.mass / distance_to_sun ** 2) * ((self.position_X[i] - self.sun.position_X[i]) / distance_to_sun)
+        x -= (G * self.sun.mass / distance_to_sun ** 2) * (
+                    (self.position_X[i] - self.sun.position_X[i]) / distance_to_sun)
         # y=-(G*m_E/(position_X**2 + position_Y**2)**1.5) * position_X - c*x**2*np.sign(x)
         if self.thrust != 0:
             x += math.cos(
@@ -85,15 +90,15 @@ class Rocket:
         z = 0
         for planet in self.PlanetsInRangeList:
             r = self.get_distance_to_planet(planet, i)
-        # r0 = np.sqrt( (self.position_X[i] - self.nearestPlanet.position_X[i])**2 + (self.position_Y[i] - self.nearestPlanet.position_Y[i])**2)
+            # r0 = np.sqrt( (self.position_X[i] - self.nearestPlanet.position_X[i])**2 + (self.position_Y[i] - self.nearestPlanet.position_Y[i])**2)
             z += (-(G * planet.mass / r ** 2) - (
                     AirResistance * self.get_relative_velocity(i) ** 2 * np.sign(self.velocity_Y[i]) * p_0 * np.exp(
                 -abs((r - planet.radius)) / h_s)) / (2 * self.mass)) * (
-                    (self.position_Y[i] - planet.position_Y[i]) / r)
-            test =self.get_relative_velocity(i)
+                         (self.position_Y[i] - planet.position_Y[i]) / r)
+            test = self.get_relative_velocity(i)
         # distanceToSun = np.sqrt( (self.position_X[i] - self.sun.position_X[i])**2 + (self.position_Y[i] - self.sun.position_Y[i])**2)
         z -= (G * self.sun.mass / distance_to_sun ** 2) * (
-                    (self.position_Y[i] - self.sun.position_Y[i]) / distance_to_sun)
+                (self.position_Y[i] - self.sun.position_Y[i]) / distance_to_sun)
         # TODO muss die Geschwindigkeit relativ zum Planet sein?
         #  Eigentlich ja oder? (Luftwiderstand) (wie kann man das besser machen? planetenabhängig?)
 
@@ -168,7 +173,7 @@ class Rocket:
         self.planetAngle = math.atan2(
             self.position_Y[self.currentStep] - self.nearestPlanet.position_Y[self.nearestPlanet.currentStep],
             self.position_X[self.currentStep] - self.nearestPlanet.position_X[self.nearestPlanet.currentStep]) * (
-                                  180 / np.pi)
+                                   180 / np.pi)
 
     def calculate_new_calculation_of_predictions(self):
         self.currentCalculationStep = self.currentStep
@@ -222,12 +227,17 @@ class Rocket:
 
     def calculate_landed_values(self):
         self.position_X[0] = self.position_X[self.currentStep] + self.radius * np.cos(self.angle * np.pi / 180)
-        self.position_Y[0] = self.position_Y[self.currentStep] + self.radius * np.sin(self.angle * np.pi / 180) # macht kein Sinn hier
+        self.position_Y[0] = self.position_Y[self.currentStep] + self.radius * np.sin(
+            self.angle * np.pi / 180)  # macht kein Sinn hier
         self.velocity_X[0] = self.velocity_X[self.currentStep]
         self.velocity_Y[0] = self.velocity_Y[self.currentStep]
 
     def stick_to_planet(self):
-        self.position_X[0] = self.nearestPlanet.position_X[self.nearestPlanet.currentStep] + self.nearestPlanet.radius * np.cos(self.planetAngle * np.pi / 180)
-        self.position_Y[0] = self.nearestPlanet.position_Y[self.nearestPlanet.currentStep] + self.nearestPlanet.radius * np.sin(self.planetAngle * np.pi / 180)
+        self.position_X[0] = self.nearestPlanet.position_X[
+                                 self.nearestPlanet.currentStep] + self.nearestPlanet.radius * np.cos(
+            self.planetAngle * np.pi / 180)
+        self.position_Y[0] = self.nearestPlanet.position_Y[
+                                 self.nearestPlanet.currentStep] + self.nearestPlanet.radius * np.sin(
+            self.planetAngle * np.pi / 180)
         self.velocity_X[0] = self.nearestPlanet.velocity_X[self.nearestPlanet.currentStep]
         self.velocity_Y[0] = self.nearestPlanet.velocity_Y[self.nearestPlanet.currentStep]

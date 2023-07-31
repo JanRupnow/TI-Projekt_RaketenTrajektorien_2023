@@ -4,10 +4,10 @@ from enum import Enum
 class FlightChangeState(Enum):
     unchanged = 0,
     paused = 1,
-    timeStepChanged = 2,  # time and power cant be changed at the same time for a calculation
+    timeStepChanged = 2,
     powerChanged = 3,
     pausedAndPowerChanged = 4,
-    pausedAndTimeStepChanged = 5,# since we use elifs for the hotkey changes
+    pausedAndTimeStepChanged = 5
 
     def __str__(self):
         if self == FlightChangeState.unchanged:

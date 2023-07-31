@@ -1,12 +1,12 @@
-import json
 
 import pygame_gui as pg
 
 from Globals.Constants import *
+
 from Methods.SupportMethods import *
 
 
-def create_ui_label(text, position_x, position_y, manager, size_x=WIDTH * 0.15, size_y= HEIGHT*0.1):
+def create_ui_label(text, position_x, position_y, manager, size_x=WIDTH * 0.15, size_y=HEIGHT*0.1):
     return pg.elements.UILabel(relative_rect=pygame.Rect((position_x, position_y), (size_x, size_y)),
                                text=text,
                                manager=manager,

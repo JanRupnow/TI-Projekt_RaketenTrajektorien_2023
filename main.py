@@ -9,7 +9,7 @@ from Methods.ConfigurePlanets import configure_planets
 from Methods.GameMethods import process_hot_key_events
 from Methods.RocketConfig import load_rocket
 
-import time
+
 def main():
     install_all_packages()
     show_start_ui()
