@@ -27,7 +27,7 @@ from numba import int32, float32, float64, typeof, types
     ("time_step", float64),
     ("c", float64),
     ("radius", float64),
-    ("thrust", float64),
+    ("thrust", int32),
     ("angle", float32),
     ("flightState", typeof(RocketFlightState.flying)),
     ("color", typeof((1, 1, 1))),

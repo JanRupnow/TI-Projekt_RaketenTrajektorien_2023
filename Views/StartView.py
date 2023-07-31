@@ -18,6 +18,7 @@ def show_start_ui():
     if len(manager.get_sprite_group()) < 4:
         initialize_start_ui(selected_number)
     while show_gui:
+        WINDOW.fill((50, 50, 50))
         for event in pygame.event.get():
             if event.type == pg.UI_BUTTON_PRESSED and event.ui_object_id == "Start_button":
                 show_gui = False
@@ -116,7 +117,6 @@ def show_start_ui():
                 reset_and_show_ui(selected_number)
             manager.process_events(event)
 
-        WINDOW.fill((0, 0, 0))
         manager.update(UI_REFRESH_RATE)
         manager.draw_ui(WINDOW)
         pygame.display.update()
@@ -132,11 +132,17 @@ def initialize_start_ui(selected_number=0):
 
 
 def initialize_rocket_configuration_ui():
-    create_ui_label("Rocket Configuration", WIDTH * 0.7, HEIGHT * 0.2, manager)
     create_ui_button("Reset", WIDTH * 0.8, HEIGHT * 0.8, manager, length_x=WIDTH * 0.1)
     create_ui_button("Previous", WIDTH * 0.38, HEIGHT * 0.7, manager)
     create_ui_button("Next", WIDTH * 0.55, HEIGHT * 0.7, manager)
     config_pairs = get_texts_and_values_for_config_ui()
+
+    create_ui_game_title_label("Simulation Time", WIDTH * 0.2, HEIGHT * 0.2, manager, "red")
+    create_ui_text_box_and_text_entry(config_pairs[6][1], config_pairs[6][0], WIDTH * 0.2, HEIGHT * 0.3, manager)
+    create_ui_text_box_and_text_entry(config_pairs[7][1], config_pairs[7][0], WIDTH * 0.2, HEIGHT * 0.35, manager)
+    create_ui_text_box_and_text_entry(config_pairs[8][1], config_pairs[8][0], WIDTH * 0.2, HEIGHT * 0.4, manager)
+
+    create_ui_game_title_label("Rocket Configuration", WIDTH * 0.7, HEIGHT * 0.2, manager, "red")
     create_ui_text_box_and_text_entry(config_pairs[0][1], config_pairs[0][0], WIDTH * 0.7, HEIGHT * 0.3, manager)
     create_ui_text_box(config_pairs[1][1], WIDTH * 0.7, HEIGHT * 0.35, manager)
     create_drop_down(planetNameArray,
@@ -146,9 +152,6 @@ def initialize_rocket_configuration_ui():
     create_ui_text_box_and_text_entry(config_pairs[3][1], config_pairs[3][0], WIDTH * 0.7, HEIGHT * 0.45, manager)
     create_ui_text_box_and_text_entry(config_pairs[4][1], config_pairs[4][0], WIDTH * 0.7, HEIGHT * 0.5, manager)
     create_ui_text_box_and_text_entry(config_pairs[5][1], config_pairs[5][0], WIDTH * 0.7, HEIGHT * 0.55, manager)
-    create_ui_text_box_and_text_entry(config_pairs[6][1], config_pairs[6][0], WIDTH * 0.2, HEIGHT * 0.3, manager)
-    create_ui_text_box_and_text_entry(config_pairs[7][1], config_pairs[7][0], WIDTH * 0.2, HEIGHT * 0.35, manager)
-    create_ui_text_box_and_text_entry(config_pairs[8][1], config_pairs[8][0], WIDTH * 0.2, HEIGHT * 0.4, manager)
 
 
 # removes all ui elements => no used object_ids

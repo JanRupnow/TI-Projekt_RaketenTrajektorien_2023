@@ -33,7 +33,7 @@ def create_ui_text_box_and_text_entry_hotkey(hotkey, position_x, position_y, man
 def get_rocket_imgage(rocket_image_number):
     jsonfile = open("./Globals/RocketConfig/CurrentRocketConfig.json")
     config = json.load(jsonfile)
-    img = pygame.image.load(config["Image"]["path"][rocket_image_number])
+    img = pygame.image.load(config["Image"]["path"][rocket_image_number]).convert_alpha()
     return pygame.transform.scale_by(img, 300 / img.get_height())
 
 
@@ -44,7 +44,7 @@ def create_rocket_image(rocket_image_number, manager, position_x=WIDTH * 0.5,
             element.kill()
     jsonfile = open("./Globals/RocketConfig/CurrentRocketConfig.json")
     config = json.load(jsonfile)
-    img = pygame.image.load(config["Image"]["path"][rocket_image_number])
+    img = pygame.image.load(config["Image"]["path"][rocket_image_number]).convert_alpha()
     img = pygame.transform.scale_by(img, 300 / img.get_height())
     image_rect = img.get_rect()
     image_rect.topleft = (position_x - img.get_width() / 2, position_y - img.get_height() / 2)
@@ -94,10 +94,10 @@ def create_ui_settings_topic_label(text, position_x, position_y, manager, size_x
     return label
 
 
-def create_ui_game_title_label(text, position_x, position_y, manager):
+def create_ui_game_title_label(text, position_x, position_y, manager, color="green"):
     label = create_ui_label(text, position_x, position_y, manager)
     label.text_horiz_alignment = "center"
-    label.text_colour = "green"
+    label.text_colour = color
     label.set_text_scale(15)
     label.rebuild()
     return label

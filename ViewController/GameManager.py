@@ -121,16 +121,12 @@ class GameManager:
             center_screen_on_planet(rocket.nearestPlanet)
         elif DATA.zoom_goal == ZoomGoal.rocket:
             automatic_zoom_on_rocket(rocket)
-        start_time = time.time()
 
         if rocket.flightState == RocketFlightState.flying:
             DrawManager.draw_rocket(rocket)
             DrawManager.draw_rocket_prediction(rocket)
         else:
             DrawManager.draw_rocket(rocket)
-        end_time = time.time()
-        print(f"Rocket Time: {end_time - start_time}")
-        start_time = time.time()
         for planet in planets:
             if planet_is_in_screen(planet):
                 DrawManager.draw_planet(planet)
@@ -138,9 +134,4 @@ class GameManager:
                 DrawManager.draw_planet_orbit(planet)
             if DATA.show_distance:
                 DrawManager.display_planet_distances(planet)
-        end_time = time.time()
-        print(f"Planet Time: {end_time - start_time}")
-        start_time = time.time()
         DrawManager.render_flight_interface(rocket, simulation_start_time, planets)
-        end_time = time.time()
-        print(f"Interface Time: {end_time - start_time}")
