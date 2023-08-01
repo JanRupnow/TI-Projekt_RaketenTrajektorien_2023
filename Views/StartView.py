@@ -1,5 +1,3 @@
-import sys
-
 import Globals.Hotkeys as Keys
 
 from Views.ViewComponents import *
@@ -7,7 +5,7 @@ from Views.ViewComponents import *
 from Methods.JsonMethods import *
 from Methods.ViewMethods import *
 
-manager = pg.UIManager((WIDTH, HEIGHT))
+manager = pg.UIManager((WIDTH, HEIGHT), theme_path='Views/PygameGui/PygameTheme.json')
 UI_REFRESH_RATE = CLOCK.tick(60) / 1000
 
 
@@ -138,20 +136,20 @@ def initialize_rocket_configuration_ui():
     config_pairs = get_texts_and_values_for_config_ui()
 
     create_ui_game_title_label("Simulation Time", WIDTH * 0.2, HEIGHT * 0.2, manager, "red")
-    create_ui_text_box_and_text_entry(config_pairs[6][1], config_pairs[6][0], WIDTH * 0.2, HEIGHT * 0.3, manager)
-    create_ui_text_box_and_text_entry(config_pairs[7][1], config_pairs[7][0], WIDTH * 0.2, HEIGHT * 0.35, manager)
-    create_ui_text_box_and_text_entry(config_pairs[8][1], config_pairs[8][0], WIDTH * 0.2, HEIGHT * 0.4, manager)
+    create_ui_text_box_and_text_entry(config_pairs[6][1], config_pairs[6][0], WIDTH * 0.2, HEIGHT * 0.3, manager, length=4)
+    create_ui_text_box_and_text_entry(config_pairs[7][1], config_pairs[7][0], WIDTH * 0.2, HEIGHT * 0.35, manager, length=2)
+    create_ui_text_box_and_text_entry(config_pairs[8][1], config_pairs[8][0], WIDTH * 0.2, HEIGHT * 0.4, manager, length=2)
 
     create_ui_game_title_label("Rocket Configuration", WIDTH * 0.7, HEIGHT * 0.2, manager, "red")
-    create_ui_text_box_and_text_entry(config_pairs[0][1], config_pairs[0][0], WIDTH * 0.7, HEIGHT * 0.3, manager)
+    create_ui_text_box_and_text_entry(config_pairs[0][1], config_pairs[0][0], WIDTH * 0.7, HEIGHT * 0.3, manager, length=3)
     create_ui_text_box(config_pairs[1][1], WIDTH * 0.7, HEIGHT * 0.35, manager)
     create_drop_down(planetNameArray,
                      planetNameArray.index(get_startplanet_name()),
                      WIDTH * 0.8, HEIGHT * 0.35, manager)
-    create_ui_text_box_and_text_entry(config_pairs[2][1], config_pairs[2][0], WIDTH * 0.7, HEIGHT * 0.4, manager)
-    create_ui_text_box_and_text_entry(config_pairs[3][1], config_pairs[3][0], WIDTH * 0.7, HEIGHT * 0.45, manager)
-    create_ui_text_box_and_text_entry(config_pairs[4][1], config_pairs[4][0], WIDTH * 0.7, HEIGHT * 0.5, manager)
-    create_ui_text_box_and_text_entry(config_pairs[5][1], config_pairs[5][0], WIDTH * 0.7, HEIGHT * 0.55, manager)
+    create_ui_text_box_and_text_entry(config_pairs[2][1], config_pairs[2][0], WIDTH * 0.7, HEIGHT * 0.4, manager, length=3)
+    create_ui_text_box_and_text_entry(config_pairs[3][1], config_pairs[3][0], WIDTH * 0.7, HEIGHT * 0.45, manager, length=2)
+    create_ui_text_box_and_text_entry(config_pairs[4][1], config_pairs[4][0], WIDTH * 0.7, HEIGHT * 0.5, manager, length=10)
+    create_ui_text_box_and_text_entry(config_pairs[5][1], config_pairs[5][0], WIDTH * 0.7, HEIGHT * 0.55, manager, length=10)
 
 
 # removes all ui elements => no used object_ids

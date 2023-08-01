@@ -45,7 +45,7 @@ class Planet:
         self.position_X[0] = x
         self.position_Y[0] = y
 
-    def attraction(self, other, i):
+    def attraction(self, other: __init__, i: int):
         otherposition_x, other_y = other.position_X[i], other.position_Y[i]  # double
         distance_x = otherposition_x - self.position_X[i]  # double
         distance_y = other_y - self.position_Y[i]  # double
@@ -73,7 +73,7 @@ class Planet:
         self.currentStep = 1
         self.currentCalculationStep = NUM_OF_PREDICTIONS
 
-    def set_scale(self, scale):
+    def set_scale(self, scale: float):
         self.scaleR *= scale
 
     def predict_step(self, i, planets: list[__init__], rocket):

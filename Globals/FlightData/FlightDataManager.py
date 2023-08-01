@@ -17,19 +17,19 @@ class SingletonMeta(type):
 
 class FlightDataManager(metaclass=SingletonMeta):
     def __init__(self):
-        self._flight_change_state = FlightChangeState.unchanged
-        self._show_distance = False
-        self._run = True
-        self._scale = STARTSCALE
-        self._draw_orbit = True
-        self._move_x = 0
-        self._move_y = 0
-        self._mouse_x = 0
-        self._mouse_y = 0
-        self._time_step = AllTimeSteps[0]
-        self._zoom_goal = ZoomGoal.rocket
-        self._time_passed = datetime.timedelta(seconds=0)
-        self._advanced_interface = True
+        self._flight_change_state: FlightChangeState = FlightChangeState.unchanged
+        self._show_distance: bool = False
+        self._run: bool = True
+        self._scale: float = STARTSCALE
+        self._draw_orbit: bool = True
+        self._move_x: float = 0
+        self._move_y: float = 0
+        self._mouse_x: float = 0
+        self._mouse_y: float = 0
+        self._time_step: float = AllTimeSteps[0]
+        self._zoom_goal: ZoomGoal = ZoomGoal.rocket
+        self._time_passed: datetime.timedelta = datetime.timedelta(seconds=0)
+        self._advanced_interface: bool = True
 
     @property
     def flight_change_state(self):

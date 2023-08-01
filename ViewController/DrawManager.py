@@ -1,3 +1,5 @@
+import datetime
+
 import numpy as np
 import math
 from pygame import Surface
@@ -103,7 +105,7 @@ class DrawManager:
                                               ))
 
     @staticmethod
-    def render_flight_interface(rocket: Rocket, now, planets):
+    def render_flight_interface(rocket: Rocket, now: datetime.datetime, planets: list[Planet]):
 
         if DATA.flight_change_state != FlightChangeState.paused:
             add_clock_time()
@@ -153,7 +155,7 @@ class DrawManager:
         angle_arc(rocket)
 
 
-def display_bar(rocket: Rocket, now):
+def display_bar(rocket: Rocket, now: datetime.datetime):
     # Complete bar
     pygame.draw.rect(WINDOW, (50, 50, 50), (0, 0, WIDTH * 1, HEIGHT * 0.1))
 

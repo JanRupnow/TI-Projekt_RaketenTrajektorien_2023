@@ -1,4 +1,4 @@
-import sys
+import pygame
 
 import Globals.Hotkeys as Keys
 
@@ -11,7 +11,7 @@ manager = pg.UIManager((WIDTH, HEIGHT))
 UI_REFRESH_RATE = CLOCK.tick(60) / 1000
 
 
-def change_hot_key_from_input(event, hotkey):
+def change_hot_key_from_input(event: pygame.Event, hotkey) -> str:
     if event.type == pg.UI_TEXT_ENTRY_FINISHED and event.ui_object_id == remove_spaces(hotkey[1] + "_input") \
             and event.text != "":
         jsonfile = open("./variables/hotkeys_config/current_hotkeys.json", "r+")
@@ -24,7 +24,7 @@ def change_hot_key_from_input(event, hotkey):
     return hotkey[0]
 
 
-def change_all_hot_keys_from_input(event, hotkeys):
+def change_all_hot_keys_from_input(event: pygame.Event, hotkeys):
     for hotkey in hotkeys:
         hotkey[0] = change_hot_key_from_input(event, hotkey)
 
@@ -42,7 +42,7 @@ def clear_settings_ui():
 
 def initialize_settings_ui():
     create_ui_settings_title_label()
-    create_ui_button("Close Settings", 0, 0, manager, length_x=WIDTH * 0.12, length_y=0.08 * HEIGHT)
+    create_ui_button("Close Settings (ESC)", 0, 0, manager, length_x=WIDTH * 0.12, length_y=0.08 * HEIGHT)
     create_ui_button("Reset Controls", WIDTH * 0.85, HEIGHT * 0.88, manager, length_x=WIDTH * 0.12, length_y=HEIGHT * 0.08)
     create_ui_game_title_label("Spaceflight Simulator", WIDTH * 0.4, HEIGHT * 0.05, manager)
     create_ui_settings_topic_label("General Controls (not mutable)", WIDTH * 0.1, HEIGHT * 0.125, manager, WIDTH * 0.18)
@@ -93,9 +93,6 @@ def show_settings_ui():
                 initialize_settings_ui()
             if check_key_down(event, Keys.h_close_window[0]):
                 show_gui = False
-            if event.type == pg.UI_TEXT_ENTRY_FINISHED and event.ui_object_id.endswith("_notMutable"):
-                manager.clear_and_reset()
-                initialize_settings_ui()
             if event.type == pg.UI_TEXT_ENTRY_FINISHED and event.ui_object_id.endswith("_input"):
                 if event.text != "":
                     if 32 < ord(event.text) < 127:

@@ -1,11 +1,13 @@
 import datetime
 import json
+import sys
+
 import pygame
 
 pygame.init()
 WIDTH, HEIGHT = pygame.display.Info().current_w, pygame.display.Info().current_h
 
-FONT_1 = pygame.font.SysFont("Arial", 21)
+FONT_1 = pygame.font.SysFont("Trebuchet MS", 21)
 
 COLOR_WHITE = (255, 255, 255)
 COLOR_UNIVERSE = (36, 36, 36)
@@ -51,10 +53,19 @@ AllTimeSteps = [1 / 60, 5 / 60, 10 / 60, 25 / 60, 100 / 60, 500 / 60, 1000 / 60,
 # must be twice the size so the array has room for calculations before resetting to 0:NUM_OF_PREDICTIONS
 LEN_OF_PREDICTIONS_ARRAY = NUM_OF_PREDICTIONS * 2
 
+if sys.platform.startswith('win'):
+    import ctypes
+    ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(u'LJ.SFS.v1')
+
 pygame.init()
-CLOCK = pygame.time.Clock()
 WINDOW = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
 
+rocket = pygame.image.load("Images/rocket-icon.png").convert_alpha()
+pygame.display.set_icon(rocket)
+pygame.display.set_caption("Spaceflight Simulator")
+pygame.display.set_allow_screensaver(True)
+
+CLOCK = pygame.time.Clock()
 WIDTH, HEIGHT = pygame.display.Info().current_w, pygame.display.Info().current_h
 
 

@@ -35,7 +35,7 @@ from numba import int32, float32, float64, typeof, types
         Planet(-5.204 * AU, 0, 71492 * 10 ** 3, COLOR_JUPITER, 1.898 * 10 ** 21, planetNameArray[6], 13.06 * 1000))),
     ("entryAngle", float32)])
 class Rocket:
-    def __init__(self, start_angle, fuel, mass, startplanet: Planet, radius, color, sun: Planet):
+    def __init__(self, start_angle: float, fuel: float, mass: float, startplanet: Planet, radius: float, color: tuple, sun: Planet):
         self.currentStep = CurrentStep
         self.currentCalculationStep = CurrentCalculationStep
         self.mass = mass
@@ -66,7 +66,7 @@ class Rocket:
         self.entryAngle = 0
 
     # Methode für die x-Komponente
-    def f2(self, v, i: int, distance_to_sun):
+    def f2(self, v, i: int, distance_to_sun: float):
         x = 0
         for planet in self.PlanetsInRangeList:
             r = self.get_distance_to_planet(planet, i)
@@ -86,7 +86,7 @@ class Rocket:
         return x
 
     # Methode für die z-Komponente
-    def f1(self, v, i: int, distance_to_sun):
+    def f1(self, v, i: int, distance_to_sun: float):
         z = 0
         for planet in self.PlanetsInRangeList:
             r = self.get_distance_to_planet(planet, i)
@@ -132,7 +132,7 @@ class Rocket:
         self.velocity_X[i + 1] = self.velocity_X[i] + k * self.time_step
         self.position_X[i + 1] = self.position_X[i] + self.velocity_X[i] * self.time_step
 
-    def set_scale(self, scale):
+    def set_scale(self, scale: float):
         self.radius *= scale
 
     def get_current_distance_to_next_planet(self):
@@ -141,7 +141,7 @@ class Rocket:
                        (self.position_Y[self.currentCalculationStep] - self.nearestPlanet.position_Y[
                            self.currentCalculationStep]) ** 2)
 
-    def get_relative_velocity(self, i):
+    def get_relative_velocity(self, i: int):
         if self.flightState == RocketFlightState.flying:
             return np.sqrt((self.velocity_X[i] - self.nearestPlanet.velocity_X[i]) ** 2
                            + (self.velocity_Y[i] - self.nearestPlanet.velocity_Y[i]) ** 2)
@@ -221,7 +221,7 @@ class Rocket:
             return
         self.nearestPlanet = min(planets, key=lambda x: self.get_distance_to_planet(x, self.currentStep))
 
-    def get_distance_to_planet(self, planet, step):
+    def get_distance_to_planet(self, planet: Planet, step: int):
         return np.sqrt((self.position_X[step] - planet.position_X[step]) ** 2
                        + (self.position_Y[step] - planet.position_Y[step]) ** 2)
 
