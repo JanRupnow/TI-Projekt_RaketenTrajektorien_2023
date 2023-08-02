@@ -183,7 +183,7 @@ def display_bar(rocket: Rocket, now: datetime.datetime):
     pygame.draw.rect(WINDOW, (20, 20, 20), (WIDTH * 0.37, HEIGHT * 0.05, WIDTH * 0.07, HEIGHT * 0.04))
 
     rocket_state = FONT_1.render(f'{rocket.flightState}', True, COLOR_WHITE)
-    WINDOW.blit(rocket_state, (WIDTH * 0.39, HEIGHT * 0.055))
+    WINDOW.blit(rocket_state, (WIDTH * 0.385, HEIGHT * 0.055))
     # Timestep
     pygame.draw.rect(WINDOW, (100, 100, 100), (WIDTH * 0.45, HEIGHT * 0.015, WIDTH * 0.07, HEIGHT * 0.04))
 
@@ -210,7 +210,7 @@ def display_bar(rocket: Rocket, now: datetime.datetime):
     pygame.draw.rect(WINDOW, (100, 100, 100), (WIDTH * 0.62, HEIGHT * 0.015, WIDTH * 0.07, HEIGHT * 0.04))
 
     year_text = FONT_1.render("Velocity", True, COLOR_WHITE)
-    WINDOW.blit(year_text, (WIDTH * 0.635, HEIGHT * 0.02))
+    WINDOW.blit(year_text, (WIDTH * 0.63, HEIGHT * 0.02))
 
     pygame.draw.rect(WINDOW, (20, 20, 20), (WIDTH * 0.62, HEIGHT * 0.05, WIDTH * 0.07, HEIGHT * 0.04))
 

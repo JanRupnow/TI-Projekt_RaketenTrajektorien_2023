@@ -19,7 +19,6 @@ def create_ui_text_box_and_text_entry_hotkey(hotkey, position_x, position_y, man
                                      relative_rect=pygame.Rect((position_x, position_y), (WIDTH * 0.1, HEIGHT * 0.05)),
                                      manager=manager,
                                      object_id=remove_spaces(hotkey[1] + "_text"))
-
     text_input = pg.elements.UITextEntryLine(relative_rect=pygame.Rect((position_x + WIDTH * 0.1, position_y),
                                                                        (WIDTH * 0.04, HEIGHT * 0.05)),
                                              manager=manager,
@@ -31,7 +30,7 @@ def create_ui_text_box_and_text_entry_hotkey(hotkey, position_x, position_y, man
     return text_box, text_input
 
 
-def get_rocket_imgage(rocket_image_number: int) -> pygame.image:
+def get_rocket_image(rocket_image_number: int) -> pygame.image:
     jsonfile = open("./Globals/RocketConfig/CurrentRocketConfig.json")
     config = json.load(jsonfile)
     img = pygame.image.load(config["Image"]["path"][rocket_image_number]).convert_alpha()
@@ -85,23 +84,13 @@ def create_ui_text_box(text, position_x, position_y, manager) -> pg.elements.UIT
                                      relative_rect=pygame.Rect((position_x, position_y), (WIDTH * 0.1, HEIGHT * 0.05)),
                                      manager=manager,
                                      object_id=remove_spaces(text[1] + "_text"))
-    text_box.set_active_effect(pg.TEXT_EFFECT_FADE_IN)
     return text_box
 
-
-def create_ui_settings_topic_label(text, position_x, position_y, manager, size_x=WIDTH * 0.1)  -> pg.elements.UILabel:
-    label = create_ui_label(text, position_x, position_y, manager, size_x)
-    label.text_horiz_alignment = "left"
-    label.text_colour = "red"
-    label.set_active_effect(pg.TEXT_EFFECT_FADE_IN)
-    label.rebuild()
-    return label
 
 
 def create_ui_game_title_label(text, position_x, position_y, manager, color="green")  -> pg.elements.UILabel:
     label = create_ui_label(text, position_x, position_y, manager)
     label.text_horiz_alignment = "center"
-    label.set_active_effect(pg.TEXT_EFFECT_FADE_IN)
     label.text_colour = color
     label.set_text_scale(15)
     label.rebuild()

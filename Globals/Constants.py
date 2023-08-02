@@ -8,6 +8,7 @@ pygame.init()
 WIDTH, HEIGHT = pygame.display.Info().current_w, pygame.display.Info().current_h
 
 FONT_1 = pygame.font.SysFont("Trebuchet MS", 21)
+TITLE_FONT_1 = pygame.font.SysFont("Trebuchet MS", 30, True)
 
 COLOR_WHITE = (255, 255, 255)
 COLOR_UNIVERSE = (36, 36, 36)
@@ -60,7 +61,7 @@ if sys.platform.startswith('win'):
 pygame.init()
 WINDOW = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
 
-rocket = pygame.image.load("Images/rocket-icon.png").convert_alpha()
+rocket = pygame.image.load("Images/RocketIcon.png").convert_alpha()
 pygame.display.set_icon(rocket)
 pygame.display.set_caption("Spaceflight Simulator")
 pygame.display.set_allow_screensaver(True)
