@@ -1,3 +1,5 @@
+import datetime
+
 import numpy as np
 import math
 from pygame import Surface
@@ -106,7 +108,7 @@ class DrawManager:
                                               ))
 
     @staticmethod
-    def render_flight_interface(rocket: Rocket, now, planets):
+    def render_flight_interface(rocket: Rocket, now: datetime.datetime, planets: list[Planet]):
 
         if DATA.flight_change_state != FlightChangeState.paused:
             add_clock_time()
@@ -152,23 +154,11 @@ class DrawManager:
             neptune_surface = FONT_1.render("- Neptune", True, COLOR_NEPTUNE)
             WINDOW.blit(neptune_surface, (15, 525))
 
-        distance = np.sqrt(
-            (rocket.position_X[rocket.currentStep] - rocket.nearestPlanet.position_X[
-                rocket.nearestPlanet.currentStep]) ** 2
-            + (rocket.position_Y[rocket.currentStep] - rocket.nearestPlanet.position_Y[
-                rocket.nearestPlanet.currentStep]) ** 2)
-        speed = round(
-            rocket.get_current_relative_velocity()) if distance < rocket.nearestPlanet.radius * 5 else round(
-            rocket.get_absolute_velocity())
-
-        rocket_velocity = FONT_1.render(f'Rocket Speed: {speed}km/h', True, COLOR_WHITE)
-        WINDOW.blit(rocket_velocity, (WIDTH * 0.75, HEIGHT * 0.8))
-        thrust_text = FONT_1.render(f'Thrust: {rocket.thrust}m/s^2', True, COLOR_WHITE)
-        WINDOW.blit(thrust_text, (WIDTH * 0.75, HEIGHT * 0.84))
         fuel_bar()
+        angle_arc(rocket)
 
 
-def display_bar(rocket: Rocket, now):
+def display_bar(rocket: Rocket, now: datetime.datetime):
     # Complete bar
     pygame.draw.rect(WINDOW, (50, 50, 50), (0, 0, WIDTH * 1, HEIGHT * 0.1))
 
@@ -190,8 +180,8 @@ def display_bar(rocket: Rocket, now):
     # State
     pygame.draw.rect(WINDOW, (100, 100, 100), (WIDTH * 0.37, HEIGHT * 0.015, WIDTH * 0.07, HEIGHT * 0.04))
 
-    year_text = FONT_1.render("State", True, COLOR_WHITE)
-    WINDOW.blit(year_text, (WIDTH * 0.39, HEIGHT * 0.02))
+    state_text = FONT_1.render("State", True, COLOR_WHITE)
+    WINDOW.blit(state_text, (WIDTH * 0.39, HEIGHT * 0.02))
 
     pygame.draw.rect(WINDOW, (20, 20, 20), (WIDTH * 0.37, HEIGHT * 0.05, WIDTH * 0.07, HEIGHT * 0.04))
 
@@ -200,24 +190,40 @@ def display_bar(rocket: Rocket, now):
     # Timestep
     pygame.draw.rect(WINDOW, (100, 100, 100), (WIDTH * 0.45, HEIGHT * 0.015, WIDTH * 0.07, HEIGHT * 0.04))
 
-    year_text = FONT_1.render("Step >>", True, COLOR_WHITE)
-    WINDOW.blit(year_text, (WIDTH * 0.465, HEIGHT * 0.02))
+    time_step_text = FONT_1.render("Step >>", True, COLOR_WHITE)
+    WINDOW.blit(time_step_text, (WIDTH * 0.465, HEIGHT * 0.02))
 
     pygame.draw.rect(WINDOW, (20, 20, 20), (WIDTH * 0.45, HEIGHT * 0.05, WIDTH * 0.07, HEIGHT * 0.04))
 
-    rocket_state = FONT_1.render(f'{int(DATA.time_step * 60)}x', True, COLOR_WHITE)
-    WINDOW.blit(rocket_state, (WIDTH * 0.465, HEIGHT * 0.055))
+    time_step_text = FONT_1.render(f'{int(DATA.time_step * 60)}x', True, COLOR_WHITE)
+    WINDOW.blit(time_step_text, (WIDTH * 0.465, HEIGHT * 0.055))
 
     # Zoom
     pygame.draw.rect(WINDOW, (100, 100, 100), (WIDTH * 0.53, HEIGHT * 0.015, WIDTH * 0.07, HEIGHT * 0.04))
 
-    year_text = FONT_1.render("Zoom", True, COLOR_WHITE)
-    WINDOW.blit(year_text, (WIDTH * 0.55, HEIGHT * 0.02))
+    zoom_text = FONT_1.render("Zoom", True, COLOR_WHITE)
+    WINDOW.blit(zoom_text, (WIDTH * 0.55, HEIGHT * 0.02))
 
     pygame.draw.rect(WINDOW, (20, 20, 20), (WIDTH * 0.53, HEIGHT * 0.05, WIDTH * 0.07, HEIGHT * 0.04))
 
-    rocket_state = FONT_1.render(f'{DATA.zoom_goal}', True, COLOR_WHITE)
-    WINDOW.blit(rocket_state, (WIDTH * 0.545, HEIGHT * 0.055))
+    zoom_text = FONT_1.render(f'{DATA.zoom_goal}', True, COLOR_WHITE)
+    WINDOW.blit(zoom_text, (WIDTH * 0.545, HEIGHT * 0.055))
+
+    # Current Speed
+    pygame.draw.rect(WINDOW, (100, 100, 100), (WIDTH * 0.62, HEIGHT * 0.015, WIDTH * 0.07, HEIGHT * 0.04))
+
+    year_text = FONT_1.render("Velocity", True, COLOR_WHITE)
+    WINDOW.blit(year_text, (WIDTH * 0.63, HEIGHT * 0.02))
+
+    pygame.draw.rect(WINDOW, (20, 20, 20), (WIDTH * 0.62, HEIGHT * 0.05, WIDTH * 0.07, HEIGHT * 0.04))
+
+    speed = round(
+        rocket.get_current_relative_velocity()) if rocket.nearestPlanet.distanceToRocket < rocket.nearestPlanet.radius * 5 else round(
+        rocket.get_absolute_velocity())
+
+    rocket_velocity = FONT_1.render(f'{speed} km/h', True, (0,160,0))
+    WINDOW.blit(rocket_velocity, (WIDTH * 0.625, HEIGHT * 0.055))
+
 
     # Time Passed
     total_seconds = DATA.time_passed.total_seconds()
@@ -226,32 +232,32 @@ def display_bar(rocket: Rocket, now):
     hours, remainder = divmod(remainder, 3_600)  # 3,600 seconds in an hour
     minutes, seconds = divmod(remainder, 60)  # 60 seconds in a minute
 
-    pygame.draw.rect(WINDOW, (100, 100, 100), (WIDTH * 0.8, HEIGHT * 0.015, WIDTH * 0.19, HEIGHT * 0.04))
+    pygame.draw.rect(WINDOW, (100, 100, 100), (WIDTH * 0.7, HEIGHT * 0.015, WIDTH * 0.19, HEIGHT * 0.04))
 
-    year_text = FONT_1.render("Time passed (Simulation):", True, COLOR_WHITE)
-    WINDOW.blit(year_text, (WIDTH * 0.81, HEIGHT * 0.02))
+    time_passed_text = FONT_1.render("Time passed (Simulation):", True, COLOR_WHITE)
+    WINDOW.blit(time_passed_text, (WIDTH * 0.71, HEIGHT * 0.02))
 
-    pygame.draw.rect(WINDOW, (20, 20, 20), (WIDTH * 0.8, HEIGHT * 0.05, WIDTH * 0.19, HEIGHT * 0.04))
+    pygame.draw.rect(WINDOW, (20, 20, 20), (WIDTH * 0.7, HEIGHT * 0.05, WIDTH * 0.19, HEIGHT * 0.04))
 
-    text_actual_time = FONT_1.render(
+    time_passed_text = FONT_1.render(
         f'{int(years)} {"year" if int(years) <= 1 else "years"}, {int(days)} {"day" if int(days) <= 1 else "days"}, {int(hours):02}:{int(minutes):02}:{int(seconds):02}' if years > 0 else
         f'{int(days)} {"day" if int(days) <= 1 else "days"}, {int(hours):02}:{int(minutes):02}:{int(seconds):02}',
         True, COLOR_WHITE)
-    WINDOW.blit(text_actual_time, (WIDTH * 0.81, HEIGHT * 0.055))
+    WINDOW.blit(time_passed_text, (WIDTH * 0.71, HEIGHT * 0.055))
 
     if rocket.flightState == RocketFlightState.flying and \
             rocket.nearestPlanet.distanceToRocket - rocket.nearestPlanet.radius < 3 / 2 * rocket.nearestPlanet.radius:
         pygame.draw.rect(WINDOW, (100, 100, 100), (WIDTH * 0.915, HEIGHT * 0.015, WIDTH * 0.07, HEIGHT * 0.04))
 
-        year_text = FONT_1.render("Altitude", True, COLOR_WHITE)
-        WINDOW.blit(year_text, (WIDTH * 0.93, HEIGHT * 0.02))
+        altitude_text = FONT_1.render("Altitude", True, COLOR_WHITE)
+        WINDOW.blit(altitude_text, (WIDTH * 0.93, HEIGHT * 0.02))
 
         pygame.draw.rect(WINDOW, (20, 20, 20), (WIDTH * 0.915, HEIGHT * 0.05, WIDTH * 0.07, HEIGHT * 0.04))
 
-        rocket_velocity = FONT_1.render(
+        altitude_text = FONT_1.render(
             f'{round((rocket.nearestPlanet.distanceToRocket - rocket.nearestPlanet.radius) / 1000, 0)} km',
             True, COLOR_WHITE)
-        WINDOW.blit(rocket_velocity, (WIDTH * 0.93, HEIGHT * 0.055))
+        WINDOW.blit(altitude_text, (WIDTH * 0.93, HEIGHT * 0.055))
 
 
 def fuel_bar():
@@ -262,4 +268,39 @@ def fuel_bar():
     pygame.draw.rect(WINDOW, (150, 150, 150),
                      (WIDTH * 0.925, HEIGHT * 0.8, WIDTH * 0.05, HEIGHT * 0.15 * (1 - percentage)))
     rocket_fuel = FONT_1.render(f'Fuel: {int(percentage * 100)}%', True, COLOR_WHITE)
-    WINDOW.blit(rocket_fuel, (WIDTH * 0.94, HEIGHT * 0.95))
+    WINDOW.blit(rocket_fuel, (WIDTH * 0.925, HEIGHT * 0.95))
+
+
+def angle_arc(rocket: Rocket):
+    radius = 125
+    center_x, center_y = WIDTH * 0.8, HEIGHT * 0.95
+    line_length = radius
+    pygame.draw.arc(WINDOW, (180, 180, 180), (center_x - radius, center_y - radius, radius * 2, radius * 2), 2*math.pi, math.pi)
+    x90 = center_x + radius * math.cos(0)
+    y90 = center_y - radius * math.sin(0)
+    x45 = center_x + line_length * math.cos(3*math.pi / 4)
+    y45 = center_y - line_length * math.sin(3*math.pi / 4)
+    x0 = center_x + radius * math.cos(math.pi /2)
+    y0 = center_y - radius * math.sin(math.pi /2)
+    x45_neg = center_x + line_length * math.cos(math.pi / 4)
+    y45_neg = center_y - line_length * math.sin(math.pi / 4)
+    x90_neg = center_x + radius * math.cos(math.pi)
+    y90_neg = center_y - radius * math.sin(math.pi)
+    pygame.draw.line(WINDOW, (180, 180, 180), (center_x, center_y), (x90, y90), 2)
+    pygame.draw.line(WINDOW, (180, 180, 180), (center_x, center_y), (x45, y45), 2)
+    pygame.draw.line(WINDOW, (180, 180, 180), (center_x, center_y), (x0, y0), 2)
+    pygame.draw.line(WINDOW, (180, 180, 180), (center_x, center_y), (x45_neg, y45_neg), 2)
+    pygame.draw.line(WINDOW, (180, 180, 180), (center_x, center_y), (x90_neg, y90_neg), 2)
+    # Draw the needle based on the given angle
+    angle_rad = math.radians(-rocket.angle+90)
+    min_size = line_length / 3
+    x_needle = center_x + (min_size + ((line_length-min_size) / 10 * rocket.thrust)) * math.cos(angle_rad)
+    y_needle = center_y - (min_size + ((line_length-min_size)/ 10 * rocket.thrust)) * math.sin(angle_rad)
+    pygame.draw.line(WINDOW, ((rocket.thrust / 10 * 255), ((10 - rocket.thrust) / 10 * 255), 0),
+                     (center_x, center_y),
+                     (x_needle,
+                     y_needle),
+                     5)
+
+    rocket_power = FONT_1.render(f'Power: {rocket.thrust * 10}%', True, COLOR_WHITE)
+    WINDOW.blit(rocket_power, (WIDTH * 0.77, HEIGHT * 0.96))
