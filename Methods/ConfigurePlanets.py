@@ -9,7 +9,7 @@ from ViewController.Planet import Planet
 
 # Metric from: https://nssdc.gsfc.nasa.gov/planetary/factsheet/
 
-def configure_planets():
+def configure_planets() -> list[Planet]:
     jsonfile = open("./Globals/RocketConfig/CurrentRocketConfig.json")
     config = json.load(jsonfile)
     time_year = config["StartTime"]["Year"]["value"]

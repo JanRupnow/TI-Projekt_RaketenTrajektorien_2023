@@ -3,7 +3,7 @@ from ViewController.Rocket.Rocket import Rocket
 from ViewController.DrawManager import DrawManager
 
 
-def load_rocket_from_path(path, planets: list[Planet]):
+def load_rocket_from_path(path, planets: list[Planet]) -> Rocket:
     jsonfile = open(path)
     config = json.load(jsonfile)
 
@@ -11,7 +11,6 @@ def load_rocket_from_path(path, planets: list[Planet]):
 
     img = pygame.image.load(config["Image"]["path"][config["Image"]["selectedNumber"]])
     img = pygame.transform.scale_by(img, 125 / img.get_width())
-
     rocket = Rocket(
         config["Start"]["AngleOnPlanet"]["value"],
         config["Mass"]["PropellantMass"]["value"],
@@ -38,7 +37,7 @@ def load_rocket_from_path(path, planets: list[Planet]):
     return rocket
 
 
-def load_rocket(planets: list[Planet]):
+def load_rocket(planets: list[Planet]) -> Rocket:
     try:
         return load_rocket_from_path("./Globals/RocketConfig/CurrentRocketConfig.json", planets)
     except:

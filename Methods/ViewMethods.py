@@ -1,28 +1,28 @@
 import json
 
 
-def get_start_month():
+def get_start_month() -> int:
     jsonfile = open("./Globals/RocketConfig/CurrentRocketConfig.json")
     config = json.load(jsonfile)
     month = config["StartTime"]["Month"]["value"]
     return month
 
 
-def get_start_day():
+def get_start_day() -> int:
     jsonfile = open("./Globals/RocketConfig/CurrentRocketConfig.json")
     config = json.load(jsonfile)
     day = config["StartTime"]["Day"]["value"]
     return day
 
 
-def get_start_year():
+def get_start_year() -> int:
     jsonfile = open("./Globals/RocketConfig/CurrentRocketConfig.json")
     config = json.load(jsonfile)
     year = config["StartTime"]["Year"]["value"]
     return year
 
 
-def check_date_is_legal(month, day):
+def check_date_is_legal(month, day) -> bool:
     if month in [1, 3, 5, 7, 8, 10, 12]:
         if 0 < day <= 31:
             return True

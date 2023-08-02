@@ -1,3 +1,5 @@
+import numpy as np
+
 from Views.HotkeyView import *
 
 from ViewController.Planet import Planet

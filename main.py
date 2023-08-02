@@ -4,14 +4,14 @@ from ViewController.GameManager import GameManager
 
 from Globals.FlightData.FlightDataManager import DATA
 
-from Methods.PackageInstaller import install_all_packages
+from Methods.PackageInstaller import package_installer
 from Methods.ConfigurePlanets import configure_planets
 from Methods.GameMethods import process_hot_key_events
 from Methods.RocketConfig import load_rocket
 
 
 def main():
-    install_all_packages()
+    package_installer()
     show_start_ui()
     planets = configure_planets()
     rocket = load_rocket(planets)
