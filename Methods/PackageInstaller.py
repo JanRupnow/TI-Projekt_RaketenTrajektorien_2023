@@ -18,6 +18,7 @@ def install_requirements():
         print(f"You have to search for 'cmd' in your Windows search")
         print(f"Command: pip install 'package_name'=='desired_version'")
         print(f"Example: pip install numpy==1.23.5")
+        sys.exit()
 
 
 def package_installer():
