@@ -47,7 +47,7 @@
         "blue": 255
     },
     "Image": {
-        "selectedNumber": 3,
+        "selectedNumber": 2,
         "path": [
             "./Images/Rocket1.png",
             "./Images/Rocket2.png",

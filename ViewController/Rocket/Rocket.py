@@ -31,6 +31,8 @@ from numba import int32, float32, float64, typeof, types
     ("angle", float32),
     ("flightState", typeof(RocketFlightState.flying)),
     ("color", typeof((1, 1, 1))),
+    ("startplanet", typeof(
+        Planet(-5.204 * AU, 0, 71492 * 10 ** 3, COLOR_JUPITER, 1.898 * 10 ** 21, planetNameArray[6], 13.06 * 1000))),
     ("sun", typeof(
         Planet(-5.204 * AU, 0, 71492 * 10 ** 3, COLOR_JUPITER, 1.898 * 10 ** 21, planetNameArray[6], 13.06 * 1000))),
     ("entryAngle", float32)])
@@ -41,6 +43,7 @@ class Rocket:
         self.mass = mass
         self.fuelmass = fuel
         # TODO angle refactor
+        self.startplanet = startplanet
         self.PlanetsInRangeList = [startplanet]
         self.nearestPlanet = startplanet
         self.planetAngle = start_angle
@@ -65,6 +68,7 @@ class Rocket:
         self.sun = sun
         self.entryAngle = 0
 
+    """
     # Methode für die x-Komponente
     def f2(self, v, i: int, distance_to_sun: float):
         x = 0
@@ -106,31 +110,72 @@ class Rocket:
             z += math.sin(
                 math.atan2(self.velocity_Y[i], self.velocity_X[i]) + self.angle * np.pi / 180) * self.thrust * 10
         return z
+    """
+    def f(self, v_x, v_y, i, distance_to_sun):
+        x = 0
+        y = 0
+        for planet in self.PlanetsInRangeList:
+            r = np.sqrt((self.position_X[i] - planet.position_X[i])**2
+                        + (self.position_Y[i] - planet.position_Y[i])**2)
+
+            abs_a = (G * planet.mass / r ** 2)
+
+            # Luftwiderstand nur auf der Erde berechnen und nur bis 100km Höhe
+            if planet.name == "Earth" and r < 100_000:
+                abs_a += ((AirResistance * (v_x**2 + v_y**2) * np.sign(self.velocity_Y[i]) *
+                            p_0 * np.exp(-abs((r - planet.radius)) / h_s))
+                         / (2 * self.mass))
+
+            sign_x = 1 if (self.position_X[i] - planet.position_X[i]) < 0 else -1
+            sign_y = 1 if (self.position_Y[i] - planet.position_Y[i]) < 0 else -1
+
+            x += sign_x * abs_a * ((self.position_X[i] - planet.position_X[i]) / r)
+            y += sign_y * abs_a * ((self.position_Y[i] - planet.position_Y[i]) / r)
+
+        x -= (G * self.sun.mass / distance_to_sun ** 2) * (
+                (self.position_X[i] - self.sun.position_X[i]) / distance_to_sun)
+        y -= (G * self.sun.mass / distance_to_sun ** 2) * (
+                (self.position_Y[i] - self.sun.position_Y[i]) / distance_to_sun)
+
+        if self.thrust != 0:
+            x += math.cos(math.atan2(self.velocity_Y[i],
+                                     self.velocity_X[i])
+                          + self.angle * np.pi / 180) * self.thrust * 10
+
+            y += math.sin(math.atan2(self.velocity_Y[i],
+                                     self.velocity_X[i])
+                          + self.angle * np.pi / 180) * self.thrust * 10
+
+        return x, y
+
 
     # Berechnung nach Runge-Kutta Verfahren
     def calculate_next_step(self, i: int):
 
-        distance_to_sun = np.sqrt(
-            (self.position_X[i] - self.sun.position_X[i]) ** 2 + (self.position_Y[i] - self.sun.position_Y[i]) ** 2)
+        distance_to_sun = np.sqrt((self.position_X[i] - self.sun.position_X[i]) ** 2
+                                  + (self.position_Y[i] - self.sun.position_Y[i]) ** 2)
 
-        # z-Komponente
-        k1 = self.f1(self.velocity_Y[i], i, distance_to_sun)
-        k2 = self.f1(self.velocity_Y[i] + k1 * self.time_step / 2, i, distance_to_sun)
-        k3 = self.f1(self.velocity_Y[i] + k2 * self.time_step / 2, i, distance_to_sun)
-        k4 = self.f1(self.velocity_Y[i] + k3 * self.time_step / 2, i, distance_to_sun)
-        k = (k1 + 2 * k2 + 2 * k3 + k4) / 6
-        self.velocity_Y[i + 1] = self.velocity_Y[i] + k * self.time_step
-        self.position_Y[i + 1] = self.position_Y[i] + self.velocity_Y[i] * self.time_step
+        k1_x, k1_y = self.f(self.velocity_X[i] - self.startplanet.velocity_X[i],
+                            (self.velocity_Y[i] - self.startplanet.velocity_Y[i]),
+                            i, distance_to_sun)
+        k2_x, k2_y = self.f((self.velocity_X[i] - self.startplanet.velocity_X[i]) + k1_x*self.time_step/2,
+                            (self.velocity_Y[i] - self.startplanet.velocity_Y[i]) + k1_y*self.time_step/2,
+                            i, distance_to_sun)
+        k3_x, k3_y = self.f((self.velocity_X[i] - self.startplanet.velocity_X[i]) + k2_x*self.time_step/2,
+                            (self.velocity_Y[i] - self.startplanet.velocity_Y[i]) + k2_y*self.time_step/2,
+                            i, distance_to_sun)
+        k4_x, k4_y = self.f((self.velocity_X[i] - self.startplanet.velocity_X[i]) + k3_x * self.time_step / 2,
+                            (self.velocity_Y[i] - self.startplanet.velocity_Y[i]) + k3_y * self.time_step / 2,
+                            i, distance_to_sun)
 
-        # x-Komponente
-        k1 = self.f2(self.velocity_X[i], i, distance_to_sun)
-        k2 = self.f2(self.velocity_X[i] + k1 * self.time_step / 2, i, distance_to_sun)
-        k3 = self.f2(self.velocity_X[i] + k2 * self.time_step / 2, i, distance_to_sun)
-        k4 = self.f2(self.velocity_X[i] + k3 * self.time_step / 2, i, distance_to_sun)
-        k = (k1 + 2 * k2 + 2 * k3 + k4) / 6
+        k_x = (k1_x + 2*k2_x + 2*k3_x + k4_x) / 6
+        k_y = (k1_y + 2*k2_y + 2*k3_y + k4_y) / 6
 
-        self.velocity_X[i + 1] = self.velocity_X[i] + k * self.time_step
+        self.velocity_X[i + 1] = self.velocity_X[i] + k_x * self.time_step
         self.position_X[i + 1] = self.position_X[i] + self.velocity_X[i] * self.time_step
+
+        self.velocity_Y[i + 1] = self.velocity_Y[i] + k_y * self.time_step
+        self.position_Y[i + 1] = self.position_Y[i] + self.velocity_Y[i] * self.time_step
 
     def set_scale(self, scale: float):
         self.radius *= scale
