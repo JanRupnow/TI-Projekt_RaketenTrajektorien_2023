@@ -216,13 +216,13 @@ def reset_current_rocket_config():
 
 
 def update_rocket_configs(event):
-    jsonfile = open("./Globals/RocketConfig/CurrentRocketConfig.json", "r+")
-    new_json = Keys.update_key_in_json_rocket(json.load(jsonfile), event.ui_object_id, event.text)
+    json_file = open("./Globals/RocketConfig/CurrentRocketConfig.json", "r+")
+    new_json = Keys.update_key_in_json_rocket(json.load(json_file), event.ui_object_id, event.text)
 
-    jsonfile.seek(0)
-    jsonfile.truncate()
-    json.dump(new_json, jsonfile, indent=4, ensure_ascii=False)
-    jsonfile.close()
+    json_file.seek(0)
+    json_file.truncate()
+    json.dump(new_json, json_file, indent=4, ensure_ascii=False)
+    json_file.close()
 
 
 def get_selected_rocket():
@@ -234,20 +234,20 @@ def get_startplanet_name():
 
 
 def update_selected_rocket(selected_rocket):
-    jsonfile = open("./Globals/RocketConfig/CurrentRocketConfig.json", "r+")
+    json_file = open("./Globals/RocketConfig/CurrentRocketConfig.json", "r+")
 
-    config = json.load(jsonfile)
+    config = json.load(json_file)
     config["Image"]["selectedNumber"] = selected_rocket
 
-    jsonfile.seek(0)
-    jsonfile.truncate()
-    json.dump(config, jsonfile, indent=4, ensure_ascii=False)
-    jsonfile.close()
+    json_file.seek(0)
+    json_file.truncate()
+    json.dump(config, json_file, indent=4, ensure_ascii=False)
+    json_file.close()
 
 
 def get_texts_and_values_for_config_ui():
-    jsonfile = open("./Globals/RocketConfig/CurrentRocketConfig.json", "r")
-    config = json.load(jsonfile)
+    json_file = open("./Globals/RocketConfig/CurrentRocketConfig.json", "r")
+    config = json.load(json_file)
 
     config_pairs = []
 
@@ -258,5 +258,5 @@ def get_texts_and_values_for_config_ui():
         except:
             pass
 
-    jsonfile.close()
+    json_file.close()
     return config_pairs

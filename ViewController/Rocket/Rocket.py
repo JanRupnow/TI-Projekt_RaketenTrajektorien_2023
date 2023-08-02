@@ -37,36 +37,37 @@ from numba import int32, float32, float64, typeof, types
         Planet(-5.204 * AU, 0, 71492 * 10 ** 3, COLOR_JUPITER, 1.898 * 10 ** 21, planetNameArray[6], 13.06 * 1000))),
     ("entryAngle", float32)])
 class Rocket:
-    def __init__(self, start_angle: float, fuel: float, mass: float, startplanet: Planet, radius: float, color: tuple, sun: Planet):
-        self.currentStep = CurrentStep
-        self.currentCalculationStep = CurrentCalculationStep
-        self.mass = mass
-        self.fuelmass = fuel
+    def __init__(self, start_angle: float, fuel: float, mass: float, startplanet: Planet, radius: float, color: tuple,
+                 sun: Planet):
+        self.currentStep: int = CurrentStep
+        self.currentCalculationStep: int = CurrentCalculationStep
+        self.mass: float = mass
+        self.fuelmass: float = fuel
         # TODO angle refactor
-        self.startplanet = startplanet
-        self.PlanetsInRangeList = [startplanet]
-        self.nearestPlanet = startplanet
-        self.planetAngle = start_angle
-        self.position_X = np.zeros(LEN_OF_PREDICTIONS_ARRAY)  # x-Position [m]
-        self.position_Y = np.zeros(LEN_OF_PREDICTIONS_ARRAY)  # z-Position [m]
-        self.velocity_X = np.zeros(LEN_OF_PREDICTIONS_ARRAY)  # x-Velocity [m/s]
-        self.velocity_Y = np.zeros(LEN_OF_PREDICTIONS_ARRAY)  # z-Velocity [m/s]
-        self.time_step = 1 / 60
-        self.c = AirResistance / self.mass
-        self.radius = radius
-        self.thrust = 0  # aktuell nicht genutzt
-        self.angle = 0
-        self.flightState = RocketFlightState.landed
-        self.color = color
-        self.velocity_X[0] = self.nearestPlanet.velocity_X[0]
-        self.velocity_Y[0] = self.nearestPlanet.velocity_Y[0]
+        self.startplanet: Planet = startplanet
+        self.PlanetsInRangeList: list[Planet] = [startplanet]
+        self.nearestPlanet: Planet = startplanet
+        self.planetAngle: float = start_angle
+        self.position_X: np.array = np.zeros(LEN_OF_PREDICTIONS_ARRAY)  # x-Position [m]
+        self.position_Y: np.array = np.zeros(LEN_OF_PREDICTIONS_ARRAY)  # z-Position [m]
+        self.velocity_X: np.array = np.zeros(LEN_OF_PREDICTIONS_ARRAY)  # x-Velocity [m/s]
+        self.velocity_Y: np.array = np.zeros(LEN_OF_PREDICTIONS_ARRAY)  # z-Velocity [m/s]
+        self.time_step: float = 1 / 60
+        self.c: float = AirResistance / self.mass
+        self.radius: float = radius
+        self.thrust: int = 0  # aktuell nicht genutzt
+        self.angle: float = 0
+        self.flightState: RocketFlightState = RocketFlightState.landed
+        self.color: tuple = color
+        self.velocity_X[0]: np.array = self.nearestPlanet.velocity_X[0]
+        self.velocity_Y[0]: np.array = self.nearestPlanet.velocity_Y[0]
         # Berechnung der Startposition der Rakete abhängig vom Startplaneten ohne Skalierung
         self.position_X[0] = startplanet.position_X[self.currentStep] + startplanet.radius * np.cos(
             self.planetAngle * np.pi / 180)
         self.position_Y[0] = startplanet.position_Y[self.currentStep] + startplanet.radius * np.sin(
             self.planetAngle * np.pi / 180)
-        self.sun = sun
-        self.entryAngle = 0
+        self.sun: Planet = sun
+        self.entryAngle: float = 0
 
     """
     # Methode für die x-Komponente
@@ -111,23 +112,24 @@ class Rocket:
                 math.atan2(self.velocity_Y[i], self.velocity_X[i]) + self.angle * np.pi / 180) * self.thrust * 10
         return z
     """
-    def f(self, v_x, v_y, i, distance_to_sun):
+
+    def f(self, v_x: float, v_y: float, i: int, distance_to_sun: float):
         x = 0
         y = 0
         for planet in self.PlanetsInRangeList:
-            r = np.sqrt((self.position_X[i] - planet.position_X[i])**2
-                        + (self.position_Y[i] - planet.position_Y[i])**2)
+            r = np.sqrt((self.position_X[i] - planet.position_X[i]) ** 2
+                        + (self.position_Y[i] - planet.position_Y[i]) ** 2)
 
             abs_a = (G * planet.mass / r ** 2)
 
             # Luftwiderstand nur auf der Erde berechnen und nur bis 100km Höhe
             if planet.name == "Earth" and r < 100_000:
-                abs_a += ((AirResistance * (v_x**2 + v_y**2) * np.sign(self.velocity_Y[i]) *
-                            p_0 * np.exp(-abs((r - planet.radius)) / h_s))
-                         / (2 * self.mass))
+                abs_a += ((AirResistance * (v_x ** 2 + v_y ** 2) * np.sign(self.velocity_Y[i]) *
+                           p_0 * np.exp(-abs((r - planet.radius)) / h_s))
+                          / (2 * self.mass))
 
-            sign_x = 1 if (self.position_X[i] - planet.position_X[i]) < 0 else -1
-            sign_y = 1 if (self.position_Y[i] - planet.position_Y[i]) < 0 else -1
+            sign_x = np.sign(self.position_X[i] - planet.position_X[i])
+            sign_y = np.sign(self.position_Y[i] - planet.position_Y[i])
 
             x += sign_x * abs_a * ((self.position_X[i] - planet.position_X[i]) / r)
             y += sign_y * abs_a * ((self.position_Y[i] - planet.position_Y[i]) / r)
@@ -148,7 +150,6 @@ class Rocket:
 
         return x, y
 
-
     # Berechnung nach Runge-Kutta Verfahren
     def calculate_next_step(self, i: int):
 
@@ -158,18 +159,18 @@ class Rocket:
         k1_x, k1_y = self.f(self.velocity_X[i] - self.startplanet.velocity_X[i],
                             (self.velocity_Y[i] - self.startplanet.velocity_Y[i]),
                             i, distance_to_sun)
-        k2_x, k2_y = self.f((self.velocity_X[i] - self.startplanet.velocity_X[i]) + k1_x*self.time_step/2,
-                            (self.velocity_Y[i] - self.startplanet.velocity_Y[i]) + k1_y*self.time_step/2,
+        k2_x, k2_y = self.f((self.velocity_X[i] - self.startplanet.velocity_X[i]) + k1_x * self.time_step / 2,
+                            (self.velocity_Y[i] - self.startplanet.velocity_Y[i]) + k1_y * self.time_step / 2,
                             i, distance_to_sun)
-        k3_x, k3_y = self.f((self.velocity_X[i] - self.startplanet.velocity_X[i]) + k2_x*self.time_step/2,
-                            (self.velocity_Y[i] - self.startplanet.velocity_Y[i]) + k2_y*self.time_step/2,
+        k3_x, k3_y = self.f((self.velocity_X[i] - self.startplanet.velocity_X[i]) + k2_x * self.time_step / 2,
+                            (self.velocity_Y[i] - self.startplanet.velocity_Y[i]) + k2_y * self.time_step / 2,
                             i, distance_to_sun)
         k4_x, k4_y = self.f((self.velocity_X[i] - self.startplanet.velocity_X[i]) + k3_x * self.time_step / 2,
                             (self.velocity_Y[i] - self.startplanet.velocity_Y[i]) + k3_y * self.time_step / 2,
                             i, distance_to_sun)
 
-        k_x = (k1_x + 2*k2_x + 2*k3_x + k4_x) / 6
-        k_y = (k1_y + 2*k2_y + 2*k3_y + k4_y) / 6
+        k_x = (k1_x + 2 * k2_x + 2 * k3_x + k4_x) / 6
+        k_y = (k1_y + 2 * k2_y + 2 * k3_y + k4_y) / 6
 
         self.velocity_X[i + 1] = self.velocity_X[i] + k_x * self.time_step
         self.position_X[i + 1] = self.position_X[i] + self.velocity_X[i] * self.time_step
@@ -201,10 +202,10 @@ class Rocket:
         return 0
 
     # in m/s
-    def get_absolute_velocity(self):
+    def get_absolute_velocity(self) -> float:
         if self.flightState == RocketFlightState.flying:
             return np.sqrt(self.velocity_X[self.currentStep] ** 2 + self.velocity_Y[self.currentStep] ** 2)
-        return 0
+        return 0.0
 
     def reset_array(self):
         self.position_X[1:NUM_OF_PREDICTIONS + 1] = self.position_X[NUM_OF_PREDICTIONS:]
@@ -266,7 +267,7 @@ class Rocket:
             return
         self.nearestPlanet = min(planets, key=lambda x: self.get_distance_to_planet(x, self.currentStep))
 
-    def get_distance_to_planet(self, planet: Planet, step: int):
+    def get_distance_to_planet(self, planet: Planet, step: int) -> float:
         return np.sqrt((self.position_X[step] - planet.position_X[step]) ** 2
                        + (self.position_Y[step] - planet.position_Y[step]) ** 2)
 

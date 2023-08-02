@@ -52,7 +52,7 @@ def shift_time_step(shift_up, planets: list[Planet], rocket: Rocket):
         DATA.flight_change_state = FlightChangeState.timeStepChanged
 
 
-def planet_is_in_screen(planet: Planet):
+def planet_is_in_screen(planet: Planet) -> bool:
     in_screen = planet.position_Y[
                    planet.currentStep] * DATA.scale + planet.radius * DATA.scale > -DATA.move_y - HEIGHT / 2
     in_screen = in_screen and planet.position_Y[
@@ -63,7 +63,7 @@ def planet_is_in_screen(planet: Planet):
         planet.currentStep] * DATA.scale - planet.radius * DATA.scale < -DATA.move_x + WIDTH / 2
 
 
-def process_hot_key_events(event, rocket: Rocket, planets: list[Planet]):
+def process_hot_key_events(event, rocket: Rocket, planets: list[Planet]) -> (pygame.Event, Rocket, list[Planet]):
     from ViewController.DrawManager import DrawManager
 
     key_pressed = pygame.key.get_pressed()
@@ -180,7 +180,7 @@ def process_hot_key_events(event, rocket: Rocket, planets: list[Planet]):
     return event, rocket, planets
 
 
-def line_is_in_screen(line):
+def line_is_in_screen(line) -> np.array:
     line_in_screen = line[(line[:, 0] < -DATA.move_x + WIDTH / 2) & (line[:, 0] > -DATA.move_x - WIDTH / 2)]
     line_in_screen = line_in_screen[
         (line_in_screen[:, 1] > -DATA.move_y - HEIGHT / 2) & (line_in_screen[:, 1] < -DATA.move_y + HEIGHT / 2)]

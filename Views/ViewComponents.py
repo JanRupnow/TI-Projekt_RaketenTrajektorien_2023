@@ -6,14 +6,16 @@ from Globals.Constants import *
 from Methods.SupportMethods import *
 
 
-def create_ui_label(text, position_x, position_y, manager, size_x=WIDTH * 0.15, size_y=HEIGHT * 0.1) -> pg.elements.UILabel:
+def create_ui_label(text, position_x, position_y, manager, size_x=WIDTH * 0.15,
+                    size_y=HEIGHT * 0.1) -> pg.elements.UILabel:
     return pg.elements.UILabel(relative_rect=pygame.Rect((position_x, position_y), (size_x, size_y)),
                                text=text,
                                manager=manager,
                                object_id=remove_spaces(text + "_label"))
 
 
-def create_ui_text_box_and_text_entry_hotkey(hotkey, position_x, position_y, manager, mutable=True, entry_text=None) -> (pg.elements.UITextBox, pg.elements.UITextEntryLine):
+def create_ui_text_box_and_text_entry_hotkey(hotkey, position_x, position_y, manager, mutable=True,
+                                             entry_text=None) -> (pg.elements.UITextBox, pg.elements.UITextEntryLine):
     text_box = pg.elements.UITextBox(hotkey[1],
                                      relative_rect=pygame.Rect((position_x, position_y), (WIDTH * 0.1, HEIGHT * 0.05)),
                                      manager=manager,
@@ -28,13 +30,14 @@ def create_ui_text_box_and_text_entry_hotkey(hotkey, position_x, position_y, man
 
     return text_box, text_input
 
+
 def create_rocket_image(rocket_image_number: int, manager: pygame_gui.UIManager, position_x=WIDTH * 0.5,
                         position_y=HEIGHT * 0.5) -> pg.elements.UIImage:
     for element in manager.root_container.elements:
         if "rocket_image" in element.get_object_ids():
             element.kill()
-    jsonfile = open("./Globals/RocketConfig/CurrentRocketConfig.json")
-    config = json.load(jsonfile)
+    json_file = open("./Globals/RocketConfig/CurrentRocketConfig.json")
+    config = json.load(json_file)
     img = pygame.image.load(config["Image"]["path"][rocket_image_number]).convert_alpha()
     img = pygame.transform.scale_by(img, 300 / img.get_height())
     image_rect = img.get_rect()
@@ -43,7 +46,9 @@ def create_rocket_image(rocket_image_number: int, manager: pygame_gui.UIManager,
                                 image_surface=img, manager=manager, object_id="rocket_image")
     return image
 
-def create_ui_text_box_and_text_entry(text, value, position_x, position_y, manager, size_x=0, size_y=0, length=20) -> (pg.elements.UITextBox, pg.elements.UITextEntryLine):
+
+def create_ui_text_box_and_text_entry(text, value, position_x, position_y, manager, size_x=0, size_y=0, length=20) -> (
+pg.elements.UITextBox, pg.elements.UITextEntryLine):
     text_box = pg.elements.UITextBox(text,
                                      relative_rect=pygame.Rect((position_x, position_y),
                                                                (WIDTH * 0.1 + size_x, size_y + HEIGHT * 0.05)),
@@ -78,7 +83,8 @@ def create_ui_text_box(text, position_x, position_y, manager) -> pg.elements.UIT
     return text_box
 
 
-def create_ui_button(text, position_x, position_y, manager, length_x=WIDTH * 0.07, length_y=HEIGHT * 0.07) -> pg.elements.UIButton:
+def create_ui_button(text, position_x, position_y, manager, length_x=WIDTH * 0.07,
+                     length_y=HEIGHT * 0.07) -> pg.elements.UIButton:
     button = pg.elements.UIButton(relative_rect=pygame.Rect((position_x, position_y), (length_x, length_y)),
                                   text=text,
                                   manager=manager,

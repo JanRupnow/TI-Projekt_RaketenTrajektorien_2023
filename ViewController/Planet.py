@@ -26,28 +26,28 @@ from numba import int32, float32, float64, typeof
 class Planet:
 
     def __init__(self, x, y, radius, color, mass, name, velocity):
-        self.radius = radius
-        self.color = color
-        self.mass = mass
-        self.name = name
-        self.distanceToRocket = 2 * radius
+        self.radius: float = radius
+        self.color: tuple = color
+        self.mass: float = mass
+        self.name: str = name
+        self.distanceToRocket: float = 2 * radius
         # drawing radius used only for displaying not calculating!!!
-        self.scaleR = radius
-        self.meanVelocity = velocity
-        self.time_step = 1 / 60
-        self.position_X = np.zeros(LEN_OF_PREDICTIONS_ARRAY)
-        self.position_Y = np.zeros(LEN_OF_PREDICTIONS_ARRAY)
-        self.velocity_X = np.zeros(LEN_OF_PREDICTIONS_ARRAY)
-        self.velocity_Y = np.zeros(LEN_OF_PREDICTIONS_ARRAY)
-        self.currentStep = 0
-        self.currentCalculationStep = 0
+        self.scaleR: float = radius
+        self.meanVelocity: float = velocity
+        self.time_step: float = 1 / 60
+        self.position_X: np.array = np.zeros(LEN_OF_PREDICTIONS_ARRAY)
+        self.position_Y: np.array = np.zeros(LEN_OF_PREDICTIONS_ARRAY)
+        self.velocity_X: np.array = np.zeros(LEN_OF_PREDICTIONS_ARRAY)
+        self.velocity_Y: np.array = np.zeros(LEN_OF_PREDICTIONS_ARRAY)
+        self.currentStep: int = 0
+        self.currentCalculationStep: int = 0
 
         self.position_X[0] = x
         self.position_Y[0] = y
 
-    def attraction(self, other: __init__, i: int):
-        otherposition_x, other_y = other.position_X[i], other.position_Y[i]  # double
-        distance_x = otherposition_x - self.position_X[i]  # double
+    def attraction(self, other: __init__, i: int) -> (float, float):
+        other_position_x, other_y = other.position_X[i], other.position_Y[i]  # double
+        distance_x = other_position_x - self.position_X[i]  # double
         distance_y = other_y - self.position_Y[i]  # double
         distance = math.sqrt(distance_x ** 2 + distance_y ** 2)  # double
         force = G * self.mass * other.mass / distance ** 2  # double
@@ -119,7 +119,7 @@ class Planet:
                                                                self.currentCalculationStep + 1] * self.time_step
         self.currentCalculationStep += 1
 
-    def check_collision(self):
+    def check_collision(self) -> bool:
         if self.distanceToRocket <= self.radius * 95 / 100:
             return True
         return False

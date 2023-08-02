@@ -13,16 +13,17 @@ settings_font_header = pygame.font.SysFont("Trebuchet MS", 16)
 rocket_background_img = pygame.image.load("Images/Rocket_Background_Image.png").convert_alpha()
 rocket_background_img = pygame.transform.scale(rocket_background_img, (WIDTH, HEIGHT))
 
+
 def change_hot_key_from_input(event: pygame.Event, hotkey) -> str:
     if event.type == pg.UI_TEXT_ENTRY_FINISHED and event.ui_object_id == remove_spaces(hotkey[1] + "_input") \
             and event.text != "":
-        jsonfile = open("./variables/hotkeys_config/current_hotkeys.json", "r+")
+        json_file = open("./variables/hotkeys_config/current_hotkeys.json", "r+")
         hotkey[0] = ord(event.text)
-        new_json = Keys.update_key_in_json(json.load(jsonfile), hotkey)
+        new_json = Keys.update_key_in_json(json.load(json_file), hotkey)
 
-        jsonfile.seek(0)
-        jsonfile.truncate()
-        json.dump(new_json, jsonfile, indent=4, ensure_ascii=False)
+        json_file.seek(0)
+        json_file.truncate()
+        json.dump(new_json, json_file, indent=4, ensure_ascii=False)
     return hotkey[0]
 
 
@@ -31,13 +32,10 @@ def change_all_hot_keys_from_input(event: pygame.Event, hotkeys):
         hotkey[0] = change_hot_key_from_input(event, hotkey)
 
 
-def clear_settings_ui():
-    manager.clear_and_reset()
-
-
 def initialize_settings_ui():
-    create_ui_button("Close Settings (ESC)", 0, 0, manager, length_x=WIDTH * 0.12-1, length_y=0.08-1 * HEIGHT)
-    create_ui_button("Reset Controls", WIDTH * 0.88+1, 0, manager, length_x=WIDTH * 0.12-1, length_y=HEIGHT * 0.08-1)
+    create_ui_button("Close Settings (ESC)", 0, 0, manager, length_x=WIDTH * 0.12 - 1, length_y=0.08 - 1 * HEIGHT)
+    create_ui_button("Reset Controls", WIDTH * 0.88 + 1, 0, manager, length_x=WIDTH * 0.12 - 1,
+                     length_y=HEIGHT * 0.08 - 1)
     create_ui_text_box_and_text_entry_hotkey(Keys.h_switch_interface, WIDTH * 0.1, HEIGHT * 0.2, manager, False, "Q")
     create_ui_text_box_and_text_entry_hotkey(Keys.h_leave_simulation, WIDTH * 0.1, HEIGHT * 0.25, manager, False, "X")
     create_ui_text_box_and_text_entry_hotkey(Keys.h_open_settings, WIDTH * 0.1, HEIGHT * 0.3, manager, False, "F1")
@@ -52,9 +50,11 @@ def initialize_settings_ui():
     create_ui_text_box_and_text_entry_hotkey(Keys.h_zoom_rocket_planet_system, WIDTH * 0.1, HEIGHT * 0.85, manager)
     create_ui_text_box_and_text_entry_hotkey(Keys.H_moveScreenUp, WIDTH * 0.75, HEIGHT * 0.2, manager, False, "UP")
     create_ui_text_box_and_text_entry_hotkey(Keys.H_moveScreenLeft, WIDTH * 0.75, HEIGHT * 0.25, manager, False, "LEFT")
-    create_ui_text_box_and_text_entry_hotkey(Keys.H_moveScreenRight, WIDTH * 0.75, HEIGHT * 0.3, manager, False, "RIGHT")
+    create_ui_text_box_and_text_entry_hotkey(Keys.H_moveScreenRight, WIDTH * 0.75, HEIGHT * 0.3, manager, False,
+                                             "RIGHT")
     create_ui_text_box_and_text_entry_hotkey(Keys.H_moveScreenDown, WIDTH * 0.75, HEIGHT * 0.35, manager, False, "DOWN")
-    create_ui_text_box_and_text_entry_hotkey(Keys.h_pause_simulation, WIDTH * 0.75, HEIGHT * 0.45, manager, False, "SPACE")
+    create_ui_text_box_and_text_entry_hotkey(Keys.h_pause_simulation, WIDTH * 0.75, HEIGHT * 0.45, manager, False,
+                                             "SPACE")
     create_ui_text_box_and_text_entry_hotkey(Keys.h_draw_line, WIDTH * 0.75, HEIGHT * 0.5, manager)
     create_ui_text_box_and_text_entry_hotkey(Keys.h_show_distance, WIDTH * 0.75, HEIGHT * 0.55, manager)
     create_ui_text_box_and_text_entry_hotkey(Keys.h_shift_time_step_down, WIDTH * 0.75, HEIGHT * 0.65, manager)
@@ -74,7 +74,7 @@ def display_ui_text_and_backgrounds():
     pygame.draw.rect(WINDOW, (0, 0, 0), (WIDTH * 0.44, HEIGHT * 0.09, WIDTH * 0.08, HEIGHT * 0.05))
     pygame.draw.rect(WINDOW, (50, 50, 50), (WIDTH * 0.44 + 1, HEIGHT * 0.09 + 1, WIDTH * 0.08 - 2, HEIGHT * 0.05 - 2))
 
-    #Hotkey Bars
+    # Hotkey Bars
     pygame.draw.rect(WINDOW, (0, 0, 0), (WIDTH * 0.085, HEIGHT * 0.15, WIDTH * 0.17, HEIGHT * 0.775))
     pygame.draw.rect(WINDOW, (50, 50, 50), (WIDTH * 0.085 + 1, HEIGHT * 0.15 + 1, WIDTH * 0.17 - 2, HEIGHT * 0.775 - 2))
 
@@ -160,4 +160,4 @@ def show_settings_ui():
         manager.draw_ui(WINDOW)
         pygame.display.update()
 
-    clear_settings_ui()
+    manager.clear_and_reset()

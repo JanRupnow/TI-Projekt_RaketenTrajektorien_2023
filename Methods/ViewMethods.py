@@ -22,7 +22,7 @@ def get_start_year() -> int:
     return year
 
 
-def check_date_is_legal(month, day) -> bool:
+def check_date_is_legal(month: int, day: int) -> bool:
     if month in [1, 3, 5, 7, 8, 10, 12]:
         if 0 < day <= 31:
             return True

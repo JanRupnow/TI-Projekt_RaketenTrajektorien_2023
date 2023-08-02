@@ -1,11 +1,11 @@
-import datetime
-
 import numpy as np
 import math
 from pygame import Surface
+
 from Globals.Constants import *
 from Globals.FlightData.FlightChangeState import FlightChangeState
 from Globals.FlightData.FlightDataManager import DATA
+
 from Methods.GameMethods import line_is_in_screen, add_clock_time
 
 from ViewController.Planet import Planet
@@ -85,8 +85,8 @@ class DrawManager:
             return
         if rocket.flightState == RocketFlightState.flying:
             cls.rocket_currentImage = pygame.transform.rotate(cls.rocket_notRotatedImage, math.atan2(
-                rocket.position_Y[rocket.currentStep+1] - rocket.position_Y[rocket.currentStep],
-                rocket.position_X[rocket.currentStep+1] - rocket.position_X[rocket.currentStep]) * (
+                rocket.position_Y[rocket.currentStep + 1] - rocket.position_Y[rocket.currentStep],
+                rocket.position_X[rocket.currentStep + 1] - rocket.position_X[rocket.currentStep]) * (
                                                                   -180) / np.pi - 90)
         elif rocket.flightState == RocketFlightState.landed:
             cls.rocket_currentImage = pygame.transform.rotate(cls.rocket_notRotatedImage,
@@ -221,9 +221,8 @@ def display_bar(rocket: Rocket, now: datetime.datetime):
         rocket.get_current_relative_velocity()) if rocket.nearestPlanet.distanceToRocket < rocket.nearestPlanet.radius * 5 else round(
         rocket.get_absolute_velocity())
 
-    rocket_velocity = FONT_1.render(f'{speed} km/h', True, (0,160,0))
+    rocket_velocity = FONT_1.render(f'{speed} km/h', True, (0, 160, 0))
     WINDOW.blit(rocket_velocity, (WIDTH * 0.625, HEIGHT * 0.055))
-
 
     # Time Passed
     total_seconds = DATA.time_passed.total_seconds()
@@ -275,13 +274,14 @@ def angle_arc(rocket: Rocket):
     radius = 125
     center_x, center_y = WIDTH * 0.8, HEIGHT * 0.95
     line_length = radius
-    pygame.draw.arc(WINDOW, (180, 180, 180), (center_x - radius, center_y - radius, radius * 2, radius * 2), 2*math.pi, math.pi)
+    pygame.draw.arc(WINDOW, (180, 180, 180), (center_x - radius, center_y - radius, radius * 2, radius * 2),
+                    2 * math.pi, math.pi)
     x90 = center_x + radius * math.cos(0)
     y90 = center_y - radius * math.sin(0)
-    x45 = center_x + line_length * math.cos(3*math.pi / 4)
-    y45 = center_y - line_length * math.sin(3*math.pi / 4)
-    x0 = center_x + radius * math.cos(math.pi /2)
-    y0 = center_y - radius * math.sin(math.pi /2)
+    x45 = center_x + line_length * math.cos(3 * math.pi / 4)
+    y45 = center_y - line_length * math.sin(3 * math.pi / 4)
+    x0 = center_x + radius * math.cos(math.pi / 2)
+    y0 = center_y - radius * math.sin(math.pi / 2)
     x45_neg = center_x + line_length * math.cos(math.pi / 4)
     y45_neg = center_y - line_length * math.sin(math.pi / 4)
     x90_neg = center_x + radius * math.cos(math.pi)
@@ -292,14 +292,14 @@ def angle_arc(rocket: Rocket):
     pygame.draw.line(WINDOW, (180, 180, 180), (center_x, center_y), (x45_neg, y45_neg), 2)
     pygame.draw.line(WINDOW, (180, 180, 180), (center_x, center_y), (x90_neg, y90_neg), 2)
     # Draw the needle based on the given angle
-    angle_rad = math.radians(-rocket.angle+90)
+    angle_rad = math.radians(-rocket.angle + 90)
     min_size = line_length / 3
-    x_needle = center_x + (min_size + ((line_length-min_size) / 10 * rocket.thrust)) * math.cos(angle_rad)
-    y_needle = center_y - (min_size + ((line_length-min_size)/ 10 * rocket.thrust)) * math.sin(angle_rad)
+    x_needle = center_x + (min_size + ((line_length - min_size) / 10 * rocket.thrust)) * math.cos(angle_rad)
+    y_needle = center_y - (min_size + ((line_length - min_size) / 10 * rocket.thrust)) * math.sin(angle_rad)
     pygame.draw.line(WINDOW, ((rocket.thrust / 10 * 255), ((10 - rocket.thrust) / 10 * 255), 0),
                      (center_x, center_y),
                      (x_needle,
-                     y_needle),
+                      y_needle),
                      5)
 
     rocket_power = FONT_1.render(f'Power: {rocket.thrust * 10}%', True, COLOR_WHITE)

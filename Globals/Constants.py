@@ -68,5 +68,3 @@ pygame.display.set_allow_screensaver(True)
 
 CLOCK = pygame.time.Clock()
 WIDTH, HEIGHT = pygame.display.Info().current_w, pygame.display.Info().current_h
-
-

@@ -17,8 +17,8 @@ def update_key_in_json_rocket(json, identifier: int, value: str):
                 # which are in the form of the if clause
                 try:
                     if identifier == remove_spaces(
-                            json[category][key]["text"] + "_input") or identifier == remove_spaces(
-                        json[category][key]["text"] + "_dropdown"):
+                        json[category][key]["text"] + "_input") or identifier == \
+                            remove_spaces(json[category][key]["text"] + "_dropdown"):
                         if value.isdigit():
                             json[category][key]["value"] = int(value)
                         else:

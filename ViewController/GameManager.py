@@ -1,4 +1,3 @@
-
 from Globals.Constants import simulation_start_time
 
 from Methods.GameMethods import center_screen_on_planet, planet_is_in_screen, automatic_zoom_on_rocket
@@ -13,7 +12,6 @@ from ViewController.DrawManager import DrawManager
 from ViewController.Planet import Planet
 from ViewController.Rocket.Rocket import Rocket
 
-import time
 
 class GameManager:
     @staticmethod
@@ -49,11 +47,9 @@ class GameManager:
         if rocket.flightState == RocketFlightState.landed:
 
             if DATA.flight_change_state == FlightChangeState.timeStepChanged:
-
                 GameManager.new_calculations_for_planet(planets)
 
             if DATA.flight_change_state == FlightChangeState.unchanged:
-
                 GameManager.calculate_next_step_for_planets(planets, rocket)
 
             rocket.stick_to_planet()
@@ -62,7 +58,6 @@ class GameManager:
         if rocket.flightState == RocketFlightState.flying:
 
             if DATA.flight_change_state == FlightChangeState.timeStepChanged:
-
                 # Calculate new orbits
                 GameManager.new_calculations_for_planet(planets)
                 rocket.calculate_new_calculation_of_predictions()
@@ -78,7 +73,6 @@ class GameManager:
                 rocket.currentStep += 1
 
             if DATA.flight_change_state == FlightChangeState.unchanged:
-
                 GameManager.calculate_next_step_for_planets(planets, rocket)
                 rocket.calculate_one_prediction()
                 rocket.currentStep += 1
@@ -97,6 +91,7 @@ class GameManager:
                 planet.reset_array()
 
         # TODO implement checking crashing
+
     @staticmethod
     def new_calculations_for_planet(planets: list[Planet]):
         for planet in planets:
@@ -104,7 +99,8 @@ class GameManager:
         for i in range(NUM_OF_PREDICTIONS):
             for planet in planets:
                 planet.calculate_next_step(planets)
-        if DATA.flight_change_state not in {FlightChangeState.paused, FlightChangeState.pausedAndPowerChanged, FlightChangeState.pausedAndTimeStepChanged}:
+        if DATA.flight_change_state not in {FlightChangeState.paused, FlightChangeState.pausedAndPowerChanged,
+                                            FlightChangeState.pausedAndTimeStepChanged}:
             for planet in planets:
                 planet.currentStep += 1
 
