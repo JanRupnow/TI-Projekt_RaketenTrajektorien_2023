@@ -1,4 +1,3 @@
-from Views.HotkeyView import show_settings_ui
 from Views.StartView import *
 
 from ViewController.GameManager import GameManager

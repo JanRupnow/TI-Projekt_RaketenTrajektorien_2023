@@ -1,5 +1,3 @@
-import pygame
-
 import Globals.Hotkeys as Keys
 
 from Views.ViewComponents import *

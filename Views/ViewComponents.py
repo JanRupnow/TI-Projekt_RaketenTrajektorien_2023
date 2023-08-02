@@ -1,4 +1,3 @@
-import pygame
 import pygame_gui
 import pygame_gui as pg
 
@@ -28,14 +27,6 @@ def create_ui_text_box_and_text_entry_hotkey(hotkey, position_x, position_y, man
     text_input.set_text(get_string_of_ascii(hotkey[0]) if entry_text is None else entry_text)
 
     return text_box, text_input
-
-
-def get_rocket_image(rocket_image_number: int) -> pygame.image:
-    jsonfile = open("./Globals/RocketConfig/CurrentRocketConfig.json")
-    config = json.load(jsonfile)
-    img = pygame.image.load(config["Image"]["path"][rocket_image_number]).convert_alpha()
-    return pygame.transform.scale_by(img, 300 / img.get_height())
-
 
 def create_rocket_image(rocket_image_number: int, manager: pygame_gui.UIManager, position_x=WIDTH * 0.5,
                         position_y=HEIGHT * 0.5) -> pg.elements.UIImage:
@@ -86,15 +77,6 @@ def create_ui_text_box(text, position_x, position_y, manager) -> pg.elements.UIT
                                      object_id=remove_spaces(text[1] + "_text"))
     return text_box
 
-
-
-def create_ui_game_title_label(text, position_x, position_y, manager, color="green")  -> pg.elements.UILabel:
-    label = create_ui_label(text, position_x, position_y, manager)
-    label.text_horiz_alignment = "center"
-    label.text_colour = color
-    label.set_text_scale(15)
-    label.rebuild()
-    return label
 
 def create_ui_button(text, position_x, position_y, manager, length_x=WIDTH * 0.07, length_y=HEIGHT * 0.07) -> pg.elements.UIButton:
     button = pg.elements.UIButton(relative_rect=pygame.Rect((position_x, position_y), (length_x, length_y)),
