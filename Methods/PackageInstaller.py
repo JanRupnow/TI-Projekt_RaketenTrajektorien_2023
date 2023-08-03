@@ -26,10 +26,11 @@ def package_installer():
 
     hotkeys_json = json.load(json_file)
     if not hotkeys_json["downloaded"]:
+        install_requirements()
         # Overwriting package status
         new_json = {"downloaded": True}
         json_file.seek(0)
         json_file.truncate()
         json.dump(new_json, json_file, indent=4, ensure_ascii=False)
         json_file.close()
-    install_requirements()
+
