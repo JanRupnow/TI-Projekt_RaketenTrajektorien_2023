@@ -24,7 +24,6 @@ from numba import int32, float32, float64, typeof
     ("currentStep", int32),
     ("currentCalculationStep", int32)])
 class Planet:
-
     def __init__(self, x, y, radius, color, mass, name, velocity):
         self.radius: float = radius
         self.color: tuple = color
@@ -46,12 +45,11 @@ class Planet:
         self.position_Y[0] = y
 
     def attraction(self, other: __init__, i: int) -> (float, float):
-        other_position_x, other_y = other.position_X[i], other.position_Y[i]  # double
-        distance_x = other_position_x - self.position_X[i]  # double
-        distance_y = other_y - self.position_Y[i]  # double
-        distance = math.sqrt(distance_x ** 2 + distance_y ** 2)  # double
-        force = G * self.mass * other.mass / distance ** 2  # double
-        # force = G * (self.mass * self.mass_factor) * (other.mass * other.mass_factor) / distance ** 2
+        other_position_x, other_y = other.position_X[i], other.position_Y[i]
+        distance_x = other_position_x - self.position_X[i]
+        distance_y = other_y - self.position_Y[i]
+        distance = math.sqrt(distance_x ** 2 + distance_y ** 2)
+        force = G * self.mass * other.mass / distance ** 2
         theta = math.atan2(distance_y, distance_x)
         force_x = math.cos(theta) * force
         force_y = math.sin(theta) * force

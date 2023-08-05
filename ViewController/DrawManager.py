@@ -17,10 +17,27 @@ class DrawManager:
     rocket_initialImage: Surface = None
     rocket_currentImage: Surface = None
     rocket_notRotatedImage: Surface = None
+    sun_surface = FONT_1.render("- Sun", True, COLOR_SUN)
+    mercury_surface = FONT_1.render("- Mercury", True, COLOR_MERCURY)
+    venus_surface = FONT_1.render("- Venus", True, COLOR_VENUS)
+    earth_surface = FONT_1.render("- Earth", True, COLOR_EARTH)
+    mars_surface = FONT_1.render("- Mars", True, COLOR_MARS)
+    jupiter_surface = FONT_1.render("- Jupiter", True, COLOR_JUPITER)
+    saturn_surface = FONT_1.render("- Saturn", True, COLOR_SATURN)
+    uranus_surface = FONT_1.render("- Uranus", True, COLOR_URANUS)
+    neptune_surface = FONT_1.render("- Neptune", True, COLOR_NEPTUNE)
+
+    state_text = FONT_1.render("State", True, COLOR_WHITE)
+    simulation_start_time_text = FONT_1.render("Simulation Time:", True, COLOR_WHITE)
+    time_step_text = FONT_1.render("Step >>", True, COLOR_WHITE)
+    zoom_text = FONT_1.render("Zoom", True, COLOR_WHITE)
+    velocity_text = FONT_1.render("Velocity", True, COLOR_WHITE)
+    time_passed_text = FONT_1.render("Time passed (Simulation):", True, COLOR_WHITE)
+    altitude_text = FONT_1.render("Altitude", True, COLOR_WHITE)
 
     @staticmethod
     def draw_planet(planet: Planet):
-
+        # TODO use pygame sprties here
         DrawManager.draw_planet_orbit(planet)
         pygame.draw.circle(WINDOW, planet.color, (
             planet.position_X[planet.currentStep] * DATA.scale + DATA.move_x + WIDTH / 2,
@@ -45,9 +62,9 @@ class DrawManager:
     def draw_planet_orbit(planet: Planet):
 
         line_in_screen = convert_to_line_in_screen(np.array((planet.position_X[
-                                                     planet.currentStep:planet.currentCalculationStep] * DATA.scale,
-                                                     planet.position_Y[
-                                                     planet.currentStep:planet.currentCalculationStep] * DATA.scale)).T)
+                                                             planet.currentStep:planet.currentCalculationStep] * DATA.scale,
+                                                             planet.position_Y[
+                                                             planet.currentStep:planet.currentCalculationStep] * DATA.scale)).T)
         # size > 3 because (2,3) are 2 coordinates for 1 point, you need 2 points to connect a line ((x,y),(x2,y2))
         if line_in_screen.size > 3:
             pygame.draw.lines(WINDOW, planet.color, False, line_in_screen, 1)
@@ -67,9 +84,9 @@ class DrawManager:
     def draw_rocket_prediction(rocket: Rocket):
 
         line_in_screen = convert_to_line_in_screen(np.array((rocket.position_X[
-                                                     rocket.currentStep:rocket.currentCalculationStep] * DATA.scale,
-                                                     rocket.position_Y[
-                                                     rocket.currentStep:rocket.currentCalculationStep] * DATA.scale)).T)
+                                                             rocket.currentStep:rocket.currentCalculationStep] * DATA.scale,
+                                                             rocket.position_Y[
+                                                             rocket.currentStep:rocket.currentCalculationStep] * DATA.scale)).T)
         # size > 3 because (2,3) are 2 coordinates for 1 point, you need 2 points to connect a line ((x,y),(x2,y2))
         if line_in_screen.size > 3:
             pygame.draw.lines(WINDOW, rocket.color, False, line_in_screen, 1)
@@ -107,57 +124,6 @@ class DrawManager:
                                               + DATA.move_y + HEIGHT / 2 - cls.rocket_currentImage.get_height() / 2
                                               ))
 
-    @staticmethod
-    def render_flight_interface(rocket: Rocket, now: datetime.datetime, planets: list[Planet]):
-
-        if DATA.flight_change_state != FlightChangeState.paused:
-            add_clock_time()
-
-        display_bar(rocket, now)
-
-        if DATA.advanced_interface:
-            # Advanced flight details
-            fps_text = FONT_1.render("FPS: " + str(int(CLOCK.get_fps())), True, COLOR_WHITE)
-            WINDOW.blit(fps_text, (WIDTH * 0.025, HEIGHT * 0.13))
-
-            # TODO implement Pressure
-            # TODO implement Current Weight
-
-            rocket_max_q = FONT_1.render(f'MaxQ: %', True, COLOR_WHITE)
-            WINDOW.blit(rocket_max_q, (WIDTH * 0.75, HEIGHT * 0.12))
-            rocket_state = FONT_1.render(f'Rocket current: {rocket.currentStep}', True, COLOR_WHITE)
-            WINDOW.blit(rocket_state, (WIDTH * 0.75, HEIGHT * 0.16))
-            rocket_state = FONT_1.render(f'Rocket calculation: {rocket.currentCalculationStep}', True, COLOR_WHITE)
-            WINDOW.blit(rocket_state, (WIDTH * 0.75, HEIGHT * 0.20))
-            rocket_state = FONT_1.render(f'Planet current: {planets[0].currentStep}', True, COLOR_WHITE)
-            WINDOW.blit(rocket_state, (WIDTH * 0.75, HEIGHT * 0.24))
-            rocket_state = FONT_1.render(f'Planet calculation: {planets[0].currentCalculationStep}', True, COLOR_WHITE)
-            WINDOW.blit(rocket_state, (WIDTH * 0.75, HEIGHT * 0.28))
-
-            # Planet colors and names
-            sun_surface = FONT_1.render("- Sun", True, COLOR_SUN)
-            WINDOW.blit(sun_surface, (15, 285))
-            mercury_surface = FONT_1.render("- Mercury", True, COLOR_MERCURY)
-            WINDOW.blit(mercury_surface, (15, 315))
-            venus_surface = FONT_1.render("- Venus", True, COLOR_VENUS)
-            WINDOW.blit(venus_surface, (15, 345))
-            earth_surface = FONT_1.render("- Earth", True, COLOR_EARTH)
-            WINDOW.blit(earth_surface, (15, 375))
-            mars_surface = FONT_1.render("- Mars", True, COLOR_MARS)
-            WINDOW.blit(mars_surface, (15, 405))
-            jupiter_surface = FONT_1.render("- Jupiter", True, COLOR_JUPITER)
-            WINDOW.blit(jupiter_surface, (15, 435))
-            saturn_surface = FONT_1.render("- Saturn", True, COLOR_SATURN)
-            WINDOW.blit(saturn_surface, (15, 465))
-            uranus_surface = FONT_1.render("- Uranus", True, COLOR_URANUS)
-            WINDOW.blit(uranus_surface, (15, 495))
-            neptune_surface = FONT_1.render("- Neptune", True, COLOR_NEPTUNE)
-            WINDOW.blit(neptune_surface, (15, 525))
-
-        fuel_bar()
-        angle_arc(rocket)
-
-
 def display_bar(rocket: Rocket, now: datetime.datetime):
     # Complete bar
     pygame.draw.rect(WINDOW, (50, 50, 50), (0, 0, WIDTH * 1, HEIGHT * 0.1))
@@ -166,8 +132,7 @@ def display_bar(rocket: Rocket, now: datetime.datetime):
 
     pygame.draw.rect(WINDOW, (100, 100, 100), (WIDTH * 0.03, HEIGHT * 0.015, WIDTH * 0.15, HEIGHT * 0.04))
 
-    year_text = FONT_1.render("Simulation Time:", True, COLOR_WHITE)
-    WINDOW.blit(year_text, (WIDTH * 0.04, HEIGHT * 0.02))
+    WINDOW.blit(DrawManager.simulation_start_time_text, (WIDTH * 0.04, HEIGHT * 0.02))
 
     pygame.draw.rect(WINDOW, (20, 20, 20), (WIDTH * 0.03, HEIGHT * 0.05, WIDTH * 0.15, HEIGHT * 0.04))
 
@@ -180,8 +145,7 @@ def display_bar(rocket: Rocket, now: datetime.datetime):
     # State
     pygame.draw.rect(WINDOW, (100, 100, 100), (WIDTH * 0.37, HEIGHT * 0.015, WIDTH * 0.07, HEIGHT * 0.04))
 
-    state_text = FONT_1.render("State", True, COLOR_WHITE)
-    WINDOW.blit(state_text, (WIDTH * 0.39, HEIGHT * 0.02))
+    WINDOW.blit(DrawManager.state_text, (WIDTH * 0.39, HEIGHT * 0.02))
 
     pygame.draw.rect(WINDOW, (20, 20, 20), (WIDTH * 0.37, HEIGHT * 0.05, WIDTH * 0.07, HEIGHT * 0.04))
 
@@ -190,30 +154,27 @@ def display_bar(rocket: Rocket, now: datetime.datetime):
     # Timestep
     pygame.draw.rect(WINDOW, (100, 100, 100), (WIDTH * 0.45, HEIGHT * 0.015, WIDTH * 0.07, HEIGHT * 0.04))
 
-    time_step_text = FONT_1.render("Step >>", True, COLOR_WHITE)
-    WINDOW.blit(time_step_text, (WIDTH * 0.465, HEIGHT * 0.02))
+    WINDOW.blit(DrawManager.time_step_text, (WIDTH * 0.465, HEIGHT * 0.02))
 
     pygame.draw.rect(WINDOW, (20, 20, 20), (WIDTH * 0.45, HEIGHT * 0.05, WIDTH * 0.07, HEIGHT * 0.04))
 
-    time_step_text = FONT_1.render(f'{int(DATA.time_step * 60)}x', True, COLOR_WHITE)
-    WINDOW.blit(time_step_text, (WIDTH * 0.465, HEIGHT * 0.055))
+    time_step_value = FONT_1.render(f'{int(DATA.time_step * 60)}x', True, COLOR_WHITE)
+    WINDOW.blit(time_step_value, (WIDTH * 0.465, HEIGHT * 0.055))
 
     # Zoom
     pygame.draw.rect(WINDOW, (100, 100, 100), (WIDTH * 0.53, HEIGHT * 0.015, WIDTH * 0.07, HEIGHT * 0.04))
 
-    zoom_text = FONT_1.render("Zoom", True, COLOR_WHITE)
-    WINDOW.blit(zoom_text, (WIDTH * 0.55, HEIGHT * 0.02))
+    WINDOW.blit(DrawManager.zoom_text, (WIDTH * 0.55, HEIGHT * 0.02))
 
     pygame.draw.rect(WINDOW, (20, 20, 20), (WIDTH * 0.53, HEIGHT * 0.05, WIDTH * 0.07, HEIGHT * 0.04))
 
-    zoom_text = FONT_1.render(f'{DATA.zoom_goal}', True, COLOR_WHITE)
-    WINDOW.blit(zoom_text, (WIDTH * 0.545, HEIGHT * 0.055))
+    zoom_value = FONT_1.render(f'{DATA.zoom_goal}', True, COLOR_WHITE)
+    WINDOW.blit(zoom_value, (WIDTH * 0.545, HEIGHT * 0.055))
 
     # Current Speed
     pygame.draw.rect(WINDOW, (100, 100, 100), (WIDTH * 0.62, HEIGHT * 0.015, WIDTH * 0.07, HEIGHT * 0.04))
 
-    year_text = FONT_1.render("Velocity", True, COLOR_WHITE)
-    WINDOW.blit(year_text, (WIDTH * 0.63, HEIGHT * 0.02))
+    WINDOW.blit(DrawManager.velocity_text, (WIDTH * 0.63, HEIGHT * 0.02))
 
     pygame.draw.rect(WINDOW, (20, 20, 20), (WIDTH * 0.62, HEIGHT * 0.05, WIDTH * 0.07, HEIGHT * 0.04))
 
@@ -233,42 +194,38 @@ def display_bar(rocket: Rocket, now: datetime.datetime):
 
     pygame.draw.rect(WINDOW, (100, 100, 100), (WIDTH * 0.7, HEIGHT * 0.015, WIDTH * 0.19, HEIGHT * 0.04))
 
-    time_passed_text = FONT_1.render("Time passed (Simulation):", True, COLOR_WHITE)
-    WINDOW.blit(time_passed_text, (WIDTH * 0.71, HEIGHT * 0.02))
+    WINDOW.blit(DrawManager.time_passed_text, (WIDTH * 0.71, HEIGHT * 0.02))
 
     pygame.draw.rect(WINDOW, (20, 20, 20), (WIDTH * 0.7, HEIGHT * 0.05, WIDTH * 0.19, HEIGHT * 0.04))
 
-    time_passed_text = FONT_1.render(
+    time_passed_value = FONT_1.render(
         f'{int(years)} {"year" if int(years) <= 1 else "years"}, {int(days)} {"day" if int(days) <= 1 else "days"}, {int(hours):02}:{int(minutes):02}:{int(seconds):02}' if years > 0 else
         f'{int(days)} {"day" if int(days) <= 1 else "days"}, {int(hours):02}:{int(minutes):02}:{int(seconds):02}',
         True, COLOR_WHITE)
-    WINDOW.blit(time_passed_text, (WIDTH * 0.71, HEIGHT * 0.055))
+    WINDOW.blit(time_passed_value, (WIDTH * 0.71, HEIGHT * 0.055))
 
     if rocket.flightState == RocketFlightState.flying and \
             rocket.nearestPlanet.distanceToRocket - rocket.nearestPlanet.radius < 3 / 2 * rocket.nearestPlanet.radius:
         pygame.draw.rect(WINDOW, (100, 100, 100), (WIDTH * 0.915, HEIGHT * 0.015, WIDTH * 0.07, HEIGHT * 0.04))
 
-        altitude_text = FONT_1.render("Altitude", True, COLOR_WHITE)
-        WINDOW.blit(altitude_text, (WIDTH * 0.93, HEIGHT * 0.02))
+        WINDOW.blit(DrawManager.altitude_text, (WIDTH * 0.93, HEIGHT * 0.02))
 
         pygame.draw.rect(WINDOW, (20, 20, 20), (WIDTH * 0.915, HEIGHT * 0.05, WIDTH * 0.07, HEIGHT * 0.04))
 
-        altitude_text = FONT_1.render(
+        altitude_value = FONT_1.render(
             f'{round((rocket.nearestPlanet.distanceToRocket - rocket.nearestPlanet.radius) / 1000, 0)} km',
             True, COLOR_WHITE)
-        WINDOW.blit(altitude_text, (WIDTH * 0.93, HEIGHT * 0.055))
-
+        WINDOW.blit(altitude_value, (WIDTH * 0.93, HEIGHT * 0.055))
 
 def fuel_bar():
-    # percentage = rocket.fuelmass / rocket.startfuelmass
     percentage = 0.75
     pygame.draw.rect(WINDOW, (255 * (1 - percentage), 255 * percentage, 0),
-                     (WIDTH * 0.925, HEIGHT * 0.8, WIDTH * 0.05, HEIGHT * 0.15))
+                     (WIDTH * 0.925, HEIGHT * 0.95 - HEIGHT * 0.15 * percentage, WIDTH * 0.05,
+                      HEIGHT * 0.15 * percentage))
     pygame.draw.rect(WINDOW, (150, 150, 150),
                      (WIDTH * 0.925, HEIGHT * 0.8, WIDTH * 0.05, HEIGHT * 0.15 * (1 - percentage)))
     rocket_fuel = FONT_1.render(f'Fuel: {int(percentage * 100)}%', True, COLOR_WHITE)
     WINDOW.blit(rocket_fuel, (WIDTH * 0.925, HEIGHT * 0.95))
-
 
 def angle_arc(rocket: Rocket):
     radius = 125
@@ -304,3 +261,43 @@ def angle_arc(rocket: Rocket):
 
     rocket_power = FONT_1.render(f'Power: {rocket.thrust * 10}%', True, COLOR_WHITE)
     WINDOW.blit(rocket_power, (WIDTH * 0.77, HEIGHT * 0.96))
+
+def render_flight_interface(rocket: Rocket, now: datetime.datetime, planets: list[Planet]):
+
+    if DATA.flight_change_state != FlightChangeState.paused:
+        add_clock_time()
+
+    display_bar(rocket, now)
+
+    if DATA.advanced_interface:
+        # Advanced flight details
+        fps_text = FONT_1.render("FPS: " + str(int(CLOCK.get_fps())), True, COLOR_WHITE)
+        WINDOW.blit(fps_text, (WIDTH * 0.025, HEIGHT * 0.13))
+
+        # TODO implement Pressure
+        # TODO implement Current Weight
+
+        rocket_max_q = FONT_1.render(f'MaxQ: %', True, COLOR_WHITE)
+        WINDOW.blit(rocket_max_q, (WIDTH * 0.75, HEIGHT * 0.12))
+        rocket_state = FONT_1.render(f'Rocket current: {rocket.currentStep}', True, COLOR_WHITE)
+        WINDOW.blit(rocket_state, (WIDTH * 0.75, HEIGHT * 0.16))
+        rocket_state = FONT_1.render(f'Rocket calculation: {rocket.currentCalculationStep}', True, COLOR_WHITE)
+        WINDOW.blit(rocket_state, (WIDTH * 0.75, HEIGHT * 0.20))
+        rocket_state = FONT_1.render(f'Planet current: {planets[0].currentStep}', True, COLOR_WHITE)
+        WINDOW.blit(rocket_state, (WIDTH * 0.75, HEIGHT * 0.24))
+        rocket_state = FONT_1.render(f'Planet calculation: {planets[0].currentCalculationStep}', True, COLOR_WHITE)
+        WINDOW.blit(rocket_state, (WIDTH * 0.75, HEIGHT * 0.28))
+
+        # Planet colors and names
+        WINDOW.blit(DrawManager.sun_surface, (15, 285))
+        WINDOW.blit(DrawManager.mercury_surface, (15, 315))
+        WINDOW.blit(DrawManager.venus_surface, (15, 345))
+        WINDOW.blit(DrawManager.earth_surface, (15, 375))
+        WINDOW.blit(DrawManager.mars_surface, (15, 405))
+        WINDOW.blit(DrawManager.jupiter_surface, (15, 435))
+        WINDOW.blit(DrawManager.saturn_surface, (15, 465))
+        WINDOW.blit(DrawManager.uranus_surface, (15, 495))
+        WINDOW.blit(DrawManager.neptune_surface, (15, 525))
+
+    fuel_bar()
+    angle_arc(rocket)
