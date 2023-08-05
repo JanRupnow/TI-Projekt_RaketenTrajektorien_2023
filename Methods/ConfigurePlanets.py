@@ -11,9 +11,9 @@ from ViewController.Planet import Planet
 
 
 def configure_planets() -> list[Planet]:
-    time_year = get_start_day()
+    time_year = get_start_year()
     time_month = get_start_month()
-    time_day = get_start_year()
+    time_day = get_start_day()
     check_date_is_legal(time_day, time_month, time_year)
     simulation_time = Time(f"{time_year}-{time_month}-{time_day}")
     planet_coord = [get_body_heliographic_stonyhurst(
