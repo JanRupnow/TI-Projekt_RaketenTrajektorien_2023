@@ -8,7 +8,7 @@ from Methods.ViewMethods import get_start_day, get_start_month, get_start_year, 
 from ViewController.Planet import Planet
 
 
-# Metric from: https://nssdc.gsfc.nasa.gov/planetary/factsheet/
+
 
 def configure_planets() -> list[Planet]:
     time_year = get_start_day()
@@ -18,6 +18,8 @@ def configure_planets() -> list[Planet]:
     simulation_time = Time(f"{time_year}-{time_month}-{time_day}")
     planet_coord = [get_body_heliographic_stonyhurst(
         this_planet, time=simulation_time, include_velocity=True) for this_planet in planetNameArray]
+
+    # Metrics from: https://nssdc.gsfc.nasa.gov/planetary/factsheet/
 
     sun = Planet(0, 0, 695 * 10 ** 6, COLOR_SUN, 1.98892 * 10 ** 30, planetNameArray[0], 0)
     # sun.sun = True
@@ -40,9 +42,9 @@ def configure_planets() -> list[Planet]:
 
     neptune = Planet(-30.178 * AU, 0, 24764 * 10 ** 3, COLOR_NEPTUNE, 1.024 * 10 ** 26, planetNameArray[9], 5.43 * 1000)
 
-    planetlist = [neptune, uranus, saturn, jupiter, mars, moon, earth, venus, mercury, sun]
+    planet_list = [neptune, uranus, saturn, jupiter, mars, moon, earth, venus, mercury, sun]
     for planet_name, this_coord in zip(planetNameArray, planet_coord):
-        planet = next(filter(lambda x: x.name == planet_name, planetlist), None)
+        planet = next(filter(lambda x: x.name == planet_name, planet_list), None)
         # Set Start Coordinates 
         planet.position_X[0] = this_coord.radius.value * (np.cos(this_coord.lon.to("rad"))) * AU
         planet.position_Y[0] = this_coord.radius.value * (np.sin(this_coord.lon.to("rad"))) * AU
@@ -54,8 +56,8 @@ def configure_planets() -> list[Planet]:
             planet.velocity_X[0] = -planet.meanVelocity * np.sin(angle)
             planet.velocity_Y[0] = planet.meanVelocity * np.cos(angle)
 
-    moon = next(filter(lambda x: x.name == "Moon", planetlist))
-    earth = next(filter(lambda x: x.name == "Earth", planetlist))
+    moon = next(filter(lambda x: x.name == "Moon", planet_list))
+    earth = next(filter(lambda x: x.name == "Earth", planet_list))
     angle = math.atan2(moon.position_X[0] - earth.position_X[0], moon.position_Y[0] - earth.position_Y[0])
     moon.velocity_X[0] = earth.velocity_X[0] - moon.meanVelocity * np.sin(angle)
     moon.velocity_Y[0] = earth.velocity_Y[0] + moon.meanVelocity * np.cos(angle)

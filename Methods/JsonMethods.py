@@ -2,8 +2,8 @@ from Methods.SupportMethods import *
 
 
 def update_key_in_json(json, hotkey):
-    for category in json.Keys():
-        for key in json[category].Keys():
+    for category in json.keys():
+        for key in json[category].keys():
             if hotkey[1] == json[category][key]["text"]:
                 json[category][key]["key"] = hotkey[0]
     return json
@@ -23,9 +23,9 @@ def update_key_in_json_rocket(json, identifier: int, value: str):
                             json[category][key]["value"] = int(value)
                         else:
                             json[category][key]["value"] = value
-                except:
+                except KeyError:
                     pass
-        except:
+        except KeyError:
             pass
     return json
 
