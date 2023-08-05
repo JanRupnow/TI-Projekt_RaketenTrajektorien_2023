@@ -63,7 +63,7 @@ def planet_is_in_screen(planet: Planet) -> bool:
         planet.currentStep] * DATA.scale - planet.radius * DATA.scale < -DATA.move_x + WIDTH / 2
 
 
-def process_hot_key_events(event, rocket: Rocket, planets: list[Planet]) -> (pygame.Event, Rocket, list[Planet]):
+def process_hot_key_events(event, rocket: Rocket, planets: list[Planet]) -> (pygame.event, Rocket, list[Planet]):
     from ViewController.DrawManager import DrawManager
 
     key_pressed = pygame.key.get_pressed()
@@ -180,10 +180,10 @@ def process_hot_key_events(event, rocket: Rocket, planets: list[Planet]) -> (pyg
     return event, rocket, planets
 
 
-def line_is_in_screen(line) -> np.array:
-    line_in_screen = line[(line[:, 0] < -DATA.move_x + WIDTH / 2) & (line[:, 0] > -DATA.move_x - WIDTH / 2)]
-    line_in_screen = line_in_screen[
-        (line_in_screen[:, 1] > -DATA.move_y - HEIGHT / 2) & (line_in_screen[:, 1] < -DATA.move_y + HEIGHT / 2)]
+def convert_to_line_in_screen(line) -> np.array:
+    line_in_screen = line
     line_in_screen[:, 0] = line_in_screen[:, 0] + DATA.move_x + WIDTH / 2
     line_in_screen[:, 1] = line_in_screen[:, 1] + DATA.move_y + HEIGHT / 2
+    line_in_screen = line_in_screen[(line_in_screen[:, 0] < WIDTH) & (line_in_screen[:, 0] > 0)]
+    line_in_screen = line_in_screen[(line_in_screen[:, 1] < HEIGHT) & (line_in_screen[:, 1] > 0)]
     return line_in_screen

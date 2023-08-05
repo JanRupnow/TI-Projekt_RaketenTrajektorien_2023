@@ -6,7 +6,7 @@ from Globals.Constants import *
 from Globals.FlightData.FlightChangeState import FlightChangeState
 from Globals.FlightData.FlightDataManager import DATA
 
-from Methods.GameMethods import line_is_in_screen, add_clock_time
+from Methods.GameMethods import convert_to_line_in_screen, add_clock_time
 
 from ViewController.Planet import Planet
 from ViewController.Rocket.Rocket import Rocket
@@ -44,7 +44,7 @@ class DrawManager:
     @staticmethod
     def draw_planet_orbit(planet: Planet):
 
-        line_in_screen = line_is_in_screen(np.array((planet.position_X[
+        line_in_screen = convert_to_line_in_screen(np.array((planet.position_X[
                                                      planet.currentStep:planet.currentCalculationStep] * DATA.scale,
                                                      planet.position_Y[
                                                      planet.currentStep:planet.currentCalculationStep] * DATA.scale)).T)
@@ -66,7 +66,7 @@ class DrawManager:
     @staticmethod
     def draw_rocket_prediction(rocket: Rocket):
 
-        line_in_screen = line_is_in_screen(np.array((rocket.position_X[
+        line_in_screen = convert_to_line_in_screen(np.array((rocket.position_X[
                                                      rocket.currentStep:rocket.currentCalculationStep] * DATA.scale,
                                                      rocket.position_Y[
                                                      rocket.currentStep:rocket.currentCalculationStep] * DATA.scale)).T)
