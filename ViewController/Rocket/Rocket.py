@@ -257,7 +257,7 @@ class Rocket:
     def update_planets_in_range_list(self, planets: list[Planet]) -> None:
         if not self.currentStep % math.ceil(100 / self.time_step) == 0:
             return
-        self.PlanetsInRangeList = []
+        self.PlanetsInRangeList.clear()
         for planet in planets:
             if planet.name != "Sun" and self.get_distance_to_planet(planet,
                                                                     self.currentCalculationStep) < planet.radius * 100:
@@ -266,7 +266,17 @@ class Rocket:
     def update_nearest_planet(self, planets: list[Planet]) -> None:
         if not self.currentStep % math.ceil(100 / self.time_step) == 0:
             return
-        self.nearestPlanet = min(planets, key=lambda x: self.get_distance_to_planet(x, self.currentStep))
+
+        min_distance = self.get_distance_to_planet(planets[0], self.currentStep)
+        nearest_planet = planets[0]
+
+        for planet in planets:
+            distance = self.get_distance_to_planet(planet, self.currentStep)
+            if distance < min_distance:
+                min_distance = distance
+                nearest_planet = planet
+
+        self.nearestPlanet = nearest_planet
 
     def get_distance_to_planet(self, planet: Planet, step: int) -> float:
         return np.sqrt((self.position_X[step] - planet.position_X[step]) ** 2

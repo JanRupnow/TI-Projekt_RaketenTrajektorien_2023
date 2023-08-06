@@ -46,6 +46,7 @@ time_month = config["StartTime"]["Month"]["value"]
 time_day = config["StartTime"]["Day"]["value"]
 simulation_start_time = datetime.datetime(time_year, time_month, time_day, 0, 0, 0)
 
+CRASH_VELOCITY = 1_000_000  # m/s
 MIN_ROCKET_RADIUS = 2
 MAX_ROCKET_RADIUS = 0.1
 NUM_OF_PREDICTIONS = 1000

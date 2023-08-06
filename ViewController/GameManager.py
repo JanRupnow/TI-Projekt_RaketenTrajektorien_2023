@@ -76,6 +76,10 @@ class GameManager:
                 rocket.calculate_one_prediction()
                 rocket.currentStep += 1
 
+            rocket.update_planets_in_range_list(planets)
+            rocket.update_nearest_planet(planets)
+            if rocket.nearestPlanet.check_collision():
+                    rocket.nearestPlanet.check_landing(rocket)
         # Only One condition since current steps should be synced after every calculation step
         if rocket.currentStep >= NUM_OF_PREDICTIONS:
             rocket.reset_array()
