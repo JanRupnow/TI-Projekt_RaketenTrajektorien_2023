@@ -33,4 +33,3 @@ def package_installer():
         json_file.truncate()
         json.dump(new_json, json_file, indent=4, ensure_ascii=False)
         json_file.close()
-

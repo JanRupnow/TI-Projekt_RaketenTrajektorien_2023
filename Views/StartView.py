@@ -87,7 +87,7 @@ def show_start_ui():
                 if is_convertible_to_int(event.text):
                     if 3000 >= int(event.text) >= 0:
                         update_rocket_configs(event)
-                        if check_date_is_legal(get_start_month(), get_start_day()):
+                        if check_date_is_legal(get_start_day(), get_start_month(), event.text):
                             update_rocket_configs(event)
                         else:
                             update_rocket_configs(event)
@@ -96,7 +96,7 @@ def show_start_ui():
             if event.type == pg.UI_TEXT_ENTRY_FINISHED and event.ui_object_id == "month_input":
                 if is_convertible_to_int(event.text):
                     if 12 >= int(event.text) > 0:
-                        if check_date_is_legal(event.text, get_start_day()):
+                        if check_date_is_legal(get_start_day(), event.text, get_start_year()):
                             update_rocket_configs(event)
                         else:
                             update_rocket_configs(event)

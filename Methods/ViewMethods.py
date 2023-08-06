@@ -22,27 +22,37 @@ def get_start_year() -> int:
     return year
 
 
-def check_date_is_legal(month: int, day: int) -> bool:
+def check_date_is_legal( day: int, month: int, year: int) -> bool:
     if month in [1, 3, 5, 7, 8, 10, 12]:
         if 0 < day <= 31:
             return True
-    elif month in [4, 6, 8, 11]:
+        else:
+            return False
+    elif month in [4, 6, 9, 11]:
         if 0 < day <= 30:
             return True
-    else:
-        if get_start_year() % 4 != 0:
+        else:
+            return False
+    elif month == 2:
+        if year % 4 != 0:
             if 0 < day <= 28:
                 return True
+            else:
+                return False
         else:
             if 0 < day <= 29:
                 return True
-    return False
+            else:
+                return False #this test pls
+    else:
+        return False
 
 
 def over_write_standard_day():
-    jsonfile = open("./Globals/RocketConfig/CurrentRocketConfig.json", "r+")
-    config = json.load(jsonfile)
-    config["StartTime"]["Day"]["value"] = 28
-    jsonfile.seek(0)
-    jsonfile.truncate()
-    json.dump(config, jsonfile, indent=4, ensure_ascii=False)
+    with open("./Globals/RocketConfig/CurrentRocketConfig.json", "r+") as jsonfile:
+        config = json.load(jsonfile)
+        config["StartTime"]["Day"]["value"] = 28
+        jsonfile.seek(0)
+        jsonfile.truncate()
+        json.dump(config, jsonfile, indent=4, ensure_ascii=False)
+        jsonfile.close()

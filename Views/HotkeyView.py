@@ -14,7 +14,7 @@ rocket_background_img = pygame.image.load("Images/Rocket_Background_Image.png").
 rocket_background_img = pygame.transform.scale(rocket_background_img, (WIDTH, HEIGHT))
 
 
-def change_hot_key_from_input(event: pygame.Event, hotkey) -> str:
+def change_hot_key_from_input(event: pygame.event, hotkey) -> str:
     if event.type == pg.UI_TEXT_ENTRY_FINISHED and event.ui_object_id == remove_spaces(hotkey[1] + "_input") \
             and event.text != "":
         json_file = open("./variables/hotkeys_config/current_hotkeys.json", "r+")
@@ -27,7 +27,7 @@ def change_hot_key_from_input(event: pygame.Event, hotkey) -> str:
     return hotkey[0]
 
 
-def change_all_hot_keys_from_input(event: pygame.Event, hotkeys):
+def change_all_hot_keys_from_input(event: pygame.event, hotkeys):
     for hotkey in hotkeys:
         hotkey[0] = change_hot_key_from_input(event, hotkey)
 

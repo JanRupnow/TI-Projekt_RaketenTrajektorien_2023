@@ -5,10 +5,10 @@ def get_string_of_ascii(value: int) -> str:
     if 32 < value < 127:
         return chr(value).upper()
     else:
-        return "a"
+        raise ValueError("Invalid Hotkey value")
 
 
-def check_key_down(event: pygame.Event, key: pygame.key) -> bool:
+def check_key_down(event: pygame.event, key: pygame.key) -> bool:
     return event.type == pygame.KEYDOWN and event.key == key
 
 
