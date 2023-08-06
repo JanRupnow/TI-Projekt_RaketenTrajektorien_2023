@@ -102,12 +102,12 @@ class DrawManager:
             return
         if rocket.flightState == RocketFlightState.flying:
             cls.rocket_currentImage = pygame.transform.rotate(cls.rocket_notRotatedImage, math.atan2(
-                rocket.position_Y[rocket.currentStep + 1] - rocket.position_Y[rocket.currentStep],
-                rocket.position_X[rocket.currentStep + 1] - rocket.position_X[rocket.currentStep]) * (
-                                                                  -180) / np.pi - 90)
+                rocket.velocity_Y[rocket.currentStep] - rocket.startplanet.velocity_Y[rocket.currentStep],
+                rocket.velocity_X[rocket.currentStep] - rocket.startplanet.velocity_X[rocket.currentStep]) * (
+                                                                  -180) / np.pi - 90 - rocket.angle)
         elif rocket.flightState == RocketFlightState.landed:
             cls.rocket_currentImage = pygame.transform.rotate(cls.rocket_notRotatedImage,
-                                                              rocket.planetAngle * (-180) / np.pi - 180)
+                                                              rocket.planetAngle * (-180) / np.pi - 90)
         else:
             cls.rocket_currentImage = pygame.transform.rotate(cls.rocket_notRotatedImage,
                                                               math.atan2(
