@@ -113,7 +113,7 @@ class Rocket:
         return z
     """
 
-    def f(self, v_x: float, v_y: float, i: int, distance_to_sun: float):
+    def f(self, v_x: float, v_y: float, i: int, distance_to_sun: float) -> None:
         x = 0
         y = 0
         for planet in self.PlanetsInRangeList:
@@ -151,7 +151,7 @@ class Rocket:
         return x, y
 
     # Berechnung nach Runge-Kutta Verfahren
-    def calculate_next_step(self, i: int):
+    def calculate_next_step(self, i: int) -> None:
 
         distance_to_sun = np.sqrt((self.position_X[i] - self.sun.position_X[i]) ** 2
                                   + (self.position_Y[i] - self.sun.position_Y[i]) ** 2)
@@ -178,22 +178,22 @@ class Rocket:
         self.velocity_Y[i + 1] = self.velocity_Y[i] + k_y * self.time_step
         self.position_Y[i + 1] = self.position_Y[i] + self.velocity_Y[i] * self.time_step
 
-    def set_scale(self, scale: float):
+    def set_scale(self, scale: float) -> None:
         self.radius *= scale
 
-    def get_current_distance_to_next_planet(self):
-        return np.sqrt((self.position_X[self.currentCalculationStep] - self.nearestPlanet.position_X[
-            self.currentCalculationStep]) ** 2 +
-                       (self.position_Y[self.currentCalculationStep] - self.nearestPlanet.position_Y[
-                           self.currentCalculationStep]) ** 2)
+    # def get_current_distance_to_next_planet(self):
+    #     return np.sqrt((self.position_X[self.currentCalculationStep] - self.nearestPlanet.position_X[
+    #         self.currentCalculationStep]) ** 2 +
+    #                    (self.position_Y[self.currentCalculationStep] - self.nearestPlanet.position_Y[
+    #                        self.currentCalculationStep]) ** 2)
 
-    def get_relative_velocity(self, i: int):
-        if self.flightState == RocketFlightState.flying:
-            return np.sqrt((self.velocity_X[i] - self.nearestPlanet.velocity_X[i]) ** 2
-                           + (self.velocity_Y[i] - self.nearestPlanet.velocity_Y[i]) ** 2)
-        return 0
+    # def get_relative_velocity(self, i: int):
+    #     if self.flightState == RocketFlightState.flying:
+    #         return np.sqrt((self.velocity_X[i] - self.nearestPlanet.velocity_X[i]) ** 2
+    #                        + (self.velocity_Y[i] - self.nearestPlanet.velocity_Y[i]) ** 2)
+    #     return 0
 
-    def get_current_relative_velocity(self):
+    def get_current_relative_velocity(self) -> float:
         if self.flightState == RocketFlightState.flying:
             return np.sqrt(
                 (self.velocity_X[self.currentStep] - self.nearestPlanet.velocity_X[self.nearestPlanet.currentStep]) ** 2
@@ -207,7 +207,7 @@ class Rocket:
             return np.sqrt(self.velocity_X[self.currentStep] ** 2 + self.velocity_Y[self.currentStep] ** 2)
         return 0.0
 
-    def reset_array(self):
+    def reset_array(self) -> None:
         self.position_X[1:NUM_OF_PREDICTIONS + 1] = self.position_X[NUM_OF_PREDICTIONS:]
         self.position_Y[1:NUM_OF_PREDICTIONS + 1] = self.position_Y[NUM_OF_PREDICTIONS:]
         self.velocity_X[1:NUM_OF_PREDICTIONS + 1] = self.velocity_X[NUM_OF_PREDICTIONS:]
@@ -215,13 +215,13 @@ class Rocket:
         self.currentStep = 1
         self.currentCalculationStep = NUM_OF_PREDICTIONS
 
-    def calculate_entry_angle(self):
+    def calculate_entry_angle(self) -> None:
         self.planetAngle = math.atan2(
             self.position_Y[self.currentStep] - self.nearestPlanet.position_Y[self.nearestPlanet.currentStep],
             self.position_X[self.currentStep] - self.nearestPlanet.position_X[self.nearestPlanet.currentStep]) * (
                                    180 / np.pi)
 
-    def calculate_new_calculation_of_predictions(self):
+    def calculate_new_calculation_of_predictions(self) -> None:
         self.currentCalculationStep = self.currentStep
         for i in range(NUM_OF_PREDICTIONS):
             # for planet in planets:
@@ -229,13 +229,13 @@ class Rocket:
             self.calculate_next_step(self.currentCalculationStep)
             self.currentCalculationStep += 1
 
-    def calculate_one_prediction(self):
+    def calculate_one_prediction(self) -> None:
         # for planet in planets:
         #    planet.predict_step(self.currentCalculationStep, planets, self)
         self.calculate_next_step(self.currentCalculationStep)
         self.currentCalculationStep += 1
 
-    def clear_array(self):
+    def clear_array(self) -> None:
         self.position_X = np.zeros(LEN_OF_PREDICTIONS_ARRAY)
         self.position_Y = np.zeros(LEN_OF_PREDICTIONS_ARRAY)
         self.velocity_X = np.zeros(LEN_OF_PREDICTIONS_ARRAY)
@@ -253,7 +253,7 @@ class Rocket:
         self.velocity_X[0] = self.nearestPlanet.position_X[self.nearestPlanet.currentStep]
         self.velocity_Y[0] = self.nearestPlanet.position_Y[self.nearestPlanet.currentStep]
 
-    def update_planets_in_range_list(self, planets: list[Planet]):
+    def update_planets_in_range_list(self, planets: list[Planet]) -> None:
         if not self.currentStep % math.ceil(100 / self.time_step) == 0:
             return
         self.PlanetsInRangeList = []
@@ -262,7 +262,7 @@ class Rocket:
                                                                     self.currentCalculationStep) < planet.radius * 100:
                 self.PlanetsInRangeList.append(planet)
 
-    def update_nearest_planet(self, planets: list[Planet]):
+    def update_nearest_planet(self, planets: list[Planet]) -> None:
         if not self.currentStep % math.ceil(100 / self.time_step) == 0:
             return
         self.nearestPlanet = min(planets, key=lambda x: self.get_distance_to_planet(x, self.currentStep))
@@ -271,14 +271,14 @@ class Rocket:
         return np.sqrt((self.position_X[step] - planet.position_X[step]) ** 2
                        + (self.position_Y[step] - planet.position_Y[step]) ** 2)
 
-    def calculate_landed_values(self):
+    def calculate_landed_values(self) -> None:
         self.position_X[0] = self.position_X[self.currentStep] + self.radius * np.cos(self.angle * np.pi / 180)
         self.position_Y[0] = self.position_Y[self.currentStep] + self.radius * np.sin(
             self.angle * np.pi / 180)  # macht kein Sinn hier
         self.velocity_X[0] = self.velocity_X[self.currentStep]
         self.velocity_Y[0] = self.velocity_Y[self.currentStep]
 
-    def stick_to_planet(self):
+    def stick_to_planet(self) -> None:
         self.position_X[0] = self.nearestPlanet.position_X[
                                  self.nearestPlanet.currentStep] + self.nearestPlanet.radius * np.cos(
             self.planetAngle * np.pi / 180)

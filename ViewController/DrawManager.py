@@ -36,7 +36,7 @@ class DrawManager:
     altitude_text = FONT_1.render("Altitude", True, COLOR_WHITE)
 
     @staticmethod
-    def draw_planet(planet: Planet):
+    def draw_planet(planet: Planet) -> None:
         # TODO use pygame sprties here
         DrawManager.draw_planet_orbit(planet)
         pygame.draw.circle(WINDOW, planet.color, (
@@ -59,7 +59,7 @@ class DrawManager:
                 max(min(0.1 * rocket.radius, 1), 0.1))
 
     @staticmethod
-    def draw_planet_orbit(planet: Planet):
+    def draw_planet_orbit(planet: Planet) -> None:
 
         line_in_screen = convert_to_line_in_screen(np.array((planet.position_X[
                                                              planet.currentStep:planet.currentCalculationStep] * DATA.scale,
@@ -70,7 +70,7 @@ class DrawManager:
             pygame.draw.lines(WINDOW, planet.color, False, line_in_screen, 1)
 
     @staticmethod
-    def display_planet_distances(planet: Planet):
+    def display_planet_distances(planet: Planet) -> None:
 
         distance_text = pygame.font.SysFont("Trebuchet MS", 16).render(
             f"{planet.name}:{str(round(planet.distanceToRocket * 1.057 * 10 ** -16, 8))} light years", True,
@@ -81,7 +81,7 @@ class DrawManager:
                                         planet.currentStep] * DATA.scale + HEIGHT / 2 + distance_text.get_height() / 2 - 20 + DATA.move_y))
 
     @staticmethod
-    def draw_rocket_prediction(rocket: Rocket):
+    def draw_rocket_prediction(rocket: Rocket) -> None:
 
         line_in_screen = convert_to_line_in_screen(np.array((rocket.position_X[
                                                              rocket.currentStep:rocket.currentCalculationStep] * DATA.scale,
@@ -92,7 +92,7 @@ class DrawManager:
             pygame.draw.lines(WINDOW, rocket.color, False, line_in_screen, 1)
 
     @classmethod
-    def draw_rocket(cls, rocket: Rocket):
+    def draw_rocket(cls, rocket: Rocket) -> None:
 
         if rocket.radius < MIN_ROCKET_RADIUS:
             pygame.draw.circle(WINDOW, rocket.color, (
@@ -124,7 +124,8 @@ class DrawManager:
                                               + DATA.move_y + HEIGHT / 2 - cls.rocket_currentImage.get_height() / 2
                                               ))
 
-def display_bar(rocket: Rocket, now: datetime.datetime):
+
+def display_bar(rocket: Rocket, now: datetime.datetime) -> None:
     # Complete bar
     pygame.draw.rect(WINDOW, (50, 50, 50), (0, 0, WIDTH * 1, HEIGHT * 0.1))
 
@@ -217,7 +218,8 @@ def display_bar(rocket: Rocket, now: datetime.datetime):
             True, COLOR_WHITE)
         WINDOW.blit(altitude_value, (WIDTH * 0.93, HEIGHT * 0.055))
 
-def fuel_bar():
+
+def fuel_bar() -> None:
     percentage = 0.75
     pygame.draw.rect(WINDOW, (255 * (1 - percentage), 255 * percentage, 0),
                      (WIDTH * 0.925, HEIGHT * 0.95 - HEIGHT * 0.15 * percentage, WIDTH * 0.05,
@@ -227,7 +229,8 @@ def fuel_bar():
     rocket_fuel = FONT_1.render(f'Fuel: {int(percentage * 100)}%', True, COLOR_WHITE)
     WINDOW.blit(rocket_fuel, (WIDTH * 0.925, HEIGHT * 0.95))
 
-def angle_arc(rocket: Rocket):
+
+def angle_arc(rocket: Rocket) -> None:
     radius = 125
     center_x, center_y = WIDTH * 0.8, HEIGHT * 0.95
     line_length = radius
@@ -262,8 +265,8 @@ def angle_arc(rocket: Rocket):
     rocket_power = FONT_1.render(f'Power: {rocket.thrust * 10}%', True, COLOR_WHITE)
     WINDOW.blit(rocket_power, (WIDTH * 0.77, HEIGHT * 0.96))
 
-def render_flight_interface(rocket: Rocket, now: datetime.datetime, planets: list[Planet]):
 
+def render_flight_interface(rocket: Rocket, now: datetime.datetime, planets: list[Planet]) -> None:
     if DATA.flight_change_state != FlightChangeState.paused:
         add_clock_time()
 
