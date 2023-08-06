@@ -128,8 +128,8 @@ class Rocket:
                            p_0 * np.exp(-abs((r - planet.radius)) / h_s))
                           / (2 * self.mass))
 
-            sign_x = np.sign(self.position_X[i] - planet.position_X[i])
-            sign_y = np.sign(self.position_Y[i] - planet.position_Y[i])
+            sign_x = -np.sign(self.position_X[i] - planet.position_X[i])
+            sign_y = -np.sign(self.position_Y[i] - planet.position_Y[i])
 
             x += sign_x * abs_a * ((self.position_X[i] - planet.position_X[i]) / r)
             y += sign_y * abs_a * ((self.position_Y[i] - planet.position_Y[i]) / r)
@@ -156,17 +156,18 @@ class Rocket:
         distance_to_sun = np.sqrt((self.position_X[i] - self.sun.position_X[i]) ** 2
                                   + (self.position_Y[i] - self.sun.position_Y[i]) ** 2)
 
-        k1_x, k1_y = self.f(self.velocity_X[i] - self.startplanet.velocity_X[i],
-                            (self.velocity_Y[i] - self.startplanet.velocity_Y[i]),
+        v_x = self.velocity_X[i] - self.startplanet.velocity_X[i]
+        v_y = self.velocity_Y[i] - self.startplanet.velocity_Y[i]
+
+        k1_x, k1_y = self.f(v_x, v_y, i, distance_to_sun)
+        k2_x, k2_y = self.f(v_x + k1_x * self.time_step / 2,
+                            v_y + k1_y * self.time_step / 2,
                             i, distance_to_sun)
-        k2_x, k2_y = self.f((self.velocity_X[i] - self.startplanet.velocity_X[i]) + k1_x * self.time_step / 2,
-                            (self.velocity_Y[i] - self.startplanet.velocity_Y[i]) + k1_y * self.time_step / 2,
+        k3_x, k3_y = self.f(v_x + k2_x * self.time_step / 2,
+                            v_y + k2_y * self.time_step / 2,
                             i, distance_to_sun)
-        k3_x, k3_y = self.f((self.velocity_X[i] - self.startplanet.velocity_X[i]) + k2_x * self.time_step / 2,
-                            (self.velocity_Y[i] - self.startplanet.velocity_Y[i]) + k2_y * self.time_step / 2,
-                            i, distance_to_sun)
-        k4_x, k4_y = self.f((self.velocity_X[i] - self.startplanet.velocity_X[i]) + k3_x * self.time_step / 2,
-                            (self.velocity_Y[i] - self.startplanet.velocity_Y[i]) + k3_y * self.time_step / 2,
+        k4_x, k4_y = self.f(v_x + k3_x * self.time_step / 2,
+                            v_y + k3_y * self.time_step / 2,
                             i, distance_to_sun)
 
         k_x = (k1_x + 2 * k2_x + 2 * k3_x + k4_x) / 6
