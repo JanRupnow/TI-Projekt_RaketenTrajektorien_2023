@@ -1,7 +1,7 @@
 {
     "Start": {
         "AngleOnPlanet": {
-            "value": 30,
+            "value": 90,
             "text": "start angle"
         },
         "Startplanet": {

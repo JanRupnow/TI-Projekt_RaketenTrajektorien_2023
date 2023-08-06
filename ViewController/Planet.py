@@ -1,4 +1,5 @@
 import math
+import sys
 
 import numpy as np
 
@@ -128,7 +129,7 @@ class Planet:
         if not self.currentStep % math.ceil(100 / self.time_step) == 0:
             return
         # Safe landing
-        if self.distanceToRocket <= self.radius * 95 / 100 and rocket.get_current_relative_velocity() < 1000000000:
+        if self.distanceToRocket <= self.radius * 95 / 100 and rocket.get_current_relative_velocity() < CRASH_VELOCITY:
             rocket.flightState = RocketFlightState.landed
             rocket.thrust = 0
             rocket.calculate_entry_angle()
@@ -136,6 +137,6 @@ class Planet:
             self.update_distance_to_rocket(rocket)
             return
         # Crashing
-        if self.distanceToRocket >= self.radius * 95 / 100 and rocket.get_current_relative_velocity() > 1000000000:
-            rocket.flightState = RocketFlightState.landed
-            rocket.clear_array()
+        if self.distanceToRocket >= self.radius * 95 / 100 and rocket.get_current_relative_velocity() > CRASH_VELOCITY:
+            rocket.flightState = RocketFlightState.crashed
+            sys.exit()
