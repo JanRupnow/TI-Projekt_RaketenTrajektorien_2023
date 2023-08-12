@@ -1,7 +1,8 @@
-from Globals.Constants import simulation_start_time
+import pandas as pd
 
 from Methods.GameMethods import center_screen_on_planet, planet_is_in_screen, automatic_zoom_on_rocket
 
+from Globals.Constants import simulation_start_time, DATA_ARRAY, DF_COLUMNS, FILE_NAME
 from Globals.FlightData.FlightChangeState import FlightChangeState
 from Globals.FlightData.ZoomGoal import ZoomGoal
 from Globals.FlightData.FlightDataManager import DATA
@@ -38,8 +39,7 @@ class GameManager:
         if DATA.flight_change_state == FlightChangeState.pausedAndTimeStepChanged:
             GameManager.new_calculations_for_planet(planets)
             rocket.calculate_new_calculation_of_predictions()
-            DATA.flight_change_state = FlightChangeState.paused
-            return
+
         if DATA.flight_change_state == FlightChangeState.paused:
             return
 
@@ -56,7 +56,7 @@ class GameManager:
 
         # Flying Rocket
         if rocket.flightState == RocketFlightState.flying:
-
+            # Save Rocket indepent variables
             if DATA.flight_change_state == FlightChangeState.timeStepChanged:
                 # Calculate new orbits
                 GameManager.new_calculations_for_planet(planets)
@@ -64,7 +64,6 @@ class GameManager:
                 rocket.currentStep += 1
 
             if DATA.flight_change_state == FlightChangeState.powerChanged:
-
                 [planet.__setattr__('currentStep', planet.currentStep + 1) for planet in planets]
                 [planet.calculate_next_step(planets) for planet in planets]
                 # If only power changed adjust the rocket prediction
@@ -79,9 +78,13 @@ class GameManager:
             rocket.update_planets_in_range_list(planets)
             rocket.update_nearest_planet(planets)
             if rocket.nearestPlanet.check_collision():
-                    rocket.nearestPlanet.check_landing(rocket)
+                # TODO GameManager.fill_dataframe()
+                rocket.nearestPlanet.check_landing(rocket)
+
+            #TODO store the variables to Numpy Array
         # Only One condition since current steps should be synced after every calculation step
         if rocket.currentStep >= NUM_OF_PREDICTIONS:
+            # TODO GameManager.fill_dataframe()
             rocket.reset_array()
             [planet.reset_array() for planet in planets]
 
@@ -101,13 +104,12 @@ class GameManager:
             [planet.calculate_next_step(planets) for planet in planets]
         if DATA.flight_change_state not in {FlightChangeState.paused, FlightChangeState.pausedAndPowerChanged,
                                             FlightChangeState.pausedAndTimeStepChanged}:
-
             [planet.__setattr__('currentStep', planet.currentStep + 1) for planet in planets]
 
     @staticmethod
     def calculate_next_step_for_planets(planets: list[Planet], rocket: Rocket):
         [(planet.predict_step(planet.currentCalculationStep, planets, rocket),
-          planet.__setattr__('currentStep', planet.currentStep + 1))for planet in planets]
+          planet.__setattr__('currentStep', planet.currentStep + 1)) for planet in planets]
 
     @staticmethod
     def display_iteration(rocket: Rocket, planets: list[Planet]):
@@ -130,3 +132,32 @@ class GameManager:
             if DATA.show_distance:
                 DrawManager.display_planet_distances(planet)
         render_flight_interface(rocket, simulation_start_time, planets)
+
+    def fill_dataframe(self, rocket: Rocket):
+        global DATA_df
+        for idx, row in enumerate(DATA_ARRAY):
+            new_row = {"Time": row[0],
+                       "Position_X": rocket.position_X[idx + 1],
+                       "Position_Y": rocket.position_Y[idx + 1],
+                       "Velocity_X": rocket.Velocity_X[idx + 1],
+                       "Velocity_Y": rocket.Velocity_X[idx + 1],
+                       "Power": row[1],
+                       "Angle": row[2],
+                       "Force": row[3],
+                       "Rocket_Fuel": row[4]}
+            DATA_df = DATA_df.append(new_row, ignore_index=True)
+
+            if DATA_df.shape[0] >= 8000:
+                self.store_dataframe()
+
+        # Just an Example to store data into the np arrays
+
+    # DATA_ARRAY[rocket.currentStep] = [simulation_start_time + DATA.time_passed,
+    #                                           rocket.power,
+    #                                           rocket.angle,
+    #                                           rocket.force,
+    #                                           rocket.fuelmass]
+    def store_dataframe(self):
+        global DATA_df
+        DATA_df.to_csv(f"Globals/FlightData/Flights/{FILE_NAME}", mode="a", header=False, index=False)
+        DATA_df = pd.DataFrame(columns=DF_COLUMNS)

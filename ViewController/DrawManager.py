@@ -37,7 +37,6 @@ class DrawManager:
 
     @staticmethod
     def draw_planet(planet: Planet) -> None:
-        # TODO use pygame sprties here
         DrawManager.draw_planet_orbit(planet)
         pygame.draw.circle(WINDOW, planet.color, (
             planet.position_X[planet.currentStep] * DATA.scale + DATA.move_x + WIDTH / 2,

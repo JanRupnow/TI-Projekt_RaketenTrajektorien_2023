@@ -2,6 +2,9 @@ import datetime
 import json
 import sys
 
+import numpy as np
+import pandas as pd
+
 import pygame
 
 pygame.init()
@@ -69,3 +72,13 @@ pygame.display.set_allow_screensaver(True)
 
 CLOCK = pygame.time.Clock()
 WIDTH, HEIGHT = pygame.display.Info().current_w, pygame.display.Info().current_h
+
+# Create an individual file name for the flight data file
+FILE_NAME = f"{datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}_Flight.csv"
+with open(FILE_NAME, "w") as file:
+    file.write("Time;Position_X;Position_Y;Velocity_X;Velocity_Y;Power;Angle;Force;Rocket_Fuel")
+
+DATA_ARRAY = np.zeros(NUM_OF_PREDICTIONS, 5)
+DF_COLUMNS = ["Time", "Position_X", "Position_Y", "Velocity_X", "Velocity_Y", "Power", "Angle",
+                                "Force", "Rocket_Fuel"]
+DATA_df = pd.DataFrame(columns=DF_COLUMNS)
