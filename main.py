@@ -1,6 +1,5 @@
-from Views.StartView import *
-
 from ViewController.GameManager import GameManager
+from Views.StartView import *
 
 from Globals.FlightData.FlightDataManager import DATA
 
@@ -11,6 +10,7 @@ from Methods.RocketConfig import load_rocket
 
 
 def main():
+    game_manager = GameManager(DATA_df)
     package_installer()
     show_start_ui()
     planets = configure_planets()
@@ -23,8 +23,8 @@ def main():
         for event in pygame.event.get():
             event, rocket, planets = process_hot_key_events(event, rocket, planets)
 
-        GameManager.calculate_next_iteration(rocket, planets)
-        GameManager.display_iteration(rocket, planets)
+        game_manager.calculate_next_iteration(rocket, planets)
+        game_manager.display_iteration(rocket, planets)
 
         pygame.display.update()
 

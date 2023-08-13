@@ -2,6 +2,9 @@ import datetime
 import json
 import sys
 
+import numpy as np
+import pandas as pd
+
 import pygame
 
 pygame.init()
@@ -39,12 +42,6 @@ planetNameArray = ["Sun", "Mercury", "Venus", "Earth", "Moon", "Mars", "Jupiter"
 CurrentStep = 0
 CurrentCalculationStep = 0
 
-jsonfile = open("./Globals/RocketConfig/CurrentRocketConfig.json")
-config = json.load(jsonfile)
-time_year = config["StartTime"]["Year"]["value"]
-time_month = config["StartTime"]["Month"]["value"]
-time_day = config["StartTime"]["Day"]["value"]
-simulation_start_time = datetime.datetime(time_year, time_month, time_day, 0, 0, 0)
 
 CRASH_VELOCITY = 1_000_000  # m/s
 MIN_ROCKET_RADIUS = 2
@@ -69,3 +66,14 @@ pygame.display.set_allow_screensaver(True)
 
 CLOCK = pygame.time.Clock()
 WIDTH, HEIGHT = pygame.display.Info().current_w, pygame.display.Info().current_h
+
+timestamp = datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
+FILE_NAME = f"Globals/FlightData/Flights/{timestamp}_Flight.csv"
+with open(FILE_NAME, "w") as file:
+    file.write("Time,Position_X,Position_Y,Velocity_X,Velocity_Y,Power,Angle,Force,Rocket_Fuel\n")
+
+DATA_ARRAY = np.zeros((NUM_OF_PREDICTIONS+1, 5), dtype="object")
+DF_COLUMNS = ["Time", "Position_X", "Position_Y", "Velocity_X", "Velocity_Y", "Power", "Angle",
+                                "Force", "Rocket_Fuel"]
+
+DATA_df = pd.DataFrame(columns=DF_COLUMNS)

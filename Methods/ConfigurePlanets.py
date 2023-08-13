@@ -1,21 +1,28 @@
 import math
 
-import numpy as np
-from astropy.time import Time
 from sunpy.coordinates import get_body_heliographic_stonyhurst
 from Globals.Constants import *
 from Methods.ViewMethods import get_start_day, get_start_month, get_start_year, check_date_is_legal
 from ViewController.Planet import Planet
 
 
+def get_start_time() -> datetime.datetime:
+    jsonfile = open("./Globals/RocketConfig/CurrentRocketConfig.json")
+    config = json.load(jsonfile)
+    time_year = config["StartTime"]["Year"]["value"]
+    time_month = config["StartTime"]["Month"]["value"]
+    time_day = config["StartTime"]["Day"]["value"]
+    return datetime.datetime(time_year, time_month, time_day, 0, 0, 0)
 
+
+simulation_start_time = get_start_time()
 
 def configure_planets() -> list[Planet]:
     time_year = get_start_year()
     time_month = get_start_month()
     time_day = get_start_day()
     check_date_is_legal(time_day, time_month, time_year)
-    simulation_time = Time(f"{time_year}-{time_month}-{time_day}")
+    simulation_time = f"{time_year}-{time_month}-{time_day}"
     planet_coord = [get_body_heliographic_stonyhurst(
         this_planet, time=simulation_time, include_velocity=True) for this_planet in planetNameArray]
 

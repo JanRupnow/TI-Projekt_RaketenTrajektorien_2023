@@ -126,7 +126,6 @@ def show_start_ui():
 
     clear_start_ui()
 
-
 def display_basic_ui():
     pygame.draw.rect(WINDOW, (0, 0, 0), (WIDTH * 0.39, HEIGHT * 0.08, WIDTH * 0.22, HEIGHT * 0.075))
     pygame.draw.rect(WINDOW, (100, 100, 100),
