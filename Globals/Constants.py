@@ -73,12 +73,18 @@ pygame.display.set_allow_screensaver(True)
 CLOCK = pygame.time.Clock()
 WIDTH, HEIGHT = pygame.display.Info().current_w, pygame.display.Info().current_h
 
-# Create an individual file name for the flight data file
-FILE_NAME = f"{datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}_Flight.csv"
+timestamp = datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
+FILE_NAME = f"Globals/FlightData/Flights/{timestamp}_Flight.csv"
 with open(FILE_NAME, "w") as file:
-    file.write("Time;Position_X;Position_Y;Velocity_X;Velocity_Y;Power;Angle;Force;Rocket_Fuel")
+    file.write("Time,Position_X,Position_Y,Velocity_X,Velocity_Y,Power,Angle,Force,Rocket_Fuel\n")
 
-DATA_ARRAY = np.zeros(NUM_OF_PREDICTIONS, 5)
+dtypes = [('timestamp', 'U32'),
+          ('thrust', int),
+          ('angle', int),
+          ('force', float),
+          ('fuelmass', float)]
+
+DATA_ARRAY = np.zeros((NUM_OF_PREDICTIONS+1, 5), dtype="object")
 DF_COLUMNS = ["Time", "Position_X", "Position_Y", "Velocity_X", "Velocity_Y", "Power", "Angle",
                                 "Force", "Rocket_Fuel"]
 DATA_df = pd.DataFrame(columns=DF_COLUMNS)
