@@ -1,3 +1,5 @@
+import sys
+
 import numpy as np
 import pandas as pd
 
@@ -81,9 +83,10 @@ class GameManager:
             rocket.update_planets_in_range_list(planets)
             rocket.update_nearest_planet(planets)
             if rocket.nearestPlanet.check_collision():
-                self.fill_dataframe(rocket)
                 rocket.nearestPlanet.check_landing(rocket)
-
+                if rocket.flavor == RocketFlightState.crashed:
+                    self.crash_fill_dataframe()
+                    sys.exit(0)
             DATA_ARRAY[rocket.currentStep] = [(simulation_start_time + DATA.time_passed).strftime('%Y-%m-%d %H:%M:%S'),
                                               rocket.thrust,
                                               rocket.angle,
@@ -151,14 +154,35 @@ class GameManager:
                        "Rocket_Fuel": row[4]}, index=[0])
             rows_to_append.append(new_row)
 
-        rows_to_append = np.reshape(rows_to_append, (999, 9))
+        rows_to_append = np.reshape(rows_to_append, (rocket.currentStep-1, 9))
         new_data_df = pd.DataFrame(rows_to_append, columns=DF_COLUMNS)
-        print(new_data_df)
+
         self.data_df = pd.concat([self.data_df, new_data_df], ignore_index=True)
-        print(self.data_df)
 
         if self.data_df.shape[0] >= 2000:
             self.store_dataframe()
+
+    def crash_fill_dataframe(self, rocket: Rocket):
+        rows_to_append = []
+        for idx, row in enumerate(DATA_ARRAY):
+            if row[0] == 0:
+                continue
+            new_row = pd.DataFrame({"Time": row[0],
+                       "Position_X": rocket.position_X[idx],
+                       "Position_Y": rocket.position_Y[idx],
+                       "Velocity_X": rocket.velocity_X[idx],
+                       "Velocity_Y": rocket.velocity_X[idx],
+                       "Power": row[1],
+                       "Angle": row[2],
+                       "Force": row[3],
+                       "Rocket_Fuel": row[4]}, index=[0])
+            rows_to_append.append(new_row)
+
+        rows_to_append = np.reshape(rows_to_append, (rocket.currentStep-1, 9))
+        new_data_df = pd.DataFrame(rows_to_append, columns=DF_COLUMNS)
+
+        self.data_df = pd.concat([self.data_df, new_data_df], ignore_index=True)
+        self.store_dataframe()
 
     def store_dataframe(self):
         self.data_df.to_csv(f"{FILE_NAME}", mode="a", header=False, index=False)

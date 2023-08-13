@@ -1,7 +1,4 @@
 import math
-import sys
-
-import numpy as np
 
 from Globals.Constants import *
 from ViewController.Rocket.RocketFlightState import RocketFlightState
@@ -139,4 +136,3 @@ class Planet:
         # Crashing
         if self.distanceToRocket >= self.radius * 95 / 100 and rocket.get_current_relative_velocity() > CRASH_VELOCITY:
             rocket.flightState = RocketFlightState.crashed
-            sys.exit()
