@@ -3,9 +3,10 @@ import sys
 import numpy as np
 import pandas as pd
 
+from Methods.ConfigurePlanets import get_start_time, simulation_start_time
 from Methods.GameMethods import center_screen_on_planet, planet_is_in_screen, automatic_zoom_on_rocket
 
-from Globals.Constants import simulation_start_time, DATA_ARRAY, DF_COLUMNS, FILE_NAME
+from Globals.Constants import DATA_ARRAY, DF_COLUMNS, FILE_NAME
 from Globals.FlightData.FlightChangeState import FlightChangeState
 from Globals.FlightData.ZoomGoal import ZoomGoal
 from Globals.FlightData.FlightDataManager import DATA
@@ -136,7 +137,7 @@ class GameManager:
                 DrawManager.draw_planet_orbit(planet)
             if DATA.show_distance:
                 DrawManager.display_planet_distances(planet)
-        render_flight_interface(rocket, simulation_start_time, planets)
+        render_flight_interface(rocket, planets)
 
     def fill_dataframe(self, rocket: Rocket):
         rows_to_append = []

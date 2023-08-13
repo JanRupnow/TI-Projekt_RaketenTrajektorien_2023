@@ -42,12 +42,6 @@ planetNameArray = ["Sun", "Mercury", "Venus", "Earth", "Moon", "Mars", "Jupiter"
 CurrentStep = 0
 CurrentCalculationStep = 0
 
-jsonfile = open("./Globals/RocketConfig/CurrentRocketConfig.json")
-config = json.load(jsonfile)
-time_year = config["StartTime"]["Year"]["value"]
-time_month = config["StartTime"]["Month"]["value"]
-time_day = config["StartTime"]["Day"]["value"]
-simulation_start_time = datetime.datetime(time_year, time_month, time_day, 0, 0, 0)
 
 CRASH_VELOCITY = 1_000_000  # m/s
 MIN_ROCKET_RADIUS = 2

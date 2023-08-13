@@ -5,6 +5,7 @@ from pygame import Surface
 from Globals.Constants import *
 from Globals.FlightData.FlightChangeState import FlightChangeState
 from Globals.FlightData.FlightDataManager import DATA
+from Methods.ConfigurePlanets import get_start_time
 
 from Methods.GameMethods import convert_to_line_in_screen, add_clock_time
 
@@ -124,7 +125,7 @@ class DrawManager:
                                               ))
 
 
-def display_bar(rocket: Rocket, now: datetime.datetime) -> None:
+def display_bar(rocket: Rocket) -> None:
     # Complete bar
     pygame.draw.rect(WINDOW, (50, 50, 50), (0, 0, WIDTH * 1, HEIGHT * 0.1))
 
@@ -137,7 +138,7 @@ def display_bar(rocket: Rocket, now: datetime.datetime) -> None:
     pygame.draw.rect(WINDOW, (20, 20, 20), (WIDTH * 0.03, HEIGHT * 0.05, WIDTH * 0.15, HEIGHT * 0.04))
 
     text_actual_time = FONT_1.render(
-        f'{(now + DATA.time_passed).strftime("%d/%m/%Y, %H:%M:%S")}',
+        f'{(get_start_time() + DATA.time_passed).strftime("%d/%m/%Y, %H:%M:%S")}',
         True, COLOR_WHITE)
     WINDOW.blit(text_actual_time, (WIDTH * 0.04, HEIGHT * 0.055))
 
@@ -265,11 +266,11 @@ def angle_arc(rocket: Rocket) -> None:
     WINDOW.blit(rocket_power, (WIDTH * 0.77, HEIGHT * 0.96))
 
 
-def render_flight_interface(rocket: Rocket, now: datetime.datetime, planets: list[Planet]) -> None:
+def render_flight_interface(rocket: Rocket, planets: list[Planet]) -> None:
     if DATA.flight_change_state != FlightChangeState.paused:
         add_clock_time()
 
-    display_bar(rocket, now)
+    display_bar(rocket)
 
     if DATA.advanced_interface:
         # Advanced flight details
