@@ -8,8 +8,8 @@ from Methods.ViewMethods import *
 manager = pg.UIManager((WIDTH, HEIGHT))
 UI_REFRESH_RATE = CLOCK.tick(60) / 1000
 
-settings_font_title = pygame.font.SysFont("Trebuchet MS", 21)
-settings_font_header = pygame.font.SysFont("Trebuchet MS", 16)
+settings_font_title = pygame.font.SysFont("Trebuchet MS", 26)
+settings_font_header = pygame.font.SysFont("Trebuchet MS", 20)
 rocket_background_img = pygame.image.load("Images/Rocket_Background_Image.png").convert_alpha()
 rocket_background_img = pygame.transform.scale(rocket_background_img, (WIDTH, HEIGHT))
 
@@ -33,8 +33,8 @@ def change_all_hot_keys_from_input(event: pygame.event, hotkeys):
 
 
 def initialize_settings_ui():
-    create_ui_button("Close Settings (ESC)", 0, 0, manager, length_x=WIDTH * 0.12 - 1, length_y=0.08 - 1 * HEIGHT)
-    create_ui_button("Reset Controls", WIDTH * 0.88 + 1, 0, manager, length_x=WIDTH * 0.12 - 1,
+    create_ui_button("Close Settings (ESC)", 0, 0, manager, length_x=WIDTH * 0.12 - 1, length_y=0.08 * HEIGHT - 1)
+    create_ui_button("Reset Controls", WIDTH * 0.88 + 1 , 0, manager, length_x=WIDTH * 0.12 - 1,
                      length_y=HEIGHT * 0.08 - 1)
     create_ui_text_box_and_text_entry_hotkey(Keys.h_switch_interface, WIDTH * 0.1, HEIGHT * 0.2, manager, False, "Q")
     create_ui_text_box_and_text_entry_hotkey(Keys.h_leave_simulation, WIDTH * 0.1, HEIGHT * 0.25, manager, False, "X")
@@ -65,8 +65,8 @@ def initialize_settings_ui():
 
 def display_ui_text_and_backgrounds():
     # Button Backgrounds
-    pygame.draw.rect(WINDOW, (0, 0, 0), (0, 0, WIDTH * 0.12, HEIGHT * 0.0675))
-    pygame.draw.rect(WINDOW, (0, 0, 0), (WIDTH * 0.879, 0, WIDTH * 0.121, HEIGHT * 0.081))
+    pygame.draw.rect(WINDOW, (0, 0, 0), (0, 0, WIDTH * 0.12, HEIGHT * 0.08))
+    pygame.draw.rect(WINDOW, (0, 0, 0), (WIDTH * 0.88, 0, WIDTH * 0.12, HEIGHT * 0.08))
     # Title Background
     pygame.draw.rect(WINDOW, (0, 0, 0), (WIDTH * 0.4, HEIGHT * 0.04, WIDTH * 0.16, HEIGHT * 0.05))
     pygame.draw.rect(WINDOW, (50, 50, 50), (WIDTH * 0.4 + 1, HEIGHT * 0.04 + 1, WIDTH * 0.16 - 2, HEIGHT * 0.05 - 2))
@@ -136,7 +136,7 @@ def show_settings_ui():
 
     while show_gui:
         for event in pygame.event.get():
-            if event.type == pg.UI_BUTTON_PRESSED and event.ui_object_id == "CloseSettings_button":
+            if event.type == pg.UI_BUTTON_PRESSED and event.ui_object_id == "CloseSettings(ESC)_button":
                 show_gui = False
             if event.type == pg.UI_BUTTON_PRESSED and event.ui_object_id == "ResetControls_button":
                 Keys.reset_overwrite_current()

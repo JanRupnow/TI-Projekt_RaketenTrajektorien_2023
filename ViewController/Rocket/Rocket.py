@@ -1,7 +1,5 @@
 import math
 
-import numpy as np
-
 from Globals.Constants import *
 from ViewController.Planet import Planet
 from ViewController.Rocket.RocketFlightState import RocketFlightState

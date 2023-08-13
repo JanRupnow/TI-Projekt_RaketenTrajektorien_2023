@@ -163,14 +163,14 @@ def display_bar(rocket: Rocket) -> None:
     WINDOW.blit(time_step_value, (WIDTH * 0.465, HEIGHT * 0.055))
 
     # Zoom
-    pygame.draw.rect(WINDOW, (100, 100, 100), (WIDTH * 0.53, HEIGHT * 0.015, WIDTH * 0.07, HEIGHT * 0.04))
+    pygame.draw.rect(WINDOW, (100, 100, 100), (WIDTH * 0.53, HEIGHT * 0.015, WIDTH * 0.08, HEIGHT * 0.04))
 
     WINDOW.blit(DrawManager.zoom_text, (WIDTH * 0.55, HEIGHT * 0.02))
 
-    pygame.draw.rect(WINDOW, (20, 20, 20), (WIDTH * 0.53, HEIGHT * 0.05, WIDTH * 0.07, HEIGHT * 0.04))
+    pygame.draw.rect(WINDOW, (20, 20, 20), (WIDTH * 0.53, HEIGHT * 0.05, WIDTH * 0.08, HEIGHT * 0.04))
 
     zoom_value = FONT_1.render(f'{DATA.zoom_goal}', True, COLOR_WHITE)
-    WINDOW.blit(zoom_value, (WIDTH * 0.545, HEIGHT * 0.055))
+    WINDOW.blit(zoom_value, (WIDTH * 0.532, HEIGHT * 0.055))
 
     # Current Speed
     pygame.draw.rect(WINDOW, (100, 100, 100), (WIDTH * 0.62, HEIGHT * 0.015, WIDTH * 0.07, HEIGHT * 0.04))

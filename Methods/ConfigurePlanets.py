@@ -1,4 +1,5 @@
 import math
+import json
 
 from sunpy.coordinates import get_body_heliographic_stonyhurst
 from Globals.Constants import *
