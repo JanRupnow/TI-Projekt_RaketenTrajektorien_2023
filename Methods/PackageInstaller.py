@@ -6,7 +6,7 @@ import sys
 def install_requirements():
     try:
         subprocess.run(['pip', 'install', 'pipenv'])
-        subprocess.run(['pipenv', 'install', '--ignore-pipfile', '-r', 'requirements.txt'])
+        subprocess.run(['pipenv', 'install'])
     except Exception as e:
         sys.exit()
 
