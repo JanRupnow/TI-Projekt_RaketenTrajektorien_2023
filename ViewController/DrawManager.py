@@ -107,7 +107,7 @@ class DrawManager:
                                                                   -180) / np.pi - 90 - rocket.angle)
         elif rocket.flightState == RocketFlightState.landed:
             cls.rocket_currentImage = pygame.transform.rotate(cls.rocket_notRotatedImage,
-                                                              rocket.planetAngle * (-180) / np.pi - 90)
+                                                              rocket.planetAngle * (-180) / np.pi - 180)
         else:
             cls.rocket_currentImage = pygame.transform.rotate(cls.rocket_notRotatedImage,
                                                               math.atan2(
@@ -219,8 +219,8 @@ def display_bar(rocket: Rocket) -> None:
         WINDOW.blit(altitude_value, (WIDTH * 0.93, HEIGHT * 0.055))
 
 
-def fuel_bar() -> None:
-    percentage = 0.75
+def fuel_bar(rocket: Rocket) -> None:
+    percentage = rocket.fuelmass / rocket.startfuelmass
     pygame.draw.rect(WINDOW, (255 * (1 - percentage), 255 * percentage, 0),
                      (WIDTH * 0.925, HEIGHT * 0.95 - HEIGHT * 0.15 * percentage, WIDTH * 0.05,
                       HEIGHT * 0.15 * percentage))
@@ -302,5 +302,5 @@ def render_flight_interface(rocket: Rocket, planets: list[Planet]) -> None:
         WINDOW.blit(DrawManager.uranus_surface, (15, 495))
         WINDOW.blit(DrawManager.neptune_surface, (15, 525))
 
-    fuel_bar()
+    fuel_bar(rocket)
     angle_arc(rocket)

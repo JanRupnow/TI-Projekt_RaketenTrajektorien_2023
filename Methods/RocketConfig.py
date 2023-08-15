@@ -24,7 +24,9 @@ def load_rocket_from_path(path, planets: list[Planet]) -> Rocket:
             config["Color"]["green"],
             config["Color"]["blue"]
         ),
-        next(filter(lambda x: x.name == "Sun", planets), None)
+        next(filter(lambda x: x.name == "Sun", planets), None),
+        config["BurningRate"]["value"],
+        config["ExhaustSpeed"]["value"]
     )
 
     if config["Start"]["Thrust"]["value"] > 0:

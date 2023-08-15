@@ -36,6 +36,7 @@ class GameManager:
 
             self.new_calculations_for_planet(planets)
             rocket.calculate_new_calculation_of_predictions()
+            rocket.updateRocketMass()
             rocket.currentStep += 1
 
         if DATA.flight_change_state == FlightChangeState.pausedAndPowerChanged:
@@ -67,6 +68,7 @@ class GameManager:
                 # Calculate new orbits
                 self.new_calculations_for_planet(planets)
                 rocket.calculate_new_calculation_of_predictions()
+                rocket.updateRocketMass()
                 rocket.currentStep += 1
 
             if DATA.flight_change_state == FlightChangeState.powerChanged:
@@ -74,11 +76,13 @@ class GameManager:
                 [planet.calculate_next_step(planets) for planet in planets]
                 # If only power changed adjust the rocket prediction
                 rocket.calculate_new_calculation_of_predictions()
+                rocket.updateRocketMass()
                 rocket.currentStep += 1
 
             if DATA.flight_change_state == FlightChangeState.unchanged:
                 self.calculate_next_step_for_planets(planets, rocket)
                 rocket.calculate_one_prediction()
+                rocket.updateRocketMass()
                 rocket.currentStep += 1
 
             rocket.update_planets_in_range_list(planets)

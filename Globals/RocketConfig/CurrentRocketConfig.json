@@ -1,7 +1,7 @@
 {
     "Start": {
         "AngleOnPlanet": {
-            "value": 90,
+            "value": 30,
             "text": "start angle"
         },
         "Startplanet": {
@@ -19,11 +19,11 @@
     },
     "Mass": {
         "StructMass": {
-            "value": 10000,
+            "value": 90000,
             "text": "rocket mass(t)"
         },
         "PropellantMass": {
-            "value": 2000,
+            "value": 1000000,
             "text": "fuel mass(t)"
         }
     },
@@ -41,13 +41,21 @@
             "text": "day"
         }
     },
+    "BurningRate": {
+        "value": 1000.0,
+        "text": "burning rate"
+    },
+    "ExhaustSpeed": {
+        "value": 5000.0,
+        "text": "exhaust speed"
+    },
     "Color": {
         "red": 255,
         "green": 255,
         "blue": 255
     },
     "Image": {
-        "selectedNumber": 2,
+        "selectedNumber": 0,
         "path": [
             "./Images/Rocket1.png",
             "./Images/Rocket2.png",

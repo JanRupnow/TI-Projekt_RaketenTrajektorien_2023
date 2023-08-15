@@ -11,8 +11,13 @@ from numba import int32, float32, float64, typeof, types
 @jitclass([
     ("currentStep", int32),
     ("currentCalculationStep", int32),
-    ("mass", float32),
+    ("current_mass", float32),
+    ("predicted_mass", float32),
+    ("structure_mass", float32),
     ("fuelmass", float64),
+    ("startfuelmass", float64),
+    ("burn_rate", float64),
+    ("exhaust_speed", float64),
     ("PlanetsInRangeList", types.List(typeof(
         Planet(-5.204 * AU, 0, 71492 * 10 ** 3, COLOR_JUPITER, 1.898 * 10 ** 21, planetNameArray[6], 13.06 * 1000)))),
     ("nearestPlanet", typeof(
@@ -23,7 +28,6 @@ from numba import int32, float32, float64, typeof, types
     ("velocity_X", float64[:]),
     ("velocity_Y", float64[:]),
     ("time_step", float64),
-    ("c", float64),
     ("radius", float64),
     ("thrust", int32),
     ("angle", float32),
@@ -36,11 +40,16 @@ from numba import int32, float32, float64, typeof, types
     ("entryAngle", float32)])
 class Rocket:
     def __init__(self, start_angle: float, fuel: float, mass: float, startplanet: Planet, radius: float, color: tuple,
-                 sun: Planet):
+                 sun: Planet, burn_rate: float, exhaust_speed: float):
         self.currentStep: int = CurrentStep
         self.currentCalculationStep: int = CurrentCalculationStep
-        self.mass: float = mass
+        self.current_mass: float = mass + fuel
+        self.predicted_mass: float = mass + fuel
+        self.structure_mass: float = mass
         self.fuelmass: float = fuel
+        self.startfuelmass: float = fuel
+        self.burn_rate: float = burn_rate
+        self.exhaust_speed: float = exhaust_speed
         # TODO angle refactor
         self.startplanet: Planet = startplanet
         self.PlanetsInRangeList: list[Planet] = [startplanet]
@@ -51,7 +60,6 @@ class Rocket:
         self.velocity_X: np.array = np.zeros(LEN_OF_PREDICTIONS_ARRAY)  # x-Velocity [m/s]
         self.velocity_Y: np.array = np.zeros(LEN_OF_PREDICTIONS_ARRAY)  # z-Velocity [m/s]
         self.time_step: float = 1 / 60
-        self.c: float = AirResistance / self.mass
         self.radius: float = radius
         self.thrust: int = 0  # aktuell nicht genutzt
         self.angle: float = 0
@@ -112,8 +120,8 @@ class Rocket:
     """
 
     def f(self, v_x: float, v_y: float, i: int, distance_to_sun: float) -> None:
-        x = 0
-        y = 0
+        x: float = 0
+        y: float = 0
         for planet in self.PlanetsInRangeList:
             r = np.sqrt((self.position_X[i] - planet.position_X[i]) ** 2
                         + (self.position_Y[i] - planet.position_Y[i]) ** 2)
@@ -121,30 +129,18 @@ class Rocket:
             abs_a = (G * planet.mass / r ** 2)
 
             # Luftwiderstand nur auf der Erde berechnen und nur bis 100km Höhe
-            if planet.name == "Earth" and r < 100_000:
-                abs_a += ((AirResistance * (v_x ** 2 + v_y ** 2) * np.sign(self.velocity_Y[i]) *
+            if planet.name == "Earth" and (r - planet.radius) < 100_000:
+                abs_a += ((AirResistance * (v_x ** 2 + v_y ** 2) *
                            p_0 * np.exp(-abs((r - planet.radius)) / h_s))
-                          / (2 * self.mass))
+                          / (2 * self.predicted_mass))
 
-            sign_x = -np.sign(self.position_X[i] - planet.position_X[i])
-            sign_y = -np.sign(self.position_Y[i] - planet.position_Y[i])
-
-            x += sign_x * abs_a * ((self.position_X[i] - planet.position_X[i]) / r)
-            y += sign_y * abs_a * ((self.position_Y[i] - planet.position_Y[i]) / r)
+            x -= abs_a * ((self.position_X[i] - planet.position_X[i]) / r)
+            y -= abs_a * ((self.position_Y[i] - planet.position_Y[i]) / r)
 
         x -= (G * self.sun.mass / distance_to_sun ** 2) * (
                 (self.position_X[i] - self.sun.position_X[i]) / distance_to_sun)
         y -= (G * self.sun.mass / distance_to_sun ** 2) * (
                 (self.position_Y[i] - self.sun.position_Y[i]) / distance_to_sun)
-
-        if self.thrust != 0:
-            x += math.cos(math.atan2(self.velocity_Y[i],
-                                     self.velocity_X[i])
-                          + self.angle * np.pi / 180) * self.thrust * 10
-
-            y += math.sin(math.atan2(self.velocity_Y[i],
-                                     self.velocity_X[i])
-                          + self.angle * np.pi / 180) * self.thrust * 10
 
         return x, y
 
@@ -171,26 +167,61 @@ class Rocket:
         k_x = (k1_x + 2 * k2_x + 2 * k3_x + k4_x) / 6
         k_y = (k1_y + 2 * k2_y + 2 * k3_y + k4_y) / 6
 
-        self.velocity_X[i + 1] = self.velocity_X[i] + k_x * self.time_step
+        delta_v_x, delta_v_y = self.calculateRocketBoost(i)
+
+        self.velocity_X[i + 1] = self.velocity_X[i] + k_x * self.time_step + delta_v_x
         self.position_X[i + 1] = self.position_X[i] + self.velocity_X[i] * self.time_step
 
-        self.velocity_Y[i + 1] = self.velocity_Y[i] + k_y * self.time_step
+        self.velocity_Y[i + 1] = self.velocity_Y[i] + k_y * self.time_step + delta_v_y
         self.position_Y[i + 1] = self.position_Y[i] + self.velocity_Y[i] * self.time_step
+
+    def updateRocketMass(self) -> None:
+        if self.flightState == RocketFlightState.flying and self.thrust != 0:
+
+            percentage: float = 0.0
+            if (self.current_mass - self.burn_rate * self.time_step * self.thrust) >= self.structure_mass:
+                percentage = 1.0
+            elif self.current_mass > self.structure_mass:
+                percentage = (self.current_mass - self.structure_mass) / (self.burn_rate * self.time_step * self.thrust)
+
+            delta = percentage * self.burn_rate * self.time_step * self.thrust
+            self.current_mass -= delta
+            self.fuelmass -= delta
+
+
+    def calculateRocketBoost(self, i: int) -> (float, float):
+        if self.thrust == 0:
+            return (0.0, 0.0)
+
+        percentage: float = 0.0
+
+        if (self.predicted_mass - self.burn_rate*self.time_step * self.thrust) >= self.structure_mass:
+            percentage = 1.0
+        elif self.predicted_mass > self.structure_mass:
+            percentage = (self.predicted_mass - self.structure_mass) / (self.burn_rate * self.time_step * self.thrust)
+        else:
+            return (0.0, 0.0)
+
+        result = self.exhaust_speed * np.log(
+            self.predicted_mass /
+            (self.predicted_mass - percentage * self.burn_rate * self.time_step * self.thrust)
+        )
+        self.predicted_mass -= percentage * self.burn_rate * self.time_step * self.thrust
+
+        alpha = math.atan2(
+            self.position_Y[i] - self.startplanet.position_Y[i],
+            self.position_X[i] - self.startplanet.position_X[i]
+            #self.velocity_Y[i] - self.startplanet.velocity_Y[i],
+            #self.velocity_X[i] - self.startplanet.velocity_X[i]
+        ) + self.angle * np.pi / 180
+
+        return (
+            result * math.cos(alpha),
+            result * math.sin(alpha)
+        )
 
     def set_scale(self, scale: float) -> None:
         self.radius *= scale
-
-    # def get_current_distance_to_next_planet(self):
-    #     return np.sqrt((self.position_X[self.currentCalculationStep] - self.nearestPlanet.position_X[
-    #         self.currentCalculationStep]) ** 2 +
-    #                    (self.position_Y[self.currentCalculationStep] - self.nearestPlanet.position_Y[
-    #                        self.currentCalculationStep]) ** 2)
-
-    # def get_relative_velocity(self, i: int):
-    #     if self.flightState == RocketFlightState.flying:
-    #         return np.sqrt((self.velocity_X[i] - self.nearestPlanet.velocity_X[i]) ** 2
-    #                        + (self.velocity_Y[i] - self.nearestPlanet.velocity_Y[i]) ** 2)
-    #     return 0
 
     def get_current_relative_velocity(self) -> float:
         if self.flightState == RocketFlightState.flying:
@@ -222,6 +253,7 @@ class Rocket:
 
     def calculate_new_calculation_of_predictions(self) -> None:
         self.currentCalculationStep = self.currentStep
+        self.predicted_mass = self.current_mass
         for i in range(NUM_OF_PREDICTIONS):
             # for planet in planets:
             #    planet.predict_step(self.currentCalculationStep, planets, self)
