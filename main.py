@@ -1,4 +1,5 @@
 from ViewController.GameManager import GameManager
+from Views.LoadingView import loading_screen
 from Views.StartView import *
 
 from Globals.FlightData.FlightDataManager import DATA
@@ -13,6 +14,9 @@ def main():
     game_manager = GameManager(DATA_df)
     package_installer()
     show_start_ui()
+
+    loading_screen()
+
     planets = configure_planets()
     rocket = load_rocket(planets)
 
