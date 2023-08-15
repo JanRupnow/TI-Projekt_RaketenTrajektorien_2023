@@ -30,6 +30,7 @@ class DrawManager:
 
     state_text = FONT_1.render("State", True, COLOR_WHITE)
     simulation_start_time_text = FONT_1.render("Simulation Time:", True, COLOR_WHITE)
+    rocket_weight_text = FONT_1.render("Weight (t):", True, COLOR_WHITE)
     time_step_text = FONT_1.render("Step >>", True, COLOR_WHITE)
     zoom_text = FONT_1.render("Zoom", True, COLOR_WHITE)
     velocity_text = FONT_1.render("Velocity", True, COLOR_WHITE)
@@ -130,7 +131,6 @@ def display_bar(rocket: Rocket) -> None:
     pygame.draw.rect(WINDOW, (50, 50, 50), (0, 0, WIDTH * 1, HEIGHT * 0.1))
 
     # Current Time
-
     pygame.draw.rect(WINDOW, (100, 100, 100), (WIDTH * 0.03, HEIGHT * 0.015, WIDTH * 0.15, HEIGHT * 0.04))
 
     WINDOW.blit(DrawManager.simulation_start_time_text, (WIDTH * 0.04, HEIGHT * 0.02))
@@ -142,7 +142,17 @@ def display_bar(rocket: Rocket) -> None:
         True, COLOR_WHITE)
     WINDOW.blit(text_actual_time, (WIDTH * 0.04, HEIGHT * 0.055))
 
-    # Generals
+    # Weight
+    pygame.draw.rect(WINDOW, (100, 100, 100), (WIDTH * 0.2, HEIGHT * 0.015, WIDTH * 0.1, HEIGHT * 0.04))
+
+    WINDOW.blit(DrawManager.rocket_weight_text, (WIDTH * 0.21, HEIGHT * 0.02))
+
+    pygame.draw.rect(WINDOW, (20, 20, 20), (WIDTH * 0.2, HEIGHT * 0.05, WIDTH * 0.1, HEIGHT * 0.04))
+
+    text_weight = FONT_1.render(
+        f'{rocket.current_mass:,.0f}', True, COLOR_WHITE)
+    WINDOW.blit(text_weight, (WIDTH * 0.21, HEIGHT * 0.055))
+
     # State
     pygame.draw.rect(WINDOW, (100, 100, 100), (WIDTH * 0.37, HEIGHT * 0.015, WIDTH * 0.07, HEIGHT * 0.04))
 
@@ -183,7 +193,7 @@ def display_bar(rocket: Rocket) -> None:
         rocket.get_current_relative_velocity()) if rocket.nearestPlanet.distanceToRocket < rocket.nearestPlanet.radius * 5 else round(
         rocket.get_absolute_velocity())
 
-    rocket_velocity = FONT_1.render(f'{speed} km/h', True, (0, 160, 0))
+    rocket_velocity = FONT_1.render(f'{speed:,.0f} km/h', True, ((0, 160, 0) if speed < CRASH_VELOCITY else (160, 0, 0)))
     WINDOW.blit(rocket_velocity, (WIDTH * 0.625, HEIGHT * 0.055))
 
     # Time Passed
@@ -209,14 +219,14 @@ def display_bar(rocket: Rocket) -> None:
             rocket.nearestPlanet.distanceToRocket - rocket.nearestPlanet.radius < 3 / 2 * rocket.nearestPlanet.radius:
         pygame.draw.rect(WINDOW, (100, 100, 100), (WIDTH * 0.915, HEIGHT * 0.015, WIDTH * 0.07, HEIGHT * 0.04))
 
-        WINDOW.blit(DrawManager.altitude_text, (WIDTH * 0.93, HEIGHT * 0.02))
+        WINDOW.blit(DrawManager.altitude_text, (WIDTH * 0.925, HEIGHT * 0.02))
 
         pygame.draw.rect(WINDOW, (20, 20, 20), (WIDTH * 0.915, HEIGHT * 0.05, WIDTH * 0.07, HEIGHT * 0.04))
 
         altitude_value = FONT_1.render(
             f'{round((rocket.nearestPlanet.distanceToRocket - rocket.nearestPlanet.radius) / 1000, 0)} km',
             True, COLOR_WHITE)
-        WINDOW.blit(altitude_value, (WIDTH * 0.93, HEIGHT * 0.055))
+        WINDOW.blit(altitude_value, (WIDTH * 0.925, HEIGHT * 0.055))
 
 
 def fuel_bar(rocket: Rocket) -> None:
@@ -278,7 +288,6 @@ def render_flight_interface(rocket: Rocket, planets: list[Planet]) -> None:
         WINDOW.blit(fps_text, (WIDTH * 0.025, HEIGHT * 0.13))
 
         # TODO implement Pressure
-        # TODO implement Current Weight
 
         rocket_max_q = FONT_1.render(f'MaxQ: %', True, COLOR_WHITE)
         WINDOW.blit(rocket_max_q, (WIDTH * 0.75, HEIGHT * 0.12))

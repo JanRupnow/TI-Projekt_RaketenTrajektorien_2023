@@ -50,7 +50,6 @@ class Rocket:
         self.startfuelmass: float = fuel
         self.burn_rate: float = burn_rate
         self.exhaust_speed: float = exhaust_speed
-        # TODO angle refactor
         self.startplanet: Planet = startplanet
         self.PlanetsInRangeList: list[Planet] = [startplanet]
         self.nearestPlanet: Planet = startplanet
