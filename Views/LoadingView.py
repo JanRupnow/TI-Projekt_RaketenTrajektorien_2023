@@ -35,7 +35,7 @@ def loading_screen():
         pygame.draw.rect(WINDOW, (128, 128, 128), pygame.Rect(WIDTH * 0.2, HEIGHT * 0.85, WIDTH * 0.6, HEIGHT * 0.075),
                          1)
         pygame.draw.rect(WINDOW, (255, 255, 255),
-                         pygame.Rect(WIDTH * 0.2, HEIGHT * 0.85, WIDTH * 0.6 * (min(elapsed_time, duration)
+                         pygame.Rect(WIDTH * 0.2, HEIGHT * 0.85, WIDTH * 0.6 * (min(elapsed_time, duration * 0.95)
                                                                                 / duration), HEIGHT * 0.075))
         # Caption
         WINDOW.blit(title_text, (WIDTH * 0.33, HEIGHT * 0.1))
