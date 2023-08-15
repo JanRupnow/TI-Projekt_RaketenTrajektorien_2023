@@ -105,6 +105,11 @@ class GameManager:
         if planets[0].currentStep >= NUM_OF_PREDICTIONS:
             [planet.reset_array() for planet in planets]
 
+        if rocket.flightState == RocketFlightState.crashed:
+            DATA.run = False
+
+
+
     def new_calculations_for_planet(self, planets: list[Planet]):
         [planet.__setattr__('currentCalculationStep', planet.currentStep) for planet in planets]
 
