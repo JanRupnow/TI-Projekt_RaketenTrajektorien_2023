@@ -15,10 +15,10 @@ def main():
     package_installer()
     show_start_ui()
 
-    loading_screen()
-
     planets = configure_planets()
     rocket = load_rocket(planets)
+
+    loading_screen()
 
     while DATA.run:
         CLOCK.tick(60)

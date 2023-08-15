@@ -1,7 +1,7 @@
 {
     "Start": {
         "AngleOnPlanet": {
-            "value": 90,
+            "value": 30,
             "text": "start angle"
         },
         "Startplanet": {
@@ -47,7 +47,7 @@
         "blue": 255
     },
     "Image": {
-        "selectedNumber": 3,
+        "selectedNumber": 1,
         "path": [
             "./Images/Rocket1.png",
             "./Images/Rocket2.png",
