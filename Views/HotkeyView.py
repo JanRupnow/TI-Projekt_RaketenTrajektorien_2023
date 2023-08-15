@@ -8,8 +8,8 @@ from Methods.ViewMethods import *
 manager = pg.UIManager((WIDTH, HEIGHT))
 UI_REFRESH_RATE = CLOCK.tick(60) / 1000
 
-settings_font_title = pygame.font.SysFont("Trebuchet MS", 26)
-settings_font_header = pygame.font.SysFont("Trebuchet MS", 20)
+settings_font_title = pygame.font.SysFont("Trebuchet MS", 22)
+settings_font_header = pygame.font.SysFont("Trebuchet MS", 16)
 rocket_background_img = pygame.image.load("Images/Rocket_Background_Image.png").convert_alpha()
 rocket_background_img = pygame.transform.scale(rocket_background_img, (WIDTH, HEIGHT))
 

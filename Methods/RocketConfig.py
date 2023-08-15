@@ -3,6 +3,7 @@ import json
 from ViewController.Planet import *
 from ViewController.Rocket.Rocket import Rocket
 from ViewController.DrawManager import DrawManager
+from Views.StartView import get_selected_rocket
 
 
 def load_rocket_from_path(path, planets: list[Planet]) -> Rocket:
@@ -11,7 +12,7 @@ def load_rocket_from_path(path, planets: list[Planet]) -> Rocket:
 
     startplanet = next(filter(lambda x: x.name == config["Start"]["Startplanet"]["value"], planets))
 
-    img = pygame.image.load(config["Image"]["path"][config["Image"]["selectedNumber"]])
+    img = pygame.image.load(f"Images/Rocket{get_selected_rocket() + 1}.png")
     img = pygame.transform.scale_by(img, 125 / img.get_width())
     rocket = Rocket(
         config["Start"]["AngleOnPlanet"]["value"],

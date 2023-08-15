@@ -132,7 +132,7 @@ def display_basic_ui():
                      (WIDTH * 0.39 + 1, HEIGHT * 0.08 + 1, WIDTH * 0.22 - 2, HEIGHT * 0.075 - 2))
 
     title_text = TITLE_FONT_1.render("Spaceflight Simulator", True, (0, 150, 150))
-    WINDOW.blit(title_text, (WIDTH * 0.42, HEIGHT * 0.1))
+    WINDOW.blit(title_text, (WIDTH * 0.405, HEIGHT * 0.1))
 
     # Background Image
     pygame.draw.rect(WINDOW, (100, 100, 100), (WIDTH * 0.45, HEIGHT * 0.315, WIDTH * 0.1, HEIGHT * 0.37))
