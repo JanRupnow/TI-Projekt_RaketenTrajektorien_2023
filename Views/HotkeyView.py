@@ -16,7 +16,7 @@ rocket_background_img = pygame.transform.scale(rocket_background_img, (WIDTH, HE
 
 def change_hot_key_from_input(event: pygame.event, hotkey) -> str:
     if event.type == pg.UI_TEXT_ENTRY_FINISHED and event.ui_object_id == remove_spaces(hotkey[1] + "_input") \
-            and event.text != "":
+            and event.text != "", "W", "A", "S", "D": #alle fixen Hotkeys
         json_file = open("./variables/hotkeys_config/current_hotkeys.json", "r+")
         hotkey[0] = ord(event.text)
         new_json = Keys.update_key_in_json(json.load(json_file), hotkey)
@@ -145,6 +145,8 @@ def show_settings_ui():
             if check_key_down(event, Keys.h_close_window[0]):
                 show_gui = False
             if event.type == pg.UI_TEXT_ENTRY_FINISHED and event.ui_object_id.endswith("_input"):
+                if Keys.list_hot_keys.__contains__(event.text):
+                    break
                 if event.text != "":
                     if 32 < ord(event.text) < 127:
                         change_all_hot_keys_from_input(event, Keys.list_hot_keys)
