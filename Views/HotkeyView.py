@@ -94,7 +94,7 @@ def display_ui_text_and_backgrounds():
     # Left Topic Background N2
     pygame.draw.rect(WINDOW, (100, 100, 100),
                      (WIDTH * 0.085 + 1, HEIGHT * 0.35 + 1, WIDTH * 0.17 - 2, HEIGHT * 0.0525 - 2))
-    rocket_controls_text = settings_font_header.render("Rocket Controls (not mutable)", True, (0, 150, 150))
+    rocket_controls_text = settings_font_header.render("Rocket Controls", True, (0, 150, 150))
     WINDOW.blit(rocket_controls_text, (WIDTH * 0.1, HEIGHT * 0.375))
     # Left Topic Background N3
     pygame.draw.rect(WINDOW, (100, 100, 100),
