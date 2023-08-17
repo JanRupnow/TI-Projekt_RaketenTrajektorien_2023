@@ -15,9 +15,8 @@ rocket_background_img = pygame.transform.scale(rocket_background_img, (WIDTH, HE
 
 
 def change_hot_key_from_input(event: pygame.event, hotkey) -> str:
-    if event.type == pg.UI_TEXT_ENTRY_FINISHED and event.ui_object_id == remove_spaces(hotkey[1] + "_input") \
-            and event.text != "", "W", "A", "S", "D": #alle fixen Hotkeys
-        json_file = open("./variables/hotkeys_config/current_hotkeys.json", "r+")
+    if event.type == pg.UI_TEXT_ENTRY_FINISHED and event.ui_object_id == remove_spaces(hotkey[1] + "_input"):
+        json_file = open("./Globals/HotkeysConfig/CurrentHotkeys.json", "r+")
         hotkey[0] = ord(event.text)
         new_json = Keys.update_key_in_json(json.load(json_file), hotkey)
 
@@ -39,10 +38,10 @@ def initialize_settings_ui():
     create_ui_text_box_and_text_entry_hotkey(Keys.h_switch_interface, WIDTH * 0.1, HEIGHT * 0.2, manager, False, "Q")
     create_ui_text_box_and_text_entry_hotkey(Keys.h_leave_simulation, WIDTH * 0.1, HEIGHT * 0.25, manager, False, "X")
     create_ui_text_box_and_text_entry_hotkey(Keys.h_open_settings, WIDTH * 0.1, HEIGHT * 0.3, manager, False, "F1")
-    create_ui_text_box_and_text_entry_hotkey(Keys.h_rocket_boost_forward, WIDTH * 0.1, HEIGHT * 0.4, manager)
-    create_ui_text_box_and_text_entry_hotkey(Keys.h_rocket_boost_left, WIDTH * 0.1, HEIGHT * 0.45, manager)
-    create_ui_text_box_and_text_entry_hotkey(Keys.h_lower_rocket_boost, WIDTH * 0.1, HEIGHT * 0.5, manager)
-    create_ui_text_box_and_text_entry_hotkey(Keys.h_rocket_boost_right, WIDTH * 0.1, HEIGHT * 0.55, manager)
+    create_ui_text_box_and_text_entry_hotkey(Keys.h_rocket_boost_forward, WIDTH * 0.1, HEIGHT * 0.4, manager, False, "W")
+    create_ui_text_box_and_text_entry_hotkey(Keys.h_rocket_boost_left, WIDTH * 0.1, HEIGHT * 0.45, manager, False, "A")
+    create_ui_text_box_and_text_entry_hotkey(Keys.h_lower_rocket_boost, WIDTH * 0.1, HEIGHT * 0.5, manager, False, "S")
+    create_ui_text_box_and_text_entry_hotkey(Keys.h_rocket_boost_right, WIDTH * 0.1, HEIGHT * 0.55, manager, False, "D")
     create_ui_text_box_and_text_entry_hotkey(Keys.h_zoom_auto_on_rocket, WIDTH * 0.1, HEIGHT * 0.65, manager)
     create_ui_text_box_and_text_entry_hotkey(Keys.H_zoomAutoOnReferencePlanet, WIDTH * 0.1, HEIGHT * 0.7, manager)
     create_ui_text_box_and_text_entry_hotkey(Keys.h_zoom_rocket_start, WIDTH * 0.1, HEIGHT * 0.75, manager)
@@ -138,17 +137,16 @@ def show_settings_ui():
         for event in pygame.event.get():
             if event.type == pg.UI_BUTTON_PRESSED and event.ui_object_id == "CloseSettings(ESC)_button":
                 show_gui = False
+            if check_key_down(event, Keys.h_close_window[0]):
+                show_gui = False
             if event.type == pg.UI_BUTTON_PRESSED and event.ui_object_id == "ResetControls_button":
                 Keys.reset_overwrite_current()
                 manager.clear_and_reset()
                 initialize_settings_ui()
-            if check_key_down(event, Keys.h_close_window[0]):
-                show_gui = False
             if event.type == pg.UI_TEXT_ENTRY_FINISHED and event.ui_object_id.endswith("_input"):
-                if Keys.list_hot_keys.__contains__(event.text):
-                    break
-                if event.text != "":
-                    if 32 < ord(event.text) < 127:
+                entry = ord(event.text.lower())
+                if not [t[0] for t in Keys.list_hot_keys].__contains__(entry) and event.text != "":
+                    if 32 < entry < 127:
                         change_all_hot_keys_from_input(event, Keys.list_hot_keys)
                 manager.clear_and_reset()
                 initialize_settings_ui()
@@ -161,5 +159,4 @@ def show_settings_ui():
         display_ui_text_and_backgrounds()
         manager.draw_ui(WINDOW)
         pygame.display.update()
-
     manager.clear_and_reset()
