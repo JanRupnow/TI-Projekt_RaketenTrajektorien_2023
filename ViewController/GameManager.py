@@ -1,26 +1,22 @@
-import sys
-
 import numpy as np
-import pandas as pd
 
-from Methods.ConfigurePlanets import get_start_time, simulation_start_time
-from Methods.GameMethods import center_screen_on_planet, planet_is_in_screen, automatic_zoom_on_rocket
-
-from Globals.Constants import DATA_ARRAY, DF_COLUMNS, FILE_NAME
+from Globals.Constants import FILE_NAME
 from Globals.FlightData.FlightChangeState import FlightChangeState
-from Globals.FlightData.ZoomGoal import ZoomGoal
 from Globals.FlightData.FlightDataManager import DATA
 from Globals.Constants import NUM_OF_PREDICTIONS
 
+from Methods.ConfigurePlanets import get_start_time
+
 from ViewController.Rocket.RocketFlightState import RocketFlightState
-from ViewController.DrawManager import DrawManager, render_flight_interface
 from ViewController.Planet import Planet
 from ViewController.Rocket.Rocket import Rocket
 
 
 class GameManager:
-    def __init__(self, data_df: pd.DataFrame):
-        self.data_df = data_df
+    def __init__(self):
+        self.data_df = np.empty((NUM_OF_PREDICTIONS * 100, 9), dtype="object")
+        self.rows_to_append = np.empty((NUM_OF_PREDICTIONS, 9), dtype="object")
+        self.data_array = np.empty((NUM_OF_PREDICTIONS + 1, 5), dtype="object")
 
     def calculate_next_iteration(self, rocket: Rocket, planets: list[Planet]):
 
@@ -89,14 +85,13 @@ class GameManager:
             rocket.update_nearest_planet(planets)
             if rocket.nearestPlanet.check_collision():
                 rocket.nearestPlanet.check_landing(rocket)
-                if rocket.flavor == RocketFlightState.crashed:
-                    self.crash_fill_dataframe()
-                    sys.exit(0)
-            DATA_ARRAY[rocket.currentStep] = [(simulation_start_time + DATA.time_passed).strftime('%Y-%m-%d %H:%M:%S'),
-                                              rocket.thrust,
-                                              rocket.angle,
-                                              1,
-                                              rocket.fuelmass]
+                self.fill_dataframe(rocket)
+            print(rocket.currentStep)
+            self.data_array[rocket.currentStep] = [(get_start_time() + DATA.time_passed).timestamp(),
+                                                   rocket.thrust,
+                                                   rocket.angle,
+                                                   1,
+                                                   rocket.fuelmass]
         # Only One condition since current steps should be synced after every calculation step
         if rocket.currentStep >= NUM_OF_PREDICTIONS:
             self.fill_dataframe(rocket)
@@ -112,8 +107,6 @@ class GameManager:
         if rocket.flightState == RocketFlightState.crashed:
             DATA.run = False
 
-
-
     def new_calculations_for_planet(self, planets: list[Planet]):
         [planet.__setattr__('currentCalculationStep', planet.currentStep) for planet in planets]
 
@@ -127,73 +120,23 @@ class GameManager:
         [(planet.predict_step(planet.currentCalculationStep, planets, rocket),
           planet.__setattr__('currentStep', planet.currentStep + 1)) for planet in planets]
 
-    def display_iteration(self, rocket: Rocket, planets: list[Planet]):
-
-        if DATA.zoom_goal == ZoomGoal.nearestPlanet:
-            center_screen_on_planet(rocket.nearestPlanet)
-        elif DATA.zoom_goal == ZoomGoal.rocket:
-            automatic_zoom_on_rocket(rocket)
-
-        if rocket.flightState == RocketFlightState.flying:
-            DrawManager.draw_rocket(rocket)
-            DrawManager.draw_rocket_prediction(rocket)
-        else:
-            DrawManager.draw_rocket(rocket)
-        for planet in planets:
-            if planet_is_in_screen(planet):
-                DrawManager.draw_planet(planet)
-            if DATA.draw_orbit:
-                DrawManager.draw_planet_orbit(planet)
-            if DATA.show_distance:
-                DrawManager.display_planet_distances(planet)
-        render_flight_interface(rocket, planets)
-
     def fill_dataframe(self, rocket: Rocket):
-        rows_to_append = []
-        for idx, row in enumerate(DATA_ARRAY):
-            if row[0] == 0:
-                continue
-            new_row = pd.DataFrame({"Time": row[0],
-                       "Position_X": rocket.position_X[idx],
-                       "Position_Y": rocket.position_Y[idx],
-                       "Velocity_X": rocket.velocity_X[idx],
-                       "Velocity_Y": rocket.velocity_X[idx],
-                       "Power": row[1],
-                       "Angle": row[2],
-                       "Force": row[3],
-                       "Rocket_Fuel": row[4]}, index=[0])
-            rows_to_append.append(new_row)
-
-        rows_to_append = np.reshape(rows_to_append, (rocket.currentStep-1, 9))
-        new_data_df = pd.DataFrame(rows_to_append, columns=DF_COLUMNS)
-
-        self.data_df = pd.concat([self.data_df, new_data_df], ignore_index=True)
-
-        if self.data_df.shape[0] >= 2000:
+        print(self.data_array[1:][~np.all(self.data_array[1:] == 0, axis=1)].shape)
+        print(rocket.position_X.reshape(-1, 1)[1:rocket.currentStep].shape)
+        print(rocket.position_Y.reshape(-1, 1)[1:rocket.currentStep].shape)
+        print(rocket.velocity_X.reshape(-1, 1)[1:rocket.currentStep].shape)
+        print(rocket.velocity_Y.reshape(-1, 1)[1:rocket.currentStep].shape)
+        whole_data = np.hstack((self.data_array[1:][~np.all(self.data_array[1:] == 0, axis=1)],
+                                rocket.position_X.reshape(-1, 1)[1:rocket.currentStep+1],
+                                rocket.position_Y.reshape(-1, 1)[1:rocket.currentStep+1],
+                                rocket.velocity_X.reshape(-1, 1)[1:rocket.currentStep+1],
+                                rocket.velocity_Y.reshape(-1, 1)[1:rocket.currentStep+1]))
+        self.data_df = np.vstack((self.data_df, whole_data))
+        self.data_array = np.zeros((NUM_OF_PREDICTIONS + 1, 5))
+        if rocket.flightState == RocketFlightState.crashed:
             self.store_dataframe()
 
-    def crash_fill_dataframe(self, rocket: Rocket):
-        rows_to_append = []
-        for idx, row in enumerate(DATA_ARRAY):
-            if row[0] == 0:
-                continue
-            new_row = pd.DataFrame({"Time": row[0],
-                       "Position_X": rocket.position_X[idx],
-                       "Position_Y": rocket.position_Y[idx],
-                       "Velocity_X": rocket.velocity_X[idx],
-                       "Velocity_Y": rocket.velocity_X[idx],
-                       "Power": row[1],
-                       "Angle": row[2],
-                       "Force": row[3],
-                       "Rocket_Fuel": row[4]}, index=[0])
-            rows_to_append.append(new_row)
-
-        rows_to_append = np.reshape(rows_to_append, (rocket.currentStep-1, 9))
-        new_data_df = pd.DataFrame(rows_to_append, columns=DF_COLUMNS)
-
-        self.data_df = pd.concat([self.data_df, new_data_df], ignore_index=True)
-        self.store_dataframe()
-
     def store_dataframe(self):
-        self.data_df.to_csv(f"{FILE_NAME}", mode="a", header=False, index=False)
-        self.data_df = pd.DataFrame(columns=DF_COLUMNS)
+        with open(FILE_NAME, mode="a") as file:
+            for row in self.data_df:
+                file.write(','.join(map(str, row)) + '\n')

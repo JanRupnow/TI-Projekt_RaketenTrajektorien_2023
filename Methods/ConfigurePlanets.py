@@ -16,8 +16,6 @@ def get_start_time() -> datetime.datetime:
     return datetime.datetime(time_year, time_month, time_day, 0, 0, 0)
 
 
-simulation_start_time = get_start_time()
-
 def configure_planets() -> list[Planet]:
     time_year = get_start_year()
     time_month = get_start_month()

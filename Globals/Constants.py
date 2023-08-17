@@ -70,9 +70,3 @@ timestamp = datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
 FILE_NAME = f"Globals/FlightData/Flights/{timestamp}_Flight.csv"
 with open(FILE_NAME, "w") as file:
     file.write("Time,Position_X,Position_Y,Velocity_X,Velocity_Y,Power,Angle,Force,Rocket_Fuel\n")
-
-DATA_ARRAY = np.zeros((NUM_OF_PREDICTIONS+1, 5), dtype="object")
-DF_COLUMNS = ["Time", "Position_X", "Position_Y", "Velocity_X", "Velocity_Y", "Power", "Angle",
-                                "Force", "Rocket_Fuel"]
-
-DATA_df = pd.DataFrame(columns=DF_COLUMNS)

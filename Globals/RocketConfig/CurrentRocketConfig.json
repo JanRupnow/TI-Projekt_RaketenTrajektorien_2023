@@ -23,7 +23,7 @@
             "text": "rocket mass(t)"
         },
         "PropellantMass": {
-            "value": 1000000,
+            "value": 500000,
             "text": "fuel mass(t)"
         }
     },

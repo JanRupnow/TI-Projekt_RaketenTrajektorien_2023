@@ -6,7 +6,7 @@ from ViewController.DrawManager import DrawManager
 from Views.StartView import get_selected_rocket
 
 
-def load_rocket_from_path(path, planets: list[Planet]) -> Rocket:
+def load_rocket_from_path(path, planets: list[Planet], draw_manager: DrawManager) -> Rocket:
     jsonfile = open(path)
     config = json.load(jsonfile)
 
@@ -36,15 +36,15 @@ def load_rocket_from_path(path, planets: list[Planet]) -> Rocket:
         rocket.flightState = RocketFlightState.flying
     rocket.angle = config["Start"]["Angle"]["value"]
 
-    DrawManager.set_rocket_image(img, rocket.radius)
+    draw_manager.set_rocket_image(img, rocket.radius)
 
     jsonfile.close()
     return rocket
 
 
-def load_rocket(planets: list[Planet]) -> Rocket:
+def load_rocket(planets: list[Planet], draw_manager: DrawManager) -> Rocket:
     try:
-        return load_rocket_from_path("./Globals/RocketConfig/CurrentRocketConfig.json", planets)
+        return load_rocket_from_path("./Globals/RocketConfig/CurrentRocketConfig.json", planets, draw_manager)
     except:
         # write standard config to current config
         with open("./Globals/RocketConfig/CurrentRocketConfig.json", "w") as outfile:
@@ -53,4 +53,4 @@ def load_rocket(planets: list[Planet]) -> Rocket:
                       indent=4,
                       ensure_ascii=False)
 
-        return load_rocket_from_path("./Globals/RocketConfig/CurrentRocketConfig.json", planets)
+        return load_rocket_from_path("./Globals/RocketConfig/CurrentRocketConfig.json", planets, draw_manager)

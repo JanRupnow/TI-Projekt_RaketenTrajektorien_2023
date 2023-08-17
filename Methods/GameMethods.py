@@ -61,7 +61,7 @@ def planet_is_in_screen(planet: Planet) -> bool:
         planet.currentStep] * DATA.scale - planet.radius * DATA.scale < -DATA.move_x + WIDTH / 2
 
 
-def process_hot_key_events(event, rocket: Rocket, planets: list[Planet]) -> (pygame.event, Rocket, list[Planet]):
+def process_hot_key_events(event, rocket: Rocket, planets: list[Planet], draw_manager) -> (pygame.event, Rocket, list[Planet]):
     from ViewController.DrawManager import DrawManager
 
     key_pressed = pygame.key.get_pressed()
@@ -119,17 +119,17 @@ def process_hot_key_events(event, rocket: Rocket, planets: list[Planet]) -> (pyg
         DATA.run = False
     elif check_key_down(event, Keys.h_zoom_rocket_start[0]):
         scale_relative(100000)
-        DrawManager.set_rocket_scale(rocket, 100000)
+        draw_manager.set_rocket_scale(rocket, 100000)
         automatic_zoom_on_rocket_once(rocket)
     # Zoom Startorbit
     elif check_key_down(event, Keys.h_zoom_rocket_planet[0]):
         scale_relative(10)
-        DrawManager.set_rocket_scale(rocket, 10)
+        draw_manager.set_rocket_scale(rocket, 10)
         automatic_zoom_on_rocket_once(rocket)
     # Zoom Universum
     elif check_key_down(event, Keys.h_zoom_rocket_planet_system[0]):
         scale_relative(1)
-        DrawManager.set_rocket_scale(rocket, 1)
+        draw_manager.set_rocket_scale(rocket, 1)
         automatic_zoom_on_rocket_once(rocket)
 
     elif check_key_down(event, Keys.H_zoomAutoOnReferencePlanet[0]) and DATA.zoom_goal != ZoomGoal.rocket:
@@ -159,12 +159,12 @@ def process_hot_key_events(event, rocket: Rocket, planets: list[Planet]) -> (pyg
     elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 5:
         mouse_position_shift_screen()
         DATA.scale *= 0.75
-        DrawManager.set_rocket_scale(rocket, 0.75)
+        draw_manager.set_rocket_scale(rocket, 0.75)
 
     elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 4:
         mouse_position_shift_screen()
         DATA.scale *= 1.25
-        DrawManager.set_rocket_scale(rocket, 1.25)
+        draw_manager.set_rocket_scale(rocket, 1.25)
 
     elif check_key_down(event, Keys.h_shift_time_step_up[0]) and not DATA.flight_change_state == FlightChangeState.pausedAndTimeStepChanged:
         shift_time_step(True, planets, rocket)
