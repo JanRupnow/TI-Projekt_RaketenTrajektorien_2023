@@ -24,7 +24,7 @@ def create_ui_text_box_and_text_entry_hotkey(hotkey, position_x, position_y, man
     text_input = pg.elements.UITextEntryLine(relative_rect=pygame.Rect((position_x + WIDTH * 0.1, position_y),
                                                                        (WIDTH * 0.04, HEIGHT * 0.05)),
                                              manager=manager,
-                                             object_id=remove_spaces(hotkey[1] + "_text"))
+                                             object_id=remove_spaces(hotkey[1] + "_input"))
     text_input.length_limit = 1 if entry_text is None else len(entry_text)
     text_input.is_enabled = mutable
     text_input.set_text(get_string_of_ascii(hotkey[0]) if entry_text is None else entry_text)
