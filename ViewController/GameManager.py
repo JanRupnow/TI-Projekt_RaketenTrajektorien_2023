@@ -14,11 +14,13 @@ from ViewController.Rocket.Rocket import Rocket
 
 class GameManager:
     def __init__(self):
-        self.data_df = np.empty((NUM_OF_PREDICTIONS * 100, 9), dtype="object")
+        self.data_df = np.empty((0, 9), dtype="object")
         self.rows_to_append = np.empty((NUM_OF_PREDICTIONS, 9), dtype="object")
-        self.data_array = np.empty((NUM_OF_PREDICTIONS + 1, 5), dtype="object")
+        self.data_array = np.zeros((NUM_OF_PREDICTIONS + 1, 5), dtype="object")
 
     def calculate_next_iteration(self, rocket: Rocket, planets: list[Planet]):
+        if rocket.currentStep > NUM_OF_PREDICTIONS - 5:
+            print(f"start: {rocket.currentStep}")
 
         rocket_takeoff = rocket.currentCalculationStep == 0 and rocket.currentStep == 0
         planet_takeoff = planets[0].currentCalculationStep == 0 and planets[0].currentStep == 0
@@ -84,9 +86,18 @@ class GameManager:
             rocket.update_planets_in_range_list(planets)
             rocket.update_nearest_planet(planets)
             if rocket.nearestPlanet.check_collision():
-                rocket.nearestPlanet.check_landing(rocket)
-                self.fill_dataframe(rocket)
-            print(rocket.currentStep)
+                if rocket.nearestPlanet.check_landing(rocket):
+                    rocket.flightState = RocketFlightState.landed
+                    rocket.thrust = 0
+                    self.fill_dataframe(rocket)
+                    rocket.calculate_entry_angle()
+                    rocket.clear_array()
+                    rocket.nearestPlanet.update_distance_to_rocket(rocket)
+                else:
+                    rocket.flightState = RocketFlightState.crashed
+                    self.fill_dataframe(rocket)
+            if rocket.currentStep > NUM_OF_PREDICTIONS-5:
+                print(f"end: {rocket.currentStep}")
             self.data_array[rocket.currentStep] = [(get_start_time() + DATA.time_passed).timestamp(),
                                                    rocket.thrust,
                                                    rocket.angle,
@@ -121,19 +132,19 @@ class GameManager:
           planet.__setattr__('currentStep', planet.currentStep + 1)) for planet in planets]
 
     def fill_dataframe(self, rocket: Rocket):
-        print(self.data_array[1:][~np.all(self.data_array[1:] == 0, axis=1)].shape)
-        print(rocket.position_X.reshape(-1, 1)[1:rocket.currentStep].shape)
-        print(rocket.position_Y.reshape(-1, 1)[1:rocket.currentStep].shape)
-        print(rocket.velocity_X.reshape(-1, 1)[1:rocket.currentStep].shape)
-        print(rocket.velocity_Y.reshape(-1, 1)[1:rocket.currentStep].shape)
-        whole_data = np.hstack((self.data_array[1:][~np.all(self.data_array[1:] == 0, axis=1)],
-                                rocket.position_X.reshape(-1, 1)[1:rocket.currentStep+1],
-                                rocket.position_Y.reshape(-1, 1)[1:rocket.currentStep+1],
-                                rocket.velocity_X.reshape(-1, 1)[1:rocket.currentStep+1],
-                                rocket.velocity_Y.reshape(-1, 1)[1:rocket.currentStep+1]))
+        print(self.data_array[2:][~np.all(self.data_array[2:] == 0, axis=1)].shape)
+        print(rocket.position_X.reshape(-1, 1)[2:rocket.currentStep].shape)
+        print(rocket.position_Y.reshape(-1, 1)[2:rocket.currentStep].shape)
+        print(rocket.velocity_X.reshape(-1, 1)[2:rocket.currentStep].shape)
+        print(rocket.velocity_Y.reshape(-1, 1)[2:rocket.currentStep].shape)
+        whole_data = np.hstack((self.data_array[2:][~np.all(self.data_array[2:] == 0, axis=1)],
+                                rocket.position_X.reshape(-1, 1)[2:rocket.currentStep],
+                                rocket.position_Y.reshape(-1, 1)[2:rocket.currentStep],
+                                rocket.velocity_X.reshape(-1, 1)[2:rocket.currentStep],
+                                rocket.velocity_Y.reshape(-1, 1)[2:rocket.currentStep]))
         self.data_df = np.vstack((self.data_df, whole_data))
         self.data_array = np.zeros((NUM_OF_PREDICTIONS + 1, 5))
-        if rocket.flightState == RocketFlightState.crashed:
+        if rocket.flightState in {RocketFlightState.crashed, RocketFlightState.landed}:
             self.store_dataframe()
 
     def store_dataframe(self):

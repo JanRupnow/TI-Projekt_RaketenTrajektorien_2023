@@ -122,17 +122,10 @@ class Planet:
             return True
         return False
 
-    def check_landing(self, rocket) -> None:
-        if not self.currentStep % math.ceil(100 / self.time_step) == 0:
-            return
+    def check_landing(self, rocket) -> bool:
         # Safe landing
         if self.distanceToRocket <= self.radius * 95 / 100 and rocket.get_current_relative_velocity() < CRASH_VELOCITY:
-            rocket.flightState = RocketFlightState.landed
-            rocket.thrust = 0
-            rocket.calculate_entry_angle()
-            rocket.clear_array()
-            self.update_distance_to_rocket(rocket)
-            return
+            return True
         # Crashing
         if self.distanceToRocket >= self.radius * 95 / 100 and rocket.get_current_relative_velocity() > CRASH_VELOCITY:
-            rocket.flightState = RocketFlightState.crashed
+            return False
