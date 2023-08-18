@@ -89,9 +89,13 @@ class GameManager:
             rocket.update_nearest_planet(planets)
             if rocket.nearestPlanet.check_collision():
                 rocket.nearestPlanet.check_landing(rocket)
-                if rocket.flavor == RocketFlightState.crashed:
-                    self.crash_fill_dataframe()
-                    sys.exit(0)
+                if rocket.flightState in {RocketFlightState.crashed, RocketFlightState.landed}:
+                    self.fill_dataframe(rocket)
+                if rocket.flightState == RocketFlightState.landed:
+                    rocket.calculate_entry_angle()
+                    rocket.clear_array()
+                rocket.nearestPlanet.update_distance_to_rocket(rocket)
+                sys.exit(0)
             DATA_ARRAY[rocket.currentStep] = [(simulation_start_time + DATA.time_passed).strftime('%Y-%m-%d %H:%M:%S'),
                                               rocket.thrust,
                                               rocket.angle,
@@ -169,7 +173,7 @@ class GameManager:
 
         self.data_df = pd.concat([self.data_df, new_data_df], ignore_index=True)
 
-        if self.data_df.shape[0] >= 2000:
+        if self.data_df.shape[0] >= 2000 or rocket.flightState in {RocketFlightState.crashed, RocketFlightState.landed}:
             self.store_dataframe()
 
     def crash_fill_dataframe(self, rocket: Rocket):
