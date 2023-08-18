@@ -327,3 +327,28 @@ class Rocket:
             self.planetAngle * np.pi / 180)
         self.velocity_X[0] = self.nearestPlanet.velocity_X[self.nearestPlanet.currentStep]
         self.velocity_Y[0] = self.nearestPlanet.velocity_Y[self.nearestPlanet.currentStep]
+
+
+    def get_current_acceleration_split(self) -> (float, float, float):
+        i: int = self.currentStep
+        a_planets: float = 0.0
+        a_air: float = 0.0
+
+        for planet in self.PlanetsInRangeList:
+            r = np.sqrt((self.position_X[i] - planet.position_X[i]) ** 2
+                        + (self.position_Y[i] - planet.position_Y[i]) ** 2)
+
+            a_planets += (G * planet.mass / r ** 2)
+
+            # Luftwiderstand nur auf der Erde berechnen und nur bis 100km Höhe
+            if planet.name == "Earth" and (r - planet.radius) < 100_000:
+                a_air += ((AirResistance * 
+                           self.get_current_relative_velocity() ** 2 *
+                           p_0 * np.exp(-abs((r - planet.radius)) / h_s))
+                          / (2 * self.predicted_mass))
+
+        distance_to_sun: float = np.sqrt((self.position_X[i] - self.sun.position_X[i]) ** 2
+                                         + (self.position_Y[i] - self.sun.position_X[i]) ** 2)
+        a_sun = (G * self.sun.mass / distance_to_sun ** 2)
+
+        return (a_planets, a_air, a_sun)
