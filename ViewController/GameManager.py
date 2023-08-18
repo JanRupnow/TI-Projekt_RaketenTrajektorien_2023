@@ -167,8 +167,10 @@ class GameManager:
                        "Force": row[3],
                        "Rocket_Fuel": row[4]}, index=[0])
             rows_to_append.append(new_row)
+            print(idx)
+            print(row)
 
-        rows_to_append = np.reshape(rows_to_append, (rocket.currentStep-1, 9))
+        rows_to_append = np.reshape(rows_to_append, (rocket.currentStep-2, 9))
         new_data_df = pd.DataFrame(rows_to_append, columns=DF_COLUMNS)
 
         self.data_df = pd.concat([self.data_df, new_data_df], ignore_index=True)
@@ -192,7 +194,7 @@ class GameManager:
                        "Rocket_Fuel": row[4]}, index=[0])
             rows_to_append.append(new_row)
 
-        rows_to_append = np.reshape(rows_to_append, (rocket.currentStep-1, 9))
+        rows_to_append = np.reshape(rows_to_append, (rocket.currentStep-2, 9))
         new_data_df = pd.DataFrame(rows_to_append, columns=DF_COLUMNS)
 
         self.data_df = pd.concat([self.data_df, new_data_df], ignore_index=True)
