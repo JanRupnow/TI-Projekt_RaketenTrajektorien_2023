@@ -118,28 +118,53 @@ class Rocket:
         return z
     """
 
-    def f(self, v_x: float, v_y: float, i: int, distance_to_sun: float) -> None:
+    def f(self, v_x: float, v_y: float, i: int, distance_to_sun: float) -> (float, float):
         x: float = 0
         y: float = 0
+
         for planet in self.PlanetsInRangeList:
             r = np.sqrt((self.position_X[i] - planet.position_X[i]) ** 2
                         + (self.position_Y[i] - planet.position_Y[i]) ** 2)
 
             abs_a = (G * planet.mass / r ** 2)
-
-            # Luftwiderstand nur auf der Erde berechnen und nur bis 100km Höhe
-            if planet.name == "Earth" and (r - planet.radius) < 100_000:
-                abs_a += ((AirResistance * (v_x ** 2 + v_y ** 2) *
-                           p_0 * np.exp(-abs((r - planet.radius)) / h_s))
-                          / (2 * self.predicted_mass))
-
             x -= abs_a * ((self.position_X[i] - planet.position_X[i]) / r)
             y -= abs_a * ((self.position_Y[i] - planet.position_Y[i]) / r)
+
+            x_air, y_air = self.calculate_air_resistance(v_x, v_y, planet, r)
+            
+            x += x_air
+            y += y_air
 
         x -= (G * self.sun.mass / distance_to_sun ** 2) * (
                 (self.position_X[i] - self.sun.position_X[i]) / distance_to_sun)
         y -= (G * self.sun.mass / distance_to_sun ** 2) * (
                 (self.position_Y[i] - self.sun.position_Y[i]) / distance_to_sun)
+
+        return x, y
+
+    # Luftwiderstand nur auf der Erde berechnen und nur bis 100km Höhe
+    def calculate_air_resistance(self, v_x: float, v_y: float, planet: Planet, r: float) -> (float, float):
+        x: float = 0
+        y: float = 0
+
+        if planet.name != "Earth":
+            return 0.0, 0.0
+        if (r - planet.radius) > 100_000:
+            return 0.0, 0.0
+
+        abs_v: float = np.sqrt(v_x ** 2 + v_y ** 2)
+        if abs_v == 0.0:
+            return 0.0, 0.0
+        
+        abs_a_air = (
+            (AirResistance * abs_v ** 2 * p_0 
+             * np.exp(-abs((r - planet.radius)) / h_s))
+            / 
+            (2 * self.predicted_mass)
+        )
+
+        x -= abs_a_air * (v_x / abs_v)
+        y -= abs_a_air * (v_y / abs_v)
 
         return x, y
 

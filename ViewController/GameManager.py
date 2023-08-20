@@ -177,8 +177,6 @@ class GameManager:
                        "Acceleration_Sun": row[6],
                        "Acceleration_Air": row[7]}, index=[0])
             rows_to_append.append(new_row)
-            print(idx)
-            print(row)
 
         self.DATA_ARRAY = np.zeros((NUM_OF_PREDICTIONS+1, 8), dtype="object")
 
