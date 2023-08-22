@@ -47,6 +47,8 @@ class GameManager:
         if DATA.flight_change_state == FlightChangeState.pausedAndTimeStepChanged:
             self.new_calculations_for_planet(planets)
             rocket.calculate_new_calculation_of_predictions()
+            DATA.flight_change_state = FlightChangeState.paused
+            return
 
         if DATA.flight_change_state == FlightChangeState.paused:
             return
