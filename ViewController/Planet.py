@@ -1,7 +1,6 @@
 import math
 
 from Globals.Constants import *
-from ViewController.Rocket.RocketFlightState import RocketFlightState
 from numba.experimental import jitclass
 from numba import int32, float32, float64, typeof
 
