@@ -134,7 +134,7 @@ class GameManager:
           planet.__setattr__('currentStep', planet.currentStep + 1)) for planet in planets]
 
     def fill_dataframe(self, rocket: Rocket):
-        print(self.data_array.shape)
+        print(f"Data format for flight: {self.flight_number} {self.data_array.shape}")
         data_length = self.data_array[np.any(self.data_array != "", axis=1)].shape[0]
         whole_data = np.hstack((self.data_array[np.any(self.data_array != "", axis=1)],
                                 rocket.position_X.reshape(-1, 1)[1:data_length+1].astype("str"),
