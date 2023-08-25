@@ -134,7 +134,6 @@ class GameManager:
           planet.__setattr__('currentStep', planet.currentStep + 1)) for planet in planets]
 
     def fill_dataframe(self, rocket: Rocket):
-        print(f"Data format for flight: {self.flight_number} {self.data_array.shape}")
         data_length = self.data_array[np.any(self.data_array != "", axis=1)].shape[0]
         whole_data = np.hstack((self.data_array[np.any(self.data_array != "", axis=1)],
                                 rocket.position_X.reshape(-1, 1)[1:data_length+1].astype("str"),
@@ -142,14 +141,14 @@ class GameManager:
                                 rocket.velocity_X.reshape(-1, 1)[1:data_length+1].astype("str"),
                                 rocket.velocity_Y.reshape(-1, 1)[1:data_length+1].astype("str")))
         self.data_df = np.vstack((self.data_df, whole_data))
-        self.data_array = np.zeros((NUM_OF_PREDICTIONS + 1, 5))
+        self.data_array = np.zeros((NUM_OF_PREDICTIONS+1, 5), dtype="str")
         if rocket.flightState in {RocketFlightState.crashed, RocketFlightState.landed}:
             self.store_dataframe()
             self.flight_number += 1
             self.data_df = np.zeros((0, 9), dtype="str")
 
     def store_dataframe(self):
-        with open(f"Globals/FlightData/Flights/{timestamp}_Flight{self.flight_number}.csv", "w") as file:
+        with open(f"Globals/FlightData/Flights/{timestamp}_Flight_{self.flight_number}.csv", "w") as file:
             file.write("Time,Position_X,Position_Y,Velocity_X,Velocity_Y,Power,Angle,Force,Rocket_Fuel\n")
-        with open(f"Globals/FlightData/Flights/{timestamp}_Flight{self.flight_number}.csv", mode="a") as file:
+        with open(f"Globals/FlightData/Flights/{timestamp}_Flight_{self.flight_number}.csv", mode="a") as file:
             np.savetxt(file, self.data_df, delimiter=',', fmt='%s')
