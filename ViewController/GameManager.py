@@ -1,6 +1,8 @@
 import numpy as np
+from numba import int32, typeof
+from numba.experimental import jitclass
 
-from Globals.Constants import FILE_NAME
+from Globals.Constants import timestamp
 from Globals.FlightData.FlightChangeState import FlightChangeState
 from Globals.FlightData.FlightDataManager import DATA
 from Globals.Constants import NUM_OF_PREDICTIONS
@@ -11,12 +13,15 @@ from ViewController.Rocket.RocketFlightState import RocketFlightState
 from ViewController.Planet import Planet
 from ViewController.Rocket.Rocket import Rocket
 
-
+# @jitclass([
+#     ("data_df", typeof(np.zeros((0,9)), dtype ="str")),
+#     ("data_array", str[:, :]),
+#     ("flight_number", int32)])
 class GameManager:
     def __init__(self):
-        self.data_df = np.empty((0, 9), dtype="object")
-        self.rows_to_append = np.empty((NUM_OF_PREDICTIONS, 9), dtype="object")
-        self.data_array = np.zeros((NUM_OF_PREDICTIONS+1, 5), dtype="object")
+        self.data_df = np.zeros((0, 9), dtype="str")
+        self.data_array = np.zeros((NUM_OF_PREDICTIONS+1, 5), dtype="str")
+        self.flight_number = 1
 
     def calculate_next_iteration(self, rocket: Rocket, planets: list[Planet]):
 
@@ -94,11 +99,12 @@ class GameManager:
                 else:
                     rocket.flightState = RocketFlightState.crashed
                     self.fill_dataframe(rocket)
-            self.data_array[rocket.currentStep] = [(get_start_time() + DATA.time_passed).timestamp(),
-                                                   rocket.thrust,
-                                                   rocket.angle,
-                                                   1,
-                                                   rocket.fuelmass]
+            if rocket.currentStep > 1:
+                self.data_array[rocket.currentStep] = [(get_start_time() + DATA.time_passed).timestamp(),
+                                                       str(rocket.thrust),
+                                                       str(rocket.angle),
+                                                       str(1),
+                                                       str(rocket.fuelmass)]
         # Only One condition since current steps should be synced after every calculation step
         if rocket.currentStep >= NUM_OF_PREDICTIONS:
             self.fill_dataframe(rocket)
@@ -128,18 +134,22 @@ class GameManager:
           planet.__setattr__('currentStep', planet.currentStep + 1)) for planet in planets]
 
     def fill_dataframe(self, rocket: Rocket):
-        data_length = self.data_array[2:][~np.all(self.data_array[2:] == 0, axis=1)].shape[0]
-        whole_data = np.hstack((self.data_array[2:][~np.all(self.data_array[2:] == 0, axis=1)],
-                                rocket.position_X.reshape(-1, 1)[1:+1],
-                                rocket.position_Y.reshape(-1, 1)[1:data_length+1],
-                                rocket.velocity_X.reshape(-1, 1)[1:data_length+1],
-                                rocket.velocity_Y.reshape(-1, 1)[1:data_length+1]))
+        print(self.data_array.shape)
+        data_length = self.data_array[np.any(self.data_array != "", axis=1)].shape[0]
+        whole_data = np.hstack((self.data_array[np.any(self.data_array != "", axis=1)],
+                                rocket.position_X.reshape(-1, 1)[1:data_length+1].astype("str"),
+                                rocket.position_Y.reshape(-1, 1)[1:data_length+1].astype("str"),
+                                rocket.velocity_X.reshape(-1, 1)[1:data_length+1].astype("str"),
+                                rocket.velocity_Y.reshape(-1, 1)[1:data_length+1].astype("str")))
         self.data_df = np.vstack((self.data_df, whole_data))
         self.data_array = np.zeros((NUM_OF_PREDICTIONS + 1, 5))
         if rocket.flightState in {RocketFlightState.crashed, RocketFlightState.landed}:
             self.store_dataframe()
+            self.flight_number += 1
+            self.data_df = np.zeros((0, 9), dtype="str")
 
     def store_dataframe(self):
-        with open(FILE_NAME, mode="a") as file:
-            for row in self.data_df:
-                file.write(','.join(map(str, row)) + '\n')
+        with open(f"Globals/FlightData/Flights/{timestamp}_Flight{self.flight_number}.csv", "w") as file:
+            file.write("Time,Position_X,Position_Y,Velocity_X,Velocity_Y,Power,Angle,Force,Rocket_Fuel\n")
+        with open(f"Globals/FlightData/Flights/{timestamp}_Flight{self.flight_number}.csv", mode="a") as file:
+            np.savetxt(file, self.data_df, delimiter=',', fmt='%s')
