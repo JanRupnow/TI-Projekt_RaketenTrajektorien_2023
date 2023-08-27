@@ -12,13 +12,17 @@ from Methods.RocketConfig import load_rocket
 
 
 def main():
-    game_manager = GameManager()
-    draw_manager = DrawManager()
     package_installer()
     show_start_ui()
 
+    game_manager = GameManager()
+    draw_manager = DrawManager()
+
     planets = configure_planets()
     rocket = load_rocket(planets, draw_manager)
+
+    game_manager.set_rocket_and_planets(rocket, planets)
+    draw_manager.set_rocket_and_planets(rocket, planets)
 
     loading_screen()
 
@@ -29,8 +33,8 @@ def main():
         for event in pygame.event.get():
             event, rocket, planets = process_hot_key_events(event, rocket, planets, draw_manager)
 
-        game_manager.calculate_next_iteration(rocket, planets)
-        draw_manager.display_iteration(rocket, planets)
+        game_manager.calculate_next_iteration()
+        draw_manager.display_iteration()
 
         pygame.display.update()
 

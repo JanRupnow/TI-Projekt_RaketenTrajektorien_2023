@@ -159,12 +159,12 @@ def process_hot_key_events(event, rocket: Rocket, planets: list[Planet], draw_ma
     elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 5:
         mouse_position_shift_screen()
         DATA.scale *= 0.75
-        draw_manager.set_rocket_scale(rocket, 0.75)
+        draw_manager.set_rocket_scale(0.75)
 
     elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 4:
         mouse_position_shift_screen()
         DATA.scale *= 1.25
-        draw_manager.set_rocket_scale(rocket, 1.25)
+        draw_manager.set_rocket_scale(1.25)
 
     elif check_key_down(event, Keys.h_shift_time_step_up[0]) and not DATA.flight_change_state == FlightChangeState.pausedAndTimeStepChanged:
         shift_time_step(True, planets, rocket)
