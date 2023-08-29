@@ -9,13 +9,13 @@ from Methods.ConfigurePlanets import get_start_time
 
 from Methods.GameMethods import convert_to_line_in_screen, add_clock_time, center_screen_on_planet, \
     automatic_zoom_on_rocket, planet_is_in_screen
+from ViewController.Manager import Manager
 
 from ViewController.Planet import Planet
-from ViewController.Rocket.Rocket import Rocket
 from ViewController.Rocket.RocketFlightState import RocketFlightState
 
 
-class DrawManager:
+class DrawManager(Manager):
     rocket_initialImage: Surface = None
     rocket_currentImage: Surface = None
     rocket_notRotatedImage: Surface = None
@@ -38,9 +38,6 @@ class DrawManager:
     time_passed_text = FONT_1.render("Time passed (Simulation):", True, COLOR_WHITE)
     altitude_text = FONT_1.render("Altitude", True, COLOR_WHITE)
 
-    def set_rocket_and_planets(self, rocket: Rocket, planets: list[Planet]):
-        self.rocket = rocket
-        self.planets = planets
     def display_iteration(self):
 
         if DATA.zoom_goal == ZoomGoal.nearestPlanet:
@@ -75,7 +72,7 @@ class DrawManager:
         self.rocket_notRotatedImage = self.rocket_currentImage
 
     def set_rocket_scale(self, scale) -> None:
-        rocket.set_scale(scale)
+        self.rocket.set_scale(scale)
         if MIN_ROCKET_RADIUS < self.rocket.radius < MAX_ROCKET_RADIUS:
             self.rocket_notRotatedImage = pygame.transform.scale_by(
                 self.rocket_initialImage,

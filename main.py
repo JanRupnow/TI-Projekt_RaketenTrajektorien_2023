@@ -13,10 +13,11 @@ from Methods.RocketConfig import load_rocket
 
 def main():
     package_installer()
-    show_start_ui()
 
     game_manager = GameManager()
     draw_manager = DrawManager()
+
+    show_start_ui()
 
     planets = configure_planets()
     rocket = load_rocket(planets, draw_manager)

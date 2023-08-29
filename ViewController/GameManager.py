@@ -1,6 +1,4 @@
 import numpy as np
-from numba import int32
-from numba.experimental import jitclass
 
 from Globals.Constants import timestamp
 from Globals.FlightData.FlightChangeState import FlightChangeState
@@ -8,20 +6,15 @@ from Globals.FlightData.FlightDataManager import DATA
 from Globals.Constants import NUM_OF_PREDICTIONS
 
 from Methods.ConfigurePlanets import get_start_time
+from ViewController.Manager import Manager
 
 from ViewController.Rocket.RocketFlightState import RocketFlightState
-from ViewController.Planet import Planet
-from ViewController.Rocket.Rocket import Rocket
 
-class GameManager:
+class GameManager(Manager):
     def __init__(self):
         self.data_df = np.zeros((0, 9), dtype="str")
         self.data_array = np.zeros((NUM_OF_PREDICTIONS+1, 5), dtype="str")
         self.flight_number = 1
-
-    def set_rocket_and_planets(self, rocket: Rocket, planets: list[Planet]):
-        self.rocket = rocket
-        self.planets = planets
     def calculate_next_iteration(self):
 
         rocket_takeoff = self.rocket.currentCalculationStep == 0 and self.rocket.currentStep == 0
