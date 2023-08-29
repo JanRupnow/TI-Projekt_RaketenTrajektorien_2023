@@ -91,19 +91,19 @@
             "text": "Close Window" 
         },
         "H_moveScreenUp": {
-            "key": 1073741906,
+            "key": 1073741920,
             "text": "Move screen up"
         },
         "H_moveScreenDown": {
-            "key": 1073741905,
+            "key": 1073741917,
             "text": "Move screen down"
         },
         "H_moveScreenRight": {
-            "key": 1073741903 ,
+            "key": 1073741918 ,
             "text": "Move screen right"
         },
         "H_moveScreenLeft": {
-            "key": 1073741904,
+            "key": 1073741916,
             "text": "Move screen left"
         }
         

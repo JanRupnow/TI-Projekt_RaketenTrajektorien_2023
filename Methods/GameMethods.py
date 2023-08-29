@@ -1,3 +1,5 @@
+import pygame
+
 from Views.HotkeyView import *
 
 from ViewController.Planet import Planet
@@ -61,7 +63,7 @@ def planet_is_in_screen(planet: Planet) -> bool:
         planet.currentStep] * DATA.scale - planet.radius * DATA.scale < -DATA.move_x + WIDTH / 2
 
 
-def process_hot_key_events(event, rocket: Rocket, planets: list[Planet]) -> (pygame.event, Rocket, list[Planet]):
+def process_hot_key_events(event: pygame.event, rocket: Rocket, planets: list[Planet]) -> (pygame.event, Rocket, list[Planet]):
     from ViewController.DrawManager import DrawManager
 
     key_pressed = pygame.key.get_pressed()
@@ -69,14 +71,13 @@ def process_hot_key_events(event, rocket: Rocket, planets: list[Planet]) -> (pyg
     DATA.mouse_x = pygame.mouse.get_pos()[0]
     DATA.mouse_y = pygame.mouse.get_pos()[1]
     distance = 10
-
-    if key_pressed[Keys.H_moveScreenLeft[0]] or DATA.mouse_x == 0:
+    if key_pressed[Keys.H_moveScreenLeft[0]] or DATA.mouse_x < 5 and DATA.zoom_goal == ZoomGoal.none:
         DATA.move_x += distance
-    elif key_pressed[Keys.H_moveScreenRight[0]] or DATA.mouse_x == WIDTH - 1:
+    elif key_pressed[Keys.H_moveScreenRight[0]] or DATA.mouse_x > WIDTH - 5 and DATA.zoom_goal == ZoomGoal.none:
         DATA.move_x -= distance
-    elif key_pressed[Keys.H_moveScreenUp[0]] or DATA.mouse_y == 0:
+    elif key_pressed[Keys.H_moveScreenUp[0]] or DATA.mouse_y < 5 and DATA.zoom_goal == ZoomGoal.none:
         DATA.move_y += distance
-    elif key_pressed[Keys.H_moveScreenDown[0]] or DATA.mouse_y == HEIGHT - 1:
+    elif key_pressed[Keys.H_moveScreenDown[0]] or DATA.mouse_y > HEIGHT - 5 and DATA.zoom_goal == ZoomGoal.none:
         DATA.move_y -= distance
 
     elif (not event.type == pygame.KEYDOWN) and \

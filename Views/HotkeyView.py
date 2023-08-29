@@ -47,11 +47,11 @@ def initialize_settings_ui():
     create_ui_text_box_and_text_entry_hotkey(Keys.h_zoom_rocket_start, WIDTH * 0.1, HEIGHT * 0.75, manager)
     create_ui_text_box_and_text_entry_hotkey(Keys.h_zoom_rocket_planet, WIDTH * 0.1, HEIGHT * 0.8, manager)
     create_ui_text_box_and_text_entry_hotkey(Keys.h_zoom_rocket_planet_system, WIDTH * 0.1, HEIGHT * 0.85, manager)
-    create_ui_text_box_and_text_entry_hotkey(Keys.H_moveScreenUp, WIDTH * 0.75, HEIGHT * 0.2, manager, False, "UP")
-    create_ui_text_box_and_text_entry_hotkey(Keys.H_moveScreenLeft, WIDTH * 0.75, HEIGHT * 0.25, manager, False, "LEFT")
+    create_ui_text_box_and_text_entry_hotkey(Keys.H_moveScreenUp, WIDTH * 0.75, HEIGHT * 0.2, manager, False, "NUM8")
+    create_ui_text_box_and_text_entry_hotkey(Keys.H_moveScreenLeft, WIDTH * 0.75, HEIGHT * 0.25, manager, False, "NUM4")
     create_ui_text_box_and_text_entry_hotkey(Keys.H_moveScreenRight, WIDTH * 0.75, HEIGHT * 0.3, manager, False,
-                                             "RIGHT")
-    create_ui_text_box_and_text_entry_hotkey(Keys.H_moveScreenDown, WIDTH * 0.75, HEIGHT * 0.35, manager, False, "DOWN")
+                                             "NUM6")
+    create_ui_text_box_and_text_entry_hotkey(Keys.H_moveScreenDown, WIDTH * 0.75, HEIGHT * 0.35, manager, False, "NUM5")
     create_ui_text_box_and_text_entry_hotkey(Keys.h_pause_simulation, WIDTH * 0.75, HEIGHT * 0.45, manager, False,
                                              "SPACE")
     create_ui_text_box_and_text_entry_hotkey(Keys.h_draw_line, WIDTH * 0.75, HEIGHT * 0.5, manager)

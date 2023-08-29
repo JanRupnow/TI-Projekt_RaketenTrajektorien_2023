@@ -25,7 +25,7 @@ def configure_planets() -> list[Planet]:
     check_date_is_legal(time_day, time_month, time_year)
     simulation_time = f"{time_year}-{time_month}-{time_day}"
     planet_coord = [get_body_heliographic_stonyhurst(
-        this_planet, time=simulation_time, include_velocity=True) for this_planet in planetNameArray]
+        this_planet, time=simulation_time, include_velocity=False) for this_planet in planetNameArray]
 
     # Metrics from: https://nssdc.gsfc.nasa.gov/planetary/factsheet/
 
