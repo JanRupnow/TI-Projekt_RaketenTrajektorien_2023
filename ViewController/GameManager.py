@@ -6,7 +6,7 @@ import pandas as pd
 from Methods.ConfigurePlanets import get_start_time, simulation_start_time
 from Methods.GameMethods import center_screen_on_planet, planet_is_in_screen, automatic_zoom_on_rocket
 
-from Globals.Constants import DATA_ARRAY, DF_COLUMNS, FILE_NAME
+from Globals.Constants import DF_COLUMNS, FILE_NAME
 from Globals.FlightData.FlightChangeState import FlightChangeState
 from Globals.FlightData.ZoomGoal import ZoomGoal
 from Globals.FlightData.FlightDataManager import DATA
@@ -21,6 +21,7 @@ from ViewController.Rocket.Rocket import Rocket
 class GameManager:
     def __init__(self, data_df: pd.DataFrame):
         self.data_df = data_df
+        self.DATA_ARRAY = np.zeros((NUM_OF_PREDICTIONS+1, 8), dtype="object")
 
     def calculate_next_iteration(self, rocket: Rocket, planets: list[Planet]):
 
@@ -46,6 +47,8 @@ class GameManager:
         if DATA.flight_change_state == FlightChangeState.pausedAndTimeStepChanged:
             self.new_calculations_for_planet(planets)
             rocket.calculate_new_calculation_of_predictions()
+            DATA.flight_change_state = FlightChangeState.paused
+            return
 
         if DATA.flight_change_state == FlightChangeState.paused:
             return
@@ -96,11 +99,17 @@ class GameManager:
                     rocket.clear_array()
                 rocket.nearestPlanet.update_distance_to_rocket(rocket)
                 sys.exit(0)
-            DATA_ARRAY[rocket.currentStep] = [(simulation_start_time + DATA.time_passed).strftime('%Y-%m-%d %H:%M:%S'),
-                                              rocket.thrust,
-                                              rocket.angle,
-                                              1,
-                                              rocket.fuelmass]
+
+            (a_planets, a_air, a_sun) = rocket.get_current_acceleration_split()
+            self.DATA_ARRAY[rocket.currentStep] = [(simulation_start_time + DATA.time_passed).strftime('%Y-%m-%d %H:%M:%S'),
+                                                    rocket.thrust,
+                                                    rocket.angle,
+                                                    1,
+                                                    rocket.fuelmass,
+                                                    a_planets,
+                                                    a_air,
+                                                    a_sun]
+            
         # Only One condition since current steps should be synced after every calculation step
         if rocket.currentStep >= NUM_OF_PREDICTIONS:
             self.fill_dataframe(rocket)
@@ -154,7 +163,7 @@ class GameManager:
 
     def fill_dataframe(self, rocket: Rocket):
         rows_to_append = []
-        for idx, row in enumerate(DATA_ARRAY):
+        for idx, row in enumerate(self.DATA_ARRAY):
             if row[0] == 0:
                 continue
             new_row = pd.DataFrame({"Time": row[0],
@@ -165,10 +174,15 @@ class GameManager:
                        "Power": row[1],
                        "Angle": row[2],
                        "Force": row[3],
-                       "Rocket_Fuel": row[4]}, index=[0])
+                       "Rocket_Fuel": row[4],
+                       "Acceleration_Planets": row[5],
+                       "Acceleration_Sun": row[6],
+                       "Acceleration_Air": row[7]}, index=[0])
             rows_to_append.append(new_row)
 
-        rows_to_append = np.reshape(rows_to_append, (rocket.currentStep-1, 9))
+        self.DATA_ARRAY = np.zeros((NUM_OF_PREDICTIONS+1, 8), dtype="object")
+
+        rows_to_append = np.reshape(rows_to_append, (len(rows_to_append), 12))
         new_data_df = pd.DataFrame(rows_to_append, columns=DF_COLUMNS)
 
         self.data_df = pd.concat([self.data_df, new_data_df], ignore_index=True)
@@ -178,7 +192,7 @@ class GameManager:
 
     def crash_fill_dataframe(self, rocket: Rocket):
         rows_to_append = []
-        for idx, row in enumerate(DATA_ARRAY):
+        for idx, row in enumerate(self.DATA_ARRAY):
             if row[0] == 0:
                 continue
             new_row = pd.DataFrame({"Time": row[0],
@@ -192,7 +206,9 @@ class GameManager:
                        "Rocket_Fuel": row[4]}, index=[0])
             rows_to_append.append(new_row)
 
-        rows_to_append = np.reshape(rows_to_append, (rocket.currentStep-1, 9))
+        self.DATA_ARRAY = np.zeros((NUM_OF_PREDICTIONS+1, 8), dtype="object")
+
+        rows_to_append = np.reshape(rows_to_append, (len(rows_to_append), 12))
         new_data_df = pd.DataFrame(rows_to_append, columns=DF_COLUMNS)
 
         self.data_df = pd.concat([self.data_df, new_data_df], ignore_index=True)
