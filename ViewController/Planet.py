@@ -1,9 +1,10 @@
 import math
 
 from Globals.Constants import *
-from ViewController.Rocket.RocketFlightState import RocketFlightState
 from numba.experimental import jitclass
 from numba import int32, float32, float64, typeof
+
+from ViewController.FlightObject import FlightObject
 
 
 @jitclass([
@@ -21,21 +22,21 @@ from numba import int32, float32, float64, typeof
     ("velocity_Y", float64[:]),
     ("currentStep", int32),
     ("currentCalculationStep", int32)])
-class Planet:
+class Planet(FlightObject):
     def __init__(self, x, y, radius, color, mass, name, velocity):
         self.radius: float = radius
         self.color: tuple = color
         self.mass: float = mass
         self.name: str = name
         self.distanceToRocket: float = 2 * radius
+        self.position_X: np.array = np.zeros(LEN_OF_PREDICTIONS_ARRAY)  # x-Position [m]
+        self.position_Y: np.array = np.zeros(LEN_OF_PREDICTIONS_ARRAY)  # z-Position [m]
+        self.velocity_X: np.array = np.zeros(LEN_OF_PREDICTIONS_ARRAY)  # x-Velocity [m/s]
+        self.velocity_Y: np.array = np.zeros(LEN_OF_PREDICTIONS_ARRAY)  # z-Velocity [m/s]
         # Drawing radius used only for displaying not calculating!!!
         self.scaleR: float = radius
         self.meanVelocity: float = velocity
         self.time_step: float = 1 / 60
-        self.position_X: np.array = np.zeros(LEN_OF_PREDICTIONS_ARRAY)
-        self.position_Y: np.array = np.zeros(LEN_OF_PREDICTIONS_ARRAY)
-        self.velocity_X: np.array = np.zeros(LEN_OF_PREDICTIONS_ARRAY)
-        self.velocity_Y: np.array = np.zeros(LEN_OF_PREDICTIONS_ARRAY)
         self.currentStep: int = 0
         self.currentCalculationStep: int = 0
 
@@ -122,12 +123,10 @@ class Planet:
             return True
         return False
 
-    def check_landing(self, rocket) -> None:
+    def check_landing(self, rocket) -> bool:
         # Safe landing
         if self.distanceToRocket <= self.radius * 95 / 100 and rocket.get_current_relative_velocity() < CRASH_VELOCITY:
-            rocket.flightState = RocketFlightState.landed
-            rocket.thrust = 0
-            return
+            return True
         # Crashing
         if self.distanceToRocket >= self.radius * 95 / 100 and rocket.get_current_relative_velocity() > CRASH_VELOCITY:
-            rocket.flightState = RocketFlightState.crashed
+            return False

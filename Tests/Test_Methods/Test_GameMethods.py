@@ -1,6 +1,5 @@
 import numpy as np
 import pytest
-
 from Globals.Constants import WIDTH, HEIGHT, AllTimeSteps, STARTSCALE
 from Globals.FlightData.FlightDataManager import DATA
 from Methods.GameMethods import convert_to_line_in_screen, planet_is_in_screen, shift_time_step, scale_relative, \
