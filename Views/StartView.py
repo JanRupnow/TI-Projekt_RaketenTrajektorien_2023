@@ -1,4 +1,5 @@
 import Globals.Hotkeys as Keys
+from Globals.FlightData.FlightDataManager import DATA
 
 from Views.ViewComponents import *
 
@@ -14,6 +15,7 @@ rocket_hall = pygame.transform.scale(rocket_hall, (WIDTH, HEIGHT))
 def show_start_ui():
     show_gui = True
     show_configuration = False
+    DATA.save_data = get_save_data()
     selected_number = get_selected_rocket()
     if len(manager.get_sprite_group()) < 4:
         initialize_start_ui(selected_number)
@@ -44,9 +46,12 @@ def show_start_ui():
                 create_rocket_image(selected_number, manager)
                 reset_and_show_ui(selected_number)
             if event.type == pg.UI_DROP_DOWN_MENU_CHANGED and event.ui_object_id == "startplanet_dropdown":
-                # dropdown.selected_option = "Moon"
                 update_rocket_configs(event)
                 reset_and_show_ui(selected_number)
+            if event.type == pg.UI_DROP_DOWN_MENU_CHANGED and event.ui_object_id == "savedata_dropdown":
+                update_rocket_configs(event)
+                reset_and_show_ui(selected_number)
+                DATA.save_data = get_save_data()
             if check_key_down(event, Keys.h_close_window[0]):
                 pygame.quit()
                 sys.exit()
@@ -126,6 +131,7 @@ def show_start_ui():
 
     clear_start_ui()
 
+
 def display_basic_ui():
     pygame.draw.rect(WINDOW, (0, 0, 0), (WIDTH * 0.39, HEIGHT * 0.08, WIDTH * 0.22, HEIGHT * 0.075))
     pygame.draw.rect(WINDOW, (100, 100, 100),
@@ -141,8 +147,8 @@ def display_basic_ui():
 
 
 def diplay_configuration_ui():
-    pygame.draw.rect(WINDOW, (0, 0, 0), (WIDTH * 0.18, HEIGHT * 0.24, WIDTH * 0.19, HEIGHT * 0.235))
-    pygame.draw.rect(WINDOW, (50, 50, 50), (WIDTH * 0.18 + 1, HEIGHT * 0.24 + 1, WIDTH * 0.19 - 2, HEIGHT * 0.235 - 2))
+    pygame.draw.rect(WINDOW, (0, 0, 0), (WIDTH * 0.18, HEIGHT * 0.24, WIDTH * 0.19, HEIGHT * 0.285))
+    pygame.draw.rect(WINDOW, (50, 50, 50), (WIDTH * 0.18 + 1, HEIGHT * 0.24 + 1, WIDTH * 0.19 - 2, HEIGHT * 0.285 - 2))
     pygame.draw.rect(WINDOW, (100, 100, 100),
                      (WIDTH * 0.18 + 1, HEIGHT * 0.24 + 1, WIDTH * 0.19 - 2, HEIGHT * 0.05 - 2))
 
@@ -170,12 +176,18 @@ def initialize_rocket_configuration_ui():
     create_ui_button("Next", WIDTH * 0.55, HEIGHT * 0.7, manager)
     config_pairs = get_texts_and_values_for_config_ui()
 
-    create_ui_text_box_and_text_entry(config_pairs[6][1], config_pairs[6][0], WIDTH * 0.2, HEIGHT * 0.3, manager,
+    create_ui_text_box_and_text_entry(config_pairs[7][1], config_pairs[7][0], WIDTH * 0.2, HEIGHT * 0.3, manager,
                                       length=4)
-    create_ui_text_box_and_text_entry(config_pairs[7][1], config_pairs[7][0], WIDTH * 0.2, HEIGHT * 0.35, manager,
+    create_ui_text_box_and_text_entry(config_pairs[8][1], config_pairs[8][0], WIDTH * 0.2, HEIGHT * 0.35, manager,
                                       length=2)
-    create_ui_text_box_and_text_entry(config_pairs[8][1], config_pairs[8][0], WIDTH * 0.2, HEIGHT * 0.4, manager,
+    create_ui_text_box_and_text_entry(config_pairs[9][1], config_pairs[9][0], WIDTH * 0.2, HEIGHT * 0.4, manager,
                                       length=2)
+
+    create_ui_text_box(config_pairs[4][1], WIDTH * 0.2, HEIGHT * 0.45, manager)
+    list_bools = ["True", "False"]
+    create_bool_drop_down(list_bools,
+                          list_bools.index(str(get_save_data())),
+                          WIDTH * 0.3, HEIGHT * 0.45, manager, length=WIDTH * 0.07)
 
     create_ui_text_box_and_text_entry(config_pairs[0][1], config_pairs[0][0], WIDTH * 0.7, HEIGHT * 0.3, manager,
                                       length=3)
@@ -187,7 +199,7 @@ def initialize_rocket_configuration_ui():
                                       length=3)
     create_ui_text_box_and_text_entry(config_pairs[3][1], config_pairs[3][0], WIDTH * 0.7, HEIGHT * 0.45, manager,
                                       length=2)
-    create_ui_text_box_and_text_entry(config_pairs[4][1], config_pairs[4][0], WIDTH * 0.7, HEIGHT * 0.5, manager,
+    create_ui_text_box_and_text_entry(config_pairs[6][1], config_pairs[6][0], WIDTH * 0.7, HEIGHT * 0.5, manager,
                                       length=10)
     create_ui_text_box_and_text_entry(config_pairs[5][1], config_pairs[5][0], WIDTH * 0.7, HEIGHT * 0.55, manager,
                                       length=10)
@@ -230,6 +242,10 @@ def get_selected_rocket():
 
 def get_startplanet_name():
     return json.load(open("./Globals/RocketConfig/CurrentRocketConfig.json", "r+"))["Start"]["Startplanet"]["value"]
+
+
+def get_save_data():
+    return json.load(open("./Globals/RocketConfig/CurrentRocketConfig.json", "r+"))["Start"]["Savedata"]["value"]
 
 
 def update_selected_rocket(selected_rocket):

@@ -91,7 +91,7 @@ class GameManager(Manager):
                 else:
                     self.rocket.flightState = RocketFlightState.crashed
                     self.fill_dataframe()
-            if self.rocket.currentStep > 1:
+            if self.rocket.currentStep > 1 and DATA.save_data:
                 (a_planets, a_air, a_sun) = self.rocket.get_current_acceleration_split()
                 self.data_array[self.rocket.currentStep] = [(get_start_time() + DATA.time_passed).timestamp(),
                                                        str(self.rocket.thrust),
@@ -103,7 +103,8 @@ class GameManager(Manager):
                                                        str(a_sun)]
         # Only One condition since current steps should be synced after every calculation step
         if self.rocket.currentStep >= NUM_OF_PREDICTIONS:
-            self.fill_dataframe()
+            if DATA.save_data:
+                self.fill_dataframe()
             self.rocket.reset_array()
             [planet.reset_array() for planet in self.planets]
 
