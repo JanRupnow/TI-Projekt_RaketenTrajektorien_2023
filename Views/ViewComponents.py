@@ -66,12 +66,22 @@ pg.elements.UITextBox, pg.elements.UITextEntryLine):
     return text_box, text_input
 
 
-def create_drop_down(array, defaultnumber, position_x, position_y, manager) -> pg.elements.UIDropDownMenu:
+def create_drop_down(array, defaultnumber, position_x, position_y, manager, length = WIDTH * 0.1, height = HEIGHT * 0.05) -> pg.elements.UIDropDownMenu:
     drop_down = pg.elements.UIDropDownMenu(array, array[defaultnumber],
                                            relative_rect=pygame.Rect((position_x, position_y),
-                                                                     (WIDTH * 0.1, HEIGHT * 0.05)),
+                                                                     (length, height)),
                                            manager=manager,
                                            object_id="startplanet_dropdown",
+                                           )
+    return drop_down
+
+
+def create_bool_drop_down(array, defaultnumber, position_x, position_y, manager, length = WIDTH * 0.1, height = HEIGHT * 0.05) -> pg.elements.UIDropDownMenu:
+    drop_down = pg.elements.UIDropDownMenu(array, array[defaultnumber],
+                                           relative_rect=pygame.Rect((position_x, position_y),
+                                                                     (length, height)),
+                                           manager=manager,
+                                           object_id="savedata_dropdown",
                                            )
     return drop_down
 

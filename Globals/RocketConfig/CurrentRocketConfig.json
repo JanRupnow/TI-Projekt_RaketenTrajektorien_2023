@@ -15,6 +15,10 @@
         "Thrust": {
             "value": 0,
             "text": "start thrust"
+        },
+        "Savedata": {
+            "value": "False",
+            "text": "save data"
         }
     },
     "Mass": {

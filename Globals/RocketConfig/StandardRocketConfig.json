@@ -15,7 +15,10 @@
         "Thrust": {
             "value": 0,
             "text": "start thrust"
-        }
+        },
+        "Savedata": {
+        "value": false,
+        "text": "save data"}
     },
     "Mass": {
         "StructMass": {
@@ -26,7 +29,8 @@
             "value": 500000,
             "text": "fuel mass(t)"
         }
-    }, "StartTime":{
+    },
+    "StartTime":{
         "Year":{
             "value":2023,
             "text": "year"},
