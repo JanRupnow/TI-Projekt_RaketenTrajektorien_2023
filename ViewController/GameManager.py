@@ -12,8 +12,8 @@ from ViewController.Rocket.RocketFlightState import RocketFlightState
 
 class GameManager(Manager):
     def __init__(self):
-        self.data_df = np.zeros((0, 9), dtype="str")
-        self.data_array = np.zeros((NUM_OF_PREDICTIONS+1, 5), dtype="str")
+        self.data_df = np.zeros((0, 12), dtype="str")
+        self.data_array = np.zeros((NUM_OF_PREDICTIONS+1, 8), dtype="str")
         self.flight_number = 1
     def calculate_next_iteration(self):
 
@@ -81,22 +81,26 @@ class GameManager(Manager):
             self.rocket.update_planets_in_range_list(self.planets)
             self.rocket.update_nearest_planet(self.planets)
             if self.rocket.nearestPlanet.check_collision():
-                if self.rocket.nearestPlanet.check_landing():
+                if self.rocket.nearestPlanet.check_landing(self.rocket):
                     self.rocket.flightState = RocketFlightState.landed
                     self.rocket.thrust = 0
                     self.fill_dataframe()
                     self.rocket.calculate_entry_angle()
                     self.rocket.clear_array()
-                    self.rocket.nearestPlanet.update_distance_to_rocket()
+                    self.rocket.nearestPlanet.update_distance_to_rocket(self.rocket)
                 else:
                     self.rocket.flightState = RocketFlightState.crashed
                     self.fill_dataframe()
             if self.rocket.currentStep > 1:
+                (a_planets, a_air, a_sun) = self.rocket.get_current_acceleration_split()
                 self.data_array[self.rocket.currentStep] = [(get_start_time() + DATA.time_passed).timestamp(),
                                                        str(self.rocket.thrust),
                                                        str(self.rocket.angle),
                                                        str(1),
-                                                       str(self.rocket.fuelmass)]
+                                                       str(self.rocket.fuelmass),
+                                                       str(a_planets),
+                                                       str(a_air),
+                                                       str(a_sun)]
         # Only One condition since current steps should be synced after every calculation step
         if self.rocket.currentStep >= NUM_OF_PREDICTIONS:
             self.fill_dataframe()
@@ -133,11 +137,11 @@ class GameManager(Manager):
                                 self.rocket.velocity_X.reshape(-1, 1)[1:data_length+1].astype("str"),
                                 self.rocket.velocity_Y.reshape(-1, 1)[1:data_length+1].astype("str")))
         self.data_df = np.vstack((self.data_df, whole_data))
-        self.data_array = np.zeros((NUM_OF_PREDICTIONS+1, 5), dtype="str")
+        self.data_array = np.zeros((NUM_OF_PREDICTIONS+1, 8), dtype="str")
         if self.rocket.flightState in {RocketFlightState.crashed, RocketFlightState.landed}:
             self.store_dataframe()
             self.flight_number += 1
-            self.data_df = np.zeros((0, 9), dtype="str")
+            self.data_df = np.zeros((0, 12), dtype="str")
 
     def store_dataframe(self):
         with open(f"Globals/FlightData/Flights/{timestamp}_Flight_{self.flight_number}.csv", "w") as file:

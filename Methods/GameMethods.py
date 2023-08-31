@@ -63,7 +63,7 @@ def planet_is_in_screen(planet: Planet) -> bool:
         planet.currentStep] * DATA.scale - planet.radius * DATA.scale < -DATA.move_x + WIDTH / 2
 
 
-def process_hot_key_events(event: pygame.event, rocket: Rocket, planets: list[Planet]) -> (pygame.event, Rocket, list[Planet]):
+def process_hot_key_events(event: pygame.event, rocket: Rocket, planets: list[Planet], draw_manager: DrawManager) -> (pygame.event, Rocket, list[Planet]):
     from ViewController.DrawManager import DrawManager
 
     key_pressed = pygame.key.get_pressed()
