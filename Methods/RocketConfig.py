@@ -2,7 +2,7 @@ import json
 
 from ViewController.Planet import *
 from ViewController.Rocket.Rocket import Rocket
-from ViewController.DrawManager import DrawManager
+from ViewController.Manager.DrawManager import DrawManager
 from ViewController.Rocket.RocketFlightState import RocketFlightState
 from Views.StartView import get_selected_rocket
 

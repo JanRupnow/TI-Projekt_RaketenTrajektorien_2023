@@ -48,15 +48,16 @@ def create_rocket_image(rocket_image_number: int, manager: pygame_gui.UIManager,
     return image
 
 
-def create_ui_text_box_and_text_entry(text, value, position_x, position_y, manager, size_x=0, size_y=0, length=20) -> (
-pg.elements.UITextBox, pg.elements.UITextEntryLine):
+def create_ui_text_box_and_text_entry(text, value, position_x, position_y, manager, size_x=0, size_y=0, length=20,
+                                      length_entry=WIDTH * 0.04) -> (
+        pg.elements.UITextBox, pg.elements.UITextEntryLine):
     text_box = pg.elements.UITextBox(text,
                                      relative_rect=pygame.Rect((position_x, position_y),
                                                                (WIDTH * 0.1 + size_x, size_y + HEIGHT * 0.05)),
                                      manager=manager,
                                      object_id=remove_spaces(text + "_text"))
     text_input = pg.elements.UITextEntryLine(relative_rect=pygame.Rect((position_x + WIDTH * 0.1 + size_x, position_y),
-                                                                       (WIDTH * 0.04 + size_x, HEIGHT * 0.05 + size_y)),
+                                                                       (length_entry + size_x, HEIGHT * 0.05 + size_y)),
                                              manager=manager,
                                              object_id=remove_spaces(text + "_input"))
     text_input.set_text(str(value))
@@ -66,7 +67,8 @@ pg.elements.UITextBox, pg.elements.UITextEntryLine):
     return text_box, text_input
 
 
-def create_drop_down(array, defaultnumber, position_x, position_y, manager, length = WIDTH * 0.1, height = HEIGHT * 0.05) -> pg.elements.UIDropDownMenu:
+def create_drop_down(array, defaultnumber, position_x, position_y, manager, length=WIDTH * 0.1,
+                     height=HEIGHT * 0.05) -> pg.elements.UIDropDownMenu:
     drop_down = pg.elements.UIDropDownMenu(array, array[defaultnumber],
                                            relative_rect=pygame.Rect((position_x, position_y),
                                                                      (length, height)),
@@ -76,7 +78,8 @@ def create_drop_down(array, defaultnumber, position_x, position_y, manager, leng
     return drop_down
 
 
-def create_bool_drop_down(array, defaultnumber, position_x, position_y, manager, length = WIDTH * 0.1, height = HEIGHT * 0.05) -> pg.elements.UIDropDownMenu:
+def create_bool_drop_down(array, defaultnumber, position_x, position_y, manager, length=WIDTH * 0.1,
+                          height=HEIGHT * 0.05) -> pg.elements.UIDropDownMenu:
     drop_down = pg.elements.UIDropDownMenu(array, array[defaultnumber],
                                            relative_rect=pygame.Rect((position_x, position_y),
                                                                      (length, height)),
@@ -86,9 +89,9 @@ def create_bool_drop_down(array, defaultnumber, position_x, position_y, manager,
     return drop_down
 
 
-def create_ui_text_box(text, position_x, position_y, manager) -> pg.elements.UITextBox:
+def create_ui_text_box(text, position_x, position_y, manager, length=WIDTH * 0.1) -> pg.elements.UITextBox:
     text_box = pg.elements.UITextBox(text,
-                                     relative_rect=pygame.Rect((position_x, position_y), (WIDTH * 0.1, HEIGHT * 0.05)),
+                                     relative_rect=pygame.Rect((position_x, position_y), (length, HEIGHT * 0.05)),
                                      manager=manager,
                                      object_id=remove_spaces(text[1] + "_text"))
     return text_box

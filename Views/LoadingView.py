@@ -11,6 +11,7 @@ def loading_screen():
     # Screen is shown for 2 seconds
     duration = 2000
 
+    #https://images.pexels.com/photos/998641/pexels-photo-998641.jpeg?cs=srgb&dl=pexels-francesco-ungaro-998641.jpg&fm=jpg
     space_loading_img = pygame.image.load("Images/Space.jpg").convert_alpha()
     space_loading_img = pygame.transform.scale(space_loading_img, (WIDTH, HEIGHT))
 

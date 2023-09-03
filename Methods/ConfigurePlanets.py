@@ -1,6 +1,7 @@
 import math
 import json
 
+import numpy as np
 from sunpy.coordinates import get_body_heliographic_stonyhurst
 from Globals.Constants import *
 from Methods.ViewMethods import get_start_day, get_start_month, get_start_year, check_date_is_legal

@@ -1,5 +1,7 @@
 import math
 
+import numpy as np
+
 from Globals.Constants import *
 from numba.experimental import jitclass
 from numba import int32, float32, float64, typeof

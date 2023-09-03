@@ -1,4 +1,6 @@
 import math
+
+import numpy as np
 from pygame import Surface
 
 from Globals.Constants import *
@@ -9,7 +11,7 @@ from Methods.ConfigurePlanets import get_start_time
 
 from Methods.GameMethods import convert_to_line_in_screen, add_clock_time, center_screen_on_planet, \
     automatic_zoom_on_rocket, planet_is_in_screen
-from ViewController.Manager import Manager
+from ViewController.Manager.ManagerBase import Manager
 
 from ViewController.Planet import Planet
 from ViewController.Rocket.RocketFlightState import RocketFlightState

@@ -1,5 +1,7 @@
 import math
 
+import numpy as np
+
 from Globals.Constants import *
 from ViewController.FlightObject import FlightObject
 from ViewController.Planet import Planet

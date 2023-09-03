@@ -16,9 +16,11 @@
             "value": 0,
             "text": "start thrust"
         },
-        "Savedata": {
-        "value": false,
-        "text": "save data"}
+        "SaveData": {
+            "value": false,
+            "text": "save data"
+        },
+        "CrashVelocity": 500
     },
     "Mass": {
         "StructMass": {
@@ -32,13 +34,13 @@
     },
     "StartTime":{
         "Year":{
-            "value":2023,
+            "value":1991,
             "text": "year"},
         "Month":{
-            "value":5,
+            "value":2,
             "text": "month"},
         "Day":{
-            "value":24,
+            "value":20,
             "text": "day"}
     },
     "BurningRate": {

@@ -6,7 +6,7 @@ from Globals.FlightData.FlightDataManager import DATA
 from Globals.Constants import NUM_OF_PREDICTIONS
 
 from Methods.ConfigurePlanets import get_start_time
-from ViewController.Manager import Manager
+from ViewController.Manager.ManagerBase import Manager
 
 from ViewController.Rocket.RocketFlightState import RocketFlightState
 

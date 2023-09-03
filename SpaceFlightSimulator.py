@@ -1,11 +1,11 @@
-from ViewController.DrawManager import DrawManager
-from ViewController.GameManager import GameManager
+from ViewController.Manager.DrawManager import DrawManager
+from ViewController.Manager.GameManager import GameManager
 from Views.LoadingView import loading_screen
 from Views.StartView import *
 
 from Globals.FlightData.FlightDataManager import DATA
 
-from Methods.PackageInstaller import package_installer
+#from Methods.PackageInstaller import package_installer
 from Methods.ConfigurePlanets import configure_planets
 from Methods.GameMethods import process_hot_key_events
 from Methods.RocketConfig import load_rocket

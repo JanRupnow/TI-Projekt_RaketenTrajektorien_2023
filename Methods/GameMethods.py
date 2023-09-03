@@ -1,5 +1,7 @@
 from Views.HotkeyView import *
 
+import numpy as np
+
 from ViewController.Planet import Planet
 from ViewController.Rocket.Rocket import Rocket
 from ViewController.Rocket.RocketFlightState import RocketFlightState
@@ -62,8 +64,6 @@ def planet_is_in_screen(planet: Planet) -> bool:
 
 
 def process_hot_key_events(event: pygame.event, rocket: Rocket, planets: list[Planet], draw_manager) -> (pygame.event, Rocket, list[Planet]):
-    from ViewController.DrawManager import DrawManager
-
     key_pressed = pygame.key.get_pressed()
     # mouse_x, mouse_y = pygame.mouse.get_pos()
     DATA.mouse_x = pygame.mouse.get_pos()[0]
