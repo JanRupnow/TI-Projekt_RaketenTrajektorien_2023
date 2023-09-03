@@ -20,7 +20,7 @@
             "value": false,
             "text": "save data"
         },
-        "CrashVelocity": 500
+        "CrashVelocity": 539
     },
     "Mass": {
         "StructMass": {
@@ -60,7 +60,7 @@
         "blue": 255
     },
     "Image": {
-        "selectedNumber": 0,
+        "selectedNumber": 2,
         "path": [
             "./Images/Rocket1.png",
             "./Images/Rocket2.png",

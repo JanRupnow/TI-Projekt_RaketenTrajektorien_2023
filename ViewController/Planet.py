@@ -6,6 +6,7 @@ from Globals.Constants import *
 from numba.experimental import jitclass
 from numba import int32, float32, float64, typeof
 
+from Globals.FlightData.FlightDataManager import DATA
 from ViewController.FlightObject import FlightObject
 
 
@@ -127,8 +128,8 @@ class Planet(FlightObject):
 
     def check_landing(self, rocket) -> bool:
         # Safe landing
-        if self.distanceToRocket <= self.radius * 95 / 100 and rocket.get_current_relative_velocity() < CRASH_VELOCITY:
+        if self.distanceToRocket <= self.radius * 95 / 100 and rocket.get_current_relative_velocity() < DATA.crash_velocity:
             return True
         # Crashing
-        if self.distanceToRocket >= self.radius * 95 / 100 and rocket.get_current_relative_velocity() > CRASH_VELOCITY:
+        if self.distanceToRocket >= self.radius * 95 / 100 and rocket.get_current_relative_velocity() > DATA.crash_velocity:
             return False

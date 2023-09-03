@@ -202,7 +202,7 @@ class DrawManager(Manager):
             self.rocket.get_absolute_velocity())
 
         rocket_velocity = FONT_1.render(f'{speed:,.0f} km/h', True,
-                                        ((0, 160, 0) if speed < CRASH_VELOCITY else (160, 0, 0)))
+                                        ((0, 160, 0) if speed < DATA.crash_velocity else (160, 0, 0)))
         WINDOW.blit(rocket_velocity, (WIDTH * 0.625, HEIGHT * 0.055))
 
         # Time Passed
@@ -294,17 +294,6 @@ class DrawManager(Manager):
             WINDOW.blit(fps_text, (WIDTH * 0.025, HEIGHT * 0.13))
 
             # TODO implement Pressure
-
-            rocket_max_q = FONT_1.render(f'MaxQ: %', True, COLOR_WHITE)
-            WINDOW.blit(rocket_max_q, (WIDTH * 0.75, HEIGHT * 0.12))
-            rocket_state = FONT_1.render(f'Rocket current: {self.rocket.currentStep}', True, COLOR_WHITE)
-            WINDOW.blit(rocket_state, (WIDTH * 0.75, HEIGHT * 0.16))
-            rocket_state = FONT_1.render(f'Rocket calculation: {self.rocket.currentCalculationStep}', True, COLOR_WHITE)
-            WINDOW.blit(rocket_state, (WIDTH * 0.75, HEIGHT * 0.20))
-            rocket_state = FONT_1.render(f'Planet current: {self.planets[0].currentStep}', True, COLOR_WHITE)
-            WINDOW.blit(rocket_state, (WIDTH * 0.75, HEIGHT * 0.24))
-            rocket_state = FONT_1.render(f'Planet calculation: {self.planets[0].currentCalculationStep}', True, COLOR_WHITE)
-            WINDOW.blit(rocket_state, (WIDTH * 0.75, HEIGHT * 0.28))
 
             # Planet colors and names
             WINDOW.blit(self.sun_surface, (15, 285))

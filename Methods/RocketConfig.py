@@ -12,7 +12,10 @@ def load_rocket_from_path(path, planets: list[Planet], draw_manager: DrawManager
     config = json.load(jsonfile)
 
     startplanet = next(filter(lambda x: x.name == config["Start"]["Startplanet"]["value"], planets))
-
+    #https://aminoapps.com/c/space/page/blog/rocketship/pXL3_zxDUQuRdMgpP5eKYoR1dl1LDjmwngK
+    #https://www.stickpng.com/de/img/icons-logos-emojis/ikonische-marken/spacex-rakete
+    #https://www.teslarati.com/spacex-starship-super-heavy-assembly-tower/
+    #https://favpng.com/png_view/rocket-png/gmMWUZuK
     img = pygame.image.load(f"Images/Rocket{get_selected_rocket() + 1}.png")
     img = pygame.transform.scale_by(img, 125 / img.get_width())
     rocket = Rocket(

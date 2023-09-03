@@ -38,8 +38,6 @@ planetNameArray = ["Sun", "Mercury", "Venus", "Earth", "Moon", "Mars", "Jupiter"
 CurrentStep = 0
 CurrentCalculationStep = 0
 
-
-CRASH_VELOCITY = 1_000_000  # m/s
 MIN_ROCKET_RADIUS = 2
 MAX_ROCKET_RADIUS = 0.1
 NUM_OF_PREDICTIONS = 1000
@@ -54,6 +52,7 @@ if sys.platform.startswith('win'):
 
 WINDOW = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
 pygame.init()
+#https://www.iconarchive.com/show/captiva-icons-by-bokehlicia/rocket-icon.html
 rocket = pygame.image.load("Images/RocketIcon.png").convert_alpha()
 pygame.display.set_icon(rocket)
 pygame.display.set_caption("Spaceflight Simulator")

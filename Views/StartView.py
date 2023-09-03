@@ -10,7 +10,8 @@ from Methods.ViewMethods import *
 
 manager = pg.UIManager((WIDTH, HEIGHT))
 UI_REFRESH_RATE = CLOCK.tick(60) / 1000
-rocket_hall = pygame.image.load("Images/Rocket_Hall2.png").convert_alpha()
+#https://getimg.ai/text-to-image
+rocket_hall = pygame.image.load("Images/Rocket_Hall.png").convert_alpha()
 rocket_hall = pygame.transform.scale(rocket_hall, (WIDTH, HEIGHT))
 
 
@@ -32,9 +33,11 @@ def show_start_ui():
         for event in pygame.event.get():
             if event.type == pg.UI_HORIZONTAL_SLIDER_MOVED and event.ui_object_id == "crash_velocity_slider":
                 mouse_position = pygame.mouse.get_pos()
+
             if event.type == pg.UI_BUTTON_PRESSED and event.ui_object_id == "Start_button":
                 show_gui = False
                 change_crash_velocity(int(slider.get_current_value()))
+                DATA.crash_velocity = get_crash_velocity()
             if event.type == pg.UI_BUTTON_PRESSED and event.ui_object_id == "Configuration_button" \
                     and not show_configuration:
                 slider = initialize_rocket_configuration_ui()
@@ -130,11 +133,15 @@ def show_start_ui():
                     else:
                         if 29 >= int(event.text) > 0:
                             update_rocket_configs(event)
+                reset_and_show_ui(selected_number)
+
+            if mouse_position is not None and not area_rect.collidepoint(pygame.mouse.get_pos()):
+                change_crash_velocity(int(slider.get_current_value()))
+                slider = reset_and_show_ui(selected_number)
+                mouse_position = None
 
             manager.process_events(event)
-        if mouse_position is not None and not area_rect.collidepoint(pygame.mouse.get_pos()):
-            change_crash_velocity(int(slider.get_current_value()))
-            slider = reset_and_show_ui(selected_number)
+
         manager.update(UI_REFRESH_RATE)
         manager.draw_ui(WINDOW)
         pygame.display.update()

@@ -15,6 +15,10 @@ def loading_screen():
     space_loading_img = pygame.image.load("Images/Space.jpg").convert_alpha()
     space_loading_img = pygame.transform.scale(space_loading_img, (WIDTH, HEIGHT))
 
+    # https://aminoapps.com/c/space/page/blog/rocketship/pXL3_zxDUQuRdMgpP5eKYoR1dl1LDjmwngK
+    # https://www.stickpng.com/de/img/icons-logos-emojis/ikonische-marken/spacex-rakete
+    # https://www.teslarati.com/spacex-starship-super-heavy-assembly-tower/
+    # https://favpng.com/png_view/rocket-png/gmMWUZuK
     rocket_loading_img = pygame.image.load(f"Images/Rocket{get_selected_rocket() + 1}.png").convert_alpha()
     rocket_loading_img = pygame.transform.scale(rocket_loading_img, (WIDTH * 0.25, HEIGHT * 0.5))
     rocket_loading_img = pygame.transform.rotate(rocket_loading_img, 300)

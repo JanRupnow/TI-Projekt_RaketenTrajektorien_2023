@@ -31,6 +31,7 @@ class FlightDataManager(metaclass=SingletonMeta):
         self._time_passed: datetime.timedelta = datetime.timedelta(seconds=0)
         self._advanced_interface: bool = True
         self._save_data: bool = True
+        self._crash_velocity: int = 0
 
     @property
     def flight_change_state(self):
@@ -146,6 +147,14 @@ class FlightDataManager(metaclass=SingletonMeta):
     @save_data.setter
     def save_data(self, value: bool):
         self._save_data = value
+
+    @property
+    def crash_velocity(self):
+        return self._crash_velocity
+
+    @crash_velocity.setter
+    def crash_velocity(self, value: int):
+        self._crash_velocity = value
 
 
 DATA = FlightDataManager()

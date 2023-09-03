@@ -10,6 +10,7 @@ UI_REFRESH_RATE = CLOCK.tick(60) / 1000
 
 settings_font_title = pygame.font.SysFont("Trebuchet MS", 22)
 settings_font_header = pygame.font.SysFont("Trebuchet MS", 16)
+#https://getimg.ai/text-to-image
 rocket_background_img = pygame.image.load("Images/Rocket_Background_Image.png").convert_alpha()
 rocket_background_img = pygame.transform.scale(rocket_background_img, (WIDTH, HEIGHT))
 
