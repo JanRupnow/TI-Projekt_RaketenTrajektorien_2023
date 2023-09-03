@@ -55,9 +55,8 @@ if sys.platform.startswith('win'):
     import ctypes
     ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(u'LJ.SFS.v1')
 
-pygame.init()
 WINDOW = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
-
+pygame.init()
 rocket = pygame.image.load("Images/RocketIcon.png").convert_alpha()
 pygame.display.set_icon(rocket)
 pygame.display.set_caption("Spaceflight Simulator")

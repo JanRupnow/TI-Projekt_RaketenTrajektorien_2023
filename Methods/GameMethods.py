@@ -1,5 +1,3 @@
-import pygame
-
 from Views.HotkeyView import *
 
 from ViewController.Planet import Planet
