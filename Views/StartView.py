@@ -213,21 +213,10 @@ def initialize_rocket_configuration_ui() -> pg.elements.UIHorizontalSlider:
     create_bool_drop_down(list_bools,
                           list_bools.index(str(get_save_data())),
                           WIDTH * 0.3, HEIGHT * 0.6, manager, length=WIDTH * 0.06)
+    create_ui_text_box("crash velocity: ", WIDTH * 0.2, HEIGHT * 0.65, manager)
+    create_ui_text_box(f"{get_crash_velocity()} m/s", WIDTH * 0.3, HEIGHT * 0.65, manager, length=0.06 * WIDTH)
 
-    create_ui_text_box("difficulty: ", WIDTH * 0.2, HEIGHT * 0.65, manager)
-
-    crash_velocity = int(get_crash_velocity())
-    if crash_velocity < 350:
-        difficulty = "easy"
-    elif crash_velocity < 700:
-        difficulty = "normal"
-    else:
-        difficulty = "hard"
-    create_ui_text_box(difficulty, WIDTH * 0.3, HEIGHT * 0.65, manager, length=0.06 * WIDTH)
-    create_ui_text_box("crash velocity: ", WIDTH * 0.2, HEIGHT * 0.7, manager)
-    create_ui_text_box(f"{get_crash_velocity()} m/s", WIDTH * 0.3, HEIGHT * 0.7, manager, length=0.06 * WIDTH)
-
-    slider = create_ui_slider(WIDTH * 0.2, HEIGHT * 0.75, manager, length_x=WIDTH * 0.15,
+    slider = create_ui_slider(WIDTH * 0.2, HEIGHT * 0.7, manager, length_x=WIDTH * 0.15,
                               length_y=0.06 * HEIGHT)
 
     create_ui_text_box_and_text_entry(config_pairs[0][1], config_pairs[0][0], WIDTH * 0.7, HEIGHT * 0.3, manager,
