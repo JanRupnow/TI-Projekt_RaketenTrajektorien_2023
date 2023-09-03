@@ -172,8 +172,8 @@ def diplay_configuration_ui():
     title_text = TITLE_FONT_1.render("Simulation Time", True, (0, 150, 150))
     WINDOW.blit(title_text, (WIDTH * 0.2, HEIGHT * 0.25))
 
-    pygame.draw.rect(WINDOW, (0, 0, 0), (WIDTH * 0.18, HEIGHT * 0.54, WIDTH * 0.19, HEIGHT * 0.285))
-    pygame.draw.rect(WINDOW, (50, 50, 50), (WIDTH * 0.18 + 1, HEIGHT * 0.54 + 1, WIDTH * 0.19 - 2, HEIGHT * 0.285 - 2))
+    pygame.draw.rect(WINDOW, (0, 0, 0), (WIDTH * 0.18, HEIGHT * 0.54, WIDTH * 0.19, HEIGHT * 0.235))
+    pygame.draw.rect(WINDOW, (50, 50, 50), (WIDTH * 0.18 + 1, HEIGHT * 0.54 + 1, WIDTH * 0.19 - 2, HEIGHT * 0.235 - 2))
     pygame.draw.rect(WINDOW, (100, 100, 100),
                      (WIDTH * 0.18 + 1, HEIGHT * 0.54 + 1, WIDTH * 0.19 - 2, HEIGHT * 0.05 - 2))
 
