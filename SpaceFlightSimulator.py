@@ -12,7 +12,8 @@ from Methods.RocketConfig import load_rocket
 
 
 def main():
-    package_installer()
+    #package_installer()
+    #isnt required anymore
 
     game_manager = GameManager()
     draw_manager = DrawManager()
