@@ -5,15 +5,14 @@ from Views.StartView import *
 
 from Globals.FlightData.FlightDataManager import DATA
 
-#from Methods.PackageInstaller import package_installer
+from Methods.PackageInstaller import package_installer
 from Methods.ConfigurePlanets import configure_planets
 from Methods.GameMethods import process_hot_key_events
 from Methods.RocketConfig import load_rocket
 
 
 def main():
-    #package_installer()
-    #isnt required anymore
+    package_installer()
 
     game_manager = GameManager()
     draw_manager = DrawManager()
