@@ -20,7 +20,7 @@
             "value": false,
             "text": "save data"
         },
-        "CrashVelocity": 539
+        "CrashVelocity": 500
     },
     "Mass": {
         "StructMass": {
@@ -34,15 +34,15 @@
     },
     "StartTime": {
         "Year": {
-            "value": 2023,
+            "value": 1991,
             "text": "year"
         },
         "Month": {
-            "value": 5,
+            "value": 2,
             "text": "month"
         },
         "Day": {
-            "value": 24,
+            "value": 20,
             "text": "day"
         }
     },
@@ -60,7 +60,7 @@
         "blue": 255
     },
     "Image": {
-        "selectedNumber": 2,
+        "selectedNumber": 1,
         "path": [
             "./Images/Rocket1.png",
             "./Images/Rocket2.png",

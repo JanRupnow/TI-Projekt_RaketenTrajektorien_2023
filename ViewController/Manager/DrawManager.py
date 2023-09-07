@@ -65,7 +65,7 @@ class DrawManager(Manager):
         self.draw_planet_orbit(planet)
         pygame.draw.circle(WINDOW, planet.color, (
             planet.current_PositionX * DATA.scale + DATA.move_x + WIDTH / 2,
-            planet.current_PositionX * DATA.scale + DATA.move_y + HEIGHT / 2),
+            planet.current_PositionY * DATA.scale + DATA.move_y + HEIGHT / 2),
                            max(planet.scaleR * DATA.scale, 2))
 
     def set_rocket_image(self, image: Surface, radius) -> None:
@@ -217,15 +217,27 @@ class DrawManager(Manager):
         WINDOW.blit(self.time_passed_text, (WIDTH * 0.71, HEIGHT * 0.02))
 
         pygame.draw.rect(WINDOW, (20, 20, 20), (WIDTH * 0.7, HEIGHT * 0.05, WIDTH * 0.19, HEIGHT * 0.04))
+        if years < 1:
+            yearresult = ""
+        elif years == 1:
+            yearresult = " year, "
+        else:
+            yearresult = " years, "
+
+        if days < 1:
+            daysresult = ""
+        elif days == 1:
+            daysresult = " day, "
+        else:
+            daysresult = " days, "
 
         time_passed_value = FONT_1.render(
-            f'{int(years)} {"year" if int(years) <= 1 else "years"}, {int(days)} {"day" if int(days) <= 1 else "days"}, {int(hours):02}:{int(minutes):02}:{int(seconds):02}' if years > 0 else
-            f'{int(days)} {"day" if int(days) <= 1 else "days"}, {int(hours):02}:{int(minutes):02}:{int(seconds):02}',
+            f'{int(years) if int(years) > 0 else ""}{yearresult}{int(days) if int(days) > 0 else ""}{daysresult}{int(hours):02}:{int(minutes):02}:{int(seconds):02}',
             True, COLOR_WHITE)
         WINDOW.blit(time_passed_value, (WIDTH * 0.71, HEIGHT * 0.055))
 
         if self.rocket.flightState == RocketFlightState.flying and \
-                self.rocket.nearestPlanet.distanceToRocket - self.rocket.nearestPlanet.radius < 3 / 2 * self.rocket.nearestPlanet.radius:
+                self.rocket.nearestPlanet.distanceToRocket - self.rocket.nearestPlanet.radius < 1 * self.rocket.nearestPlanet.radius:
             pygame.draw.rect(WINDOW, (100, 100, 100), (WIDTH * 0.915, HEIGHT * 0.015, WIDTH * 0.07, HEIGHT * 0.04))
 
             WINDOW.blit(self.altitude_text, (WIDTH * 0.925, HEIGHT * 0.02))

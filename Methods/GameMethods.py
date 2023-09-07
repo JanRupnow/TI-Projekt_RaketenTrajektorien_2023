@@ -69,13 +69,15 @@ def process_hot_key_events(event: pygame.event, rocket: Rocket, planets: list[Pl
     DATA.mouse_x = pygame.mouse.get_pos()[0]
     DATA.mouse_y = pygame.mouse.get_pos()[1]
     distance = 10
-    if key_pressed[Keys.H_moveScreenLeft[0]] or DATA.mouse_x < 5 and DATA.zoom_goal == ZoomGoal.none:
+    screen_distance_x = WIDTH * 0.05
+    screen_distance_y = HEIGHT * 0.05
+    if key_pressed[Keys.H_moveScreenLeft[0]] or DATA.mouse_x < screen_distance_x and DATA.zoom_goal == ZoomGoal.none:
         DATA.move_x += distance
-    elif key_pressed[Keys.H_moveScreenRight[0]] or DATA.mouse_x > WIDTH - 5 and DATA.zoom_goal == ZoomGoal.none:
+    elif key_pressed[Keys.H_moveScreenRight[0]] or DATA.mouse_x > WIDTH - screen_distance_x and DATA.zoom_goal == ZoomGoal.none:
         DATA.move_x -= distance
-    elif key_pressed[Keys.H_moveScreenUp[0]] or DATA.mouse_y < 5 and DATA.zoom_goal == ZoomGoal.none:
+    elif key_pressed[Keys.H_moveScreenUp[0]] or DATA.mouse_y < screen_distance_y and DATA.zoom_goal == ZoomGoal.none:
         DATA.move_y += distance
-    elif key_pressed[Keys.H_moveScreenDown[0]] or DATA.mouse_y > HEIGHT - 5 and DATA.zoom_goal == ZoomGoal.none:
+    elif key_pressed[Keys.H_moveScreenDown[0]] or DATA.mouse_y > HEIGHT - screen_distance_y and DATA.zoom_goal == ZoomGoal.none:
         DATA.move_y -= distance
 
     elif (not event.type == pygame.KEYDOWN) and \

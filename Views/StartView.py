@@ -18,7 +18,8 @@ rocket_hall = pygame.transform.scale(rocket_hall, (WIDTH, HEIGHT))
 def show_start_ui():
     show_gui = True
     # Slider Box
-    area_rect = pygame.Rect(WIDTH * 0.2, HEIGHT * 0.75, WIDTH * 0.15, 0.06 * HEIGHT)
+    slider = None
+    area_rect = pygame.Rect(WIDTH * 0.2, HEIGHT * 0.7, WIDTH * 0.15, 0.06 * HEIGHT)
     mouse_position = None
     show_configuration = False
     DATA.save_data = get_save_data()
@@ -36,8 +37,10 @@ def show_start_ui():
 
             if event.type == pg.UI_BUTTON_PRESSED and event.ui_object_id == "Start_button":
                 show_gui = False
-                change_crash_velocity(int(slider.get_current_value()))
+                if slider is not None:
+                    change_crash_velocity(int(slider.get_current_value()))
                 DATA.crash_velocity = get_crash_velocity()
+
             if event.type == pg.UI_BUTTON_PRESSED and event.ui_object_id == "Configuration_button" \
                     and not show_configuration:
                 slider = initialize_rocket_configuration_ui()
@@ -135,7 +138,7 @@ def show_start_ui():
                             update_rocket_configs(event)
                 reset_and_show_ui(selected_number)
 
-            if mouse_position is not None and not area_rect.collidepoint(pygame.mouse.get_pos()):
+            if mouse_position != None and not area_rect.collidepoint(pygame.mouse.get_pos()):
                 change_crash_velocity(int(slider.get_current_value()))
                 slider = reset_and_show_ui(selected_number)
                 mouse_position = None
